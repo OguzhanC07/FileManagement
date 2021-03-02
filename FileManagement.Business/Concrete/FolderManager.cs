@@ -19,17 +19,17 @@ namespace FileManagement.Business.Concrete
 
         public async Task<List<Folder>> GetFoldersByUserId(int id)
         {
-            return await _genericDal.GetAllByFilter(I => I.AppUserId == id);
+            return await _genericDal.GetAllByFilter(I => I.AppUserId == id && I.IsDeleted == false && I.SubFolderId==null);
         }
 
         public async Task<List<Folder>> GetSubFoldersByFolderId(int id)
         {
-            return await _genericDal.GetAllByFilter(I => I.SubFolderId == id);
+            return await _genericDal.GetAllByFilter(I => I.SubFolderId == id && I.IsDeleted == false);
         }
 
         public async Task<Folder> FindFolderById(int id)
         {
-            return await _genericDal.GetByFilter(I => I.Id == id && I.IsActive == true);
+            return await _genericDal.GetByFilter(I => I.Id == id && I.IsDeleted == false);
         }
     }
 }

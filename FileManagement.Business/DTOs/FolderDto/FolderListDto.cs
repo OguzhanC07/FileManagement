@@ -9,9 +9,10 @@ namespace FileManagement.Business.DTOs.FolderDto
     public class FolderListDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string FolderName { get; set; }
+        public int? SubFolderId { get; set; }
         public int Size { get; set; }
-        public int UserId { get; set; }
+        public int AppUserId { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }

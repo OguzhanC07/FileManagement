@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -21,10 +22,13 @@ namespace FileManagement.DataAccess
         [Required]
         [StringLength(50)]
         public string FolderName { get; set; }
+        public Guid FileGuid { get; set; }
         public int Size { get; set; }
         public int? SubFolderId { get; set; }
         public int AppUserId { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsDeleted { get; set; }
+        [Column(TypeName = "datetime")]
+        public DateTime CreatedAt { get; set; }
 
         [ForeignKey(nameof(AppUserId))]
         [InverseProperty(nameof(User.Folders))]
