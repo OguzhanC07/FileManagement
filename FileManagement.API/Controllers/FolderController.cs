@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FileManagement.API.CustomFilters;
 using FileManagement.Business.DTOs.FolderDto;
 using FileManagement.Business.Interfaces;
 using FileManagement.DataAccess;
@@ -50,10 +49,10 @@ namespace FileManagement.API.Controllers
             dto.Size = 0;
             dto.CreatedAt = DateTime.Now;
             dto.SubId = null;
-            
+
             await _folderService.AddAsync(_mapper.Map<Folder>(dto));
-            var user = await _userService.CheckEmailorUsernameAsync(User.Identity.Name);
-            string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.Name}";
+            var user = await _userService.GetById(dto.UserId);
+            string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.FolderName}";
             Directory.CreateDirectory(userDirectory);
 
             return Created("", new { Message = "Başarıyla klasör oluşturuldu.", Code = "CREATED_SUCCESSFULLY" });
@@ -66,8 +65,8 @@ namespace FileManagement.API.Controllers
             dto.CreatedAt = DateTime.Now;
             dto.SubId = id;
             await _folderService.AddAsync(_mapper.Map<Folder>(dto));
-            var user = await _userService.CheckEmailorUsernameAsync(User.Identity.Name);
-            string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.Name}";
+            var user = await _userService.GetById(dto.UserId);
+            string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.FolderName}";
             Directory.CreateDirectory(userDirectory);
             return Created("", new { Message = "Başarıyla klasör oluşturuldu.", Code = "CREATED_SUCCESSFULLY" });
         }
@@ -90,6 +89,10 @@ namespace FileManagement.API.Controllers
             {
                 return BadRequest(new { Error = "Id'ler uyuşmuyor", Code = "ID_IS_NOT_MATCHED" });
             }
+
+            var folder = await _folderService.FindFolderById(id);
+            string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{folder.AppUserId}/{folder.FolderName}";
+
 
             await _folderService.UpdateAsync(_mapper.Map<Folder>(folderEditDto));
             return Ok(new { Message = "Başarıyla güncellendi", Code = "UPDATED_SUCCESSFULLY" });

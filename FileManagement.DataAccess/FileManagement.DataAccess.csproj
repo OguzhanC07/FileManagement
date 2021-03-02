@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\FileManagement.Entities\Concrete\File.cs" Link="File.cs" />
+    <Compile Include="..\FileManagement.Entities\Concrete\Folder.cs" Link="Folder.cs" />
+    <Compile Include="..\FileManagement.Entities\Concrete\User.cs" Link="User.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.3">
       <PrivateAssets>all</PrivateAssets>
@@ -19,10 +25,6 @@
 
   <ItemGroup>
     <Folder Include="Concrete\EntityFrameworkCore\Context\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\FileManagement.Entities\FileManagement.Entities.csproj" />
   </ItemGroup>
 
 </Project>

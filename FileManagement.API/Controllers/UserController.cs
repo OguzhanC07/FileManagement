@@ -28,19 +28,19 @@ namespace FileManagement.API.Controllers
         public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
             var user = await _userService.CheckUserNameOrPasswordAsync(userLoginDto);
-            if (user!=null)
+            if (user != null)
             {
-                var token =_jwtService.GenerateToken(user);
+                var token = _jwtService.GenerateToken(user);
                 string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{userLoginDto.UserName}";
                 if (!Directory.Exists(userDirectory))
                 {
                     Directory.CreateDirectory(userDirectory);
                 }
 
-                return Created("",token);
+                return Created("", token);
             }
 
-            return NotFound(new {Error="Kullanıcı adı veya şifre yanlış.", Code="USERNAME_OR_PASSWORD_WRONG" });
+            return NotFound(new { Error = "Kullanıcı adı veya şifre yanlış.", Code = "USERNAME_OR_PASSWORD_WRONG" });
         }
     }
 }

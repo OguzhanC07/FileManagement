@@ -9,6 +9,6 @@ namespace FileManagement.Business.DTOs.FolderDto
     public class FolderEditDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string FolderName { get; set; }
     }
 }

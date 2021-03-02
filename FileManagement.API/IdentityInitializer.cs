@@ -12,16 +12,21 @@ namespace FileManagement.API
         {
             var seedUser = await userService.CheckEmailorUsernameAsync("test");
 
-            if (seedUser==null)
+            if (seedUser == null)
             {
                 await userService.AddAsync(new DataAccess.User
                 {
                     Email = "test@test.com",
                     Password = "1234",
                     Username = "test",
-                    IsActive = true
+                    isActive = true
                 });
             }
+        }
+
+        internal static object Seed(object userService)
+        {
+            throw new NotImplementedException();
         }
     }
 }

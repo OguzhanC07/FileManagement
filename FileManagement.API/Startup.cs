@@ -5,19 +5,14 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace FileManagement.API
 {
@@ -35,7 +30,7 @@ namespace FileManagement.API
         {
 
             services.AddAutoMapper(typeof(Startup));
-            
+
             services.AddDependicies();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
@@ -43,16 +38,14 @@ namespace FileManagement.API
                 opt.RequireHttpsMetadata = false;
                 opt.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidIssuer=JwtConstant.Issuer,
-                    ValidAudience=JwtConstant.Audience,
-                    IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConstant.SecretKey)),
+                    ValidIssuer = JwtConstant.Issuer,
+                    ValidAudience = JwtConstant.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConstant.SecretKey)),
                     ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
                     ClockSkew = TimeSpan.Zero
                 };
             });
-
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FileManagement.API", Version = "v1" });
@@ -72,8 +65,8 @@ namespace FileManagement.API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FileManagement.API v1"));
             }
-
             app.UseRouting();
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthorization();
             IdentityInitializer.Seed(userService).Wait();

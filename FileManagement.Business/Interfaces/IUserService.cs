@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FileManagement.Business.Interfaces
 {
-    public interface IUserService :IGenericService<User>
+    public interface IUserService : IGenericService<User>
     {
         public Task<User> CheckUserNameOrPasswordAsync(UserLoginDto dto);
         Task<User> CheckEmailorUsernameAsync(string emailorUsername);

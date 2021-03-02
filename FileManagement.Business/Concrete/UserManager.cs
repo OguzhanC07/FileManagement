@@ -26,8 +26,8 @@ namespace FileManagement.Business.Concrete
 
         public async Task<User> CheckUserNameOrPasswordAsync(UserLoginDto dto)
         {
-            var result =await _genericDal.GetByFilter(I => I.Password == dto.Password && I.Username == dto.UserName);
-            if (result!=null)
+            var result = await _genericDal.GetByFilter(I => I.Password == dto.Password && I.Username == dto.UserName);
+            if (result != null)
             {
                 return result;
             }
