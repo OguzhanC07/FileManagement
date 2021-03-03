@@ -8,5 +8,6 @@ namespace FileManagement.DataAccess.Interfaces
 {
     public interface IFolderDal : IGenericDal<Folder>
     {
+        Task<List<Folder>> GetAllSubFolders(int folderId, int? subFolderId);
     }
 }

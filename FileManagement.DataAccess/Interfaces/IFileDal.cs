@@ -8,5 +8,6 @@ namespace FileManagement.DataAccess.Interfaces
 {
     public interface IFileDal : IGenericDal<File>
     {
+
     }
 }

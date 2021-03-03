@@ -12,9 +12,11 @@ namespace FileManagement.Business.Concrete
     public class FolderManager : GenericManager<Folder>, IFolderService
     {
         private readonly IGenericDal<Folder> _genericDal;
-        public FolderManager(IGenericDal<Folder> genericDal) : base(genericDal)
+        private readonly IFolderDal _folderDal;
+        public FolderManager(IFolderDal folderDal,IGenericDal<Folder> genericDal) : base(genericDal)
         {
             _genericDal = genericDal;
+            _folderDal = folderDal;
         }
 
         public async Task<List<Folder>> GetFoldersByUserId(int id)
@@ -30,6 +32,11 @@ namespace FileManagement.Business.Concrete
         public async Task<Folder> FindFolderById(int id)
         {
             return await _genericDal.GetByFilter(I => I.Id == id && I.IsDeleted == false);
+        }
+
+        public async Task<List<Folder>> GetAllSubFolders(int folderId, int? subFolderId)
+        {
+           return await _folderDal.GetAllSubFolders(folderId, subFolderId);
         }
     }
 }

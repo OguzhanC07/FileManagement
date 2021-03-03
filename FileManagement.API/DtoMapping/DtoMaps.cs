@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FileManagement.Business.DTOs.FileDto;
 using FileManagement.Business.DTOs.FolderDto;
 using FileManagement.Business.DTOs.UserDto;
 using FileManagement.DataAccess;
@@ -27,6 +28,11 @@ namespace FileManagement.API.DtoMapping
 
             CreateMap<Folder, FolderEditDto>();
             CreateMap<FolderEditDto, Folder>();
+            #endregion
+
+            #region File
+            CreateMap<File, FileEditDto>();
+            CreateMap<FileEditDto, File>();
             #endregion
         }
     }

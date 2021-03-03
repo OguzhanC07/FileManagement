@@ -129,5 +129,13 @@ namespace FileManagement.API.Controllers
             return Ok();
         }
 
+        [HttpGet("[action]")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Demo()
+        {
+            var result = await _folderService.GetAllSubFolders(2,null);
+            return Ok(result);
+        }
+
     }
 }
