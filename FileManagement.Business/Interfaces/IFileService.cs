@@ -9,6 +9,7 @@ namespace FileManagement.Business.Interfaces
 {
     public interface IFileService : IGenericService<File>
     {
-
+        Task<List<File>> GetFilesByFolderId(int id);
+        Task<File> GetFileByIdAsync(int id);
     }
 }

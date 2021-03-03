@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 
@@ -21,6 +20,9 @@ namespace FileManagement.DataAccess
         public DateTime UploadedAt { get; set; }
         public int FolderId { get; set; }
         public bool IsActive { get; set; }
+        [Required]
+        [StringLength(50)]
+        public string FileGuid { get; set; }
 
         [ForeignKey(nameof(FolderId))]
         [InverseProperty("Files")]

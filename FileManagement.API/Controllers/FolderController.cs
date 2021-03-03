@@ -2,6 +2,7 @@
 using FileManagement.Business.DTOs.FolderDto;
 using FileManagement.Business.Interfaces;
 using FileManagement.DataAccess;
+using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,10 +23,12 @@ namespace FileManagement.API.Controllers
         private readonly IFolderService _folderService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
-        public FolderController(IUserService userService, IMapper mapper, IFolderService folderService)
+        private readonly IFileService _fileService;
+        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService)
         {
             _folderService = folderService;
             _userService = userService;
+            _fileService = fileService;
             _mapper = mapper;
         }
 
@@ -43,7 +46,6 @@ namespace FileManagement.API.Controllers
         }
 
         [HttpPost]
-        //[FileNameCheck]
         public async Task<IActionResult> AddFolder(AddFolderDto dto)
         {
             dto.Size = 0;
@@ -109,6 +111,20 @@ namespace FileManagement.API.Controllers
                 return Ok(new { Message = "Başarıyla güncellendi", Code = "UPDATED_SUCCESSFULLY" });
             }
             return NotFound("Böyle bir klasör bulunamadı.");
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> DownloadFolder(int id)
+        {
+            var folder = await _folderService.FindFolderById(id);
+            var subFolders = await _folderService.GetSubFoldersByFolderId(id);
+            var user = await _userService.GetById(folder.AppUserId);
+           
+            
+            
+            string userPath = $"/users/{user.Username}/";
+
+            return Ok();
         }
 
     }
