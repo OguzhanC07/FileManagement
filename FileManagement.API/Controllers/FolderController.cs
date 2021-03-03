@@ -113,7 +113,9 @@ namespace FileManagement.API.Controllers
             return NotFound("Böyle bir klasör bulunamadı.");
         }
 
-        [HttpGet("{id}")]
+
+
+        [HttpGet("[action]/{id}")]
         public async Task<IActionResult> DownloadFolder(int id)
         {
             var folder = await _folderService.FindFolderById(id);

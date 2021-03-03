@@ -55,15 +55,15 @@ namespace FileManagement.API.Controllers
 
         
 
-        [HttpPost("{folderId}")]
-        public async Task<IActionResult> UploadFiles(int folderId, [FromForm]List<IFormFile> formFiles)
+        [HttpPost("[action]/{folderId}")]
+        public async Task<IActionResult> UploadFile(int folderId, [FromForm]IFormFileCollection formFiles)
         {
             var folder = await _folderService.FindFolderById(folderId);
             var user = await _userService.GetById(folder.AppUserId);
-            foreach (var file in formFiles)
+            foreach ( var file in formFiles)
             {
                 var newName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                var result = await UploadFile(file, folder.FolderName, user.Username, newName);
+                var result = await UploadFile(file, folder.FileGuid.ToString(), user.Username, newName);
                 if (result==true)
                 {
                     await _fileService.AddAsync(new DataAccess.File

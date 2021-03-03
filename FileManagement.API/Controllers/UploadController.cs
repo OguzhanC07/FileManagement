@@ -15,7 +15,7 @@ namespace FileManagement.API.Controllers
     [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
     public class UploadController : ControllerBase
     {
-        public async Task<bool> UploadFile(IFormFile file, string foldername,string username,string guidName)
+        internal async Task<bool> UploadFile(IFormFile file, string foldername,string username,string guidName)
         {
             try
             {
@@ -24,9 +24,9 @@ namespace FileManagement.API.Controllers
                 await file.CopyToAsync(stream);
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                return false;
+                throw new Exception(e.Message);
             }
         }
     }
