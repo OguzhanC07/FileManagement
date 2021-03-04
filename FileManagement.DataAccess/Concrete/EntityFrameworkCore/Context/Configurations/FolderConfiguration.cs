@@ -20,9 +20,9 @@ namespace FileManagement.DataAccess.Concrete.EntityFrameworkCore.Context.Configu
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Folders__AppUser__276EDEB3");
 
-            entity.HasOne(d => d.SubFolder)
-                .WithMany(p => p.InverseSubFolder)
-                .HasForeignKey(d => d.SubFolderId)
+            entity.HasOne(d => d.ParentFolder)
+                .WithMany(p => p.InverseParentFolder)
+                .HasForeignKey(d => d.ParentFolderId)
                 .HasConstraintName("FK__Folders__SubFold__267ABA7A");
 
             OnConfigurePartial(entity);

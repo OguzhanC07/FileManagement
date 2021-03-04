@@ -21,12 +21,12 @@ namespace FileManagement.Business.Concrete
 
         public async Task<List<Folder>> GetFoldersByUserId(int id)
         {
-            return await _genericDal.GetAllByFilter(I => I.AppUserId == id && I.IsDeleted == false && I.SubFolderId==null);
+            return await _genericDal.GetAllByFilter(I => I.AppUserId == id && I.IsDeleted == false && I.ParentFolderId==null);
         }
 
         public async Task<List<Folder>> GetSubFoldersByFolderId(int id)
         {
-            return await _genericDal.GetAllByFilter(I => I.SubFolderId == id && I.IsDeleted == false);
+            return await _genericDal.GetAllByFilter(I => I.ParentFolderId == id && I.IsDeleted == false);
         }
 
         public async Task<Folder> FindFolderById(int id)
@@ -34,9 +34,9 @@ namespace FileManagement.Business.Concrete
             return await _genericDal.GetByFilter(I => I.Id == id && I.IsDeleted == false);
         }
 
-        public async Task<List<Folder>> GetAllSubFolders(int folderId, int? subFolderId)
+        public async Task<List<Folder>> GetAllSubFolders(int folderId)
         {
-           return await _folderDal.GetAllSubFolders(folderId, subFolderId);
+           return await _folderDal.GetAllSubFolders(folderId);
         }
     }
 }

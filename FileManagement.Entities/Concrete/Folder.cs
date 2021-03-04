@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 #nullable disable
 
 namespace FileManagement.DataAccess
@@ -12,7 +13,7 @@ namespace FileManagement.DataAccess
         public Folder()
         {
             Files = new HashSet<File>();
-            InverseSubFolder = new HashSet<Folder>();
+            InverseParentFolder = new HashSet<Folder>();
         }
 
         [Key]
@@ -22,7 +23,7 @@ namespace FileManagement.DataAccess
         public string FolderName { get; set; }
         public Guid FileGuid { get; set; }
         public int Size { get; set; }
-        public int? SubFolderId { get; set; }
+        public int? ParentFolderId { get; set; }
         public int AppUserId { get; set; }
         public bool IsDeleted { get; set; }
         [Column(TypeName = "datetime")]
@@ -31,12 +32,12 @@ namespace FileManagement.DataAccess
         [ForeignKey(nameof(AppUserId))]
         [InverseProperty(nameof(User.Folders))]
         public virtual User AppUser { get; set; }
-        [ForeignKey(nameof(SubFolderId))]
-        [InverseProperty(nameof(Folder.InverseSubFolder))]
-        public virtual Folder SubFolder { get; set; }
+        [ForeignKey(nameof(ParentFolderId))]
+        [InverseProperty(nameof(Folder.InverseParentFolder))]
+        public virtual Folder ParentFolder { get; set; }
         [InverseProperty(nameof(File.Folder))]
         public virtual ICollection<File> Files { get; set; }
-        [InverseProperty(nameof(Folder.SubFolder))]
-        public virtual ICollection<Folder> InverseSubFolder { get; set; }
+        [InverseProperty(nameof(Folder.ParentFolder))]
+        public virtual ICollection<Folder> InverseParentFolder { get; set; }
     }
 }

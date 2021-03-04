@@ -25,7 +25,7 @@ namespace FileManagement.API.Controllers
         private readonly IFolderService _folderService;
         private readonly IFileService _fileService;
         private readonly IUserService _userService;
-        private IWebHostEnvironment _webHostEnviroment;
+        private readonly IWebHostEnvironment _webHostEnviroment;
 
         public FileController(IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
@@ -50,18 +50,6 @@ namespace FileManagement.API.Controllers
             string mimetype =MimeTypesMap.GetMimeType(file.FileGuid.Split(".").Last());
             return PhysicalFile(path,mimetype);
         }
-
-        //[HttpGet("[action]/{filename}")]
-        //public async Task<IActionResult> DownloadFilesWithZip(int[] fileIds)
-        //{
-        //    foreach (var item in fileIds)
-        //    {
-                
-        //    }
-        //    return Ok();
-        //}
-
-        
 
         [HttpPost("[action]/{folderId}")]
         public async Task<IActionResult> UploadFile(int folderId, [FromForm]IFormFileCollection formFiles)

@@ -2,15 +2,14 @@
 using FileManagement.Business.DTOs.FolderDto;
 using FileManagement.Business.Interfaces;
 using FileManagement.DataAccess;
-using ICSharpCode.SharpZipLib.Zip;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.IO.Compression;
 using System.Threading.Tasks;
 
 namespace FileManagement.API.Controllers
@@ -24,12 +23,16 @@ namespace FileManagement.API.Controllers
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
-        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService)
+        private readonly IWebHostEnvironment _webHostEnviroment;
+     
+        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment)
         {
             _folderService = folderService;
             _userService = userService;
             _fileService = fileService;
             _mapper = mapper;
+            _webHostEnviroment = webHostEnvironment;
+          
         }
 
 
@@ -50,7 +53,7 @@ namespace FileManagement.API.Controllers
         {
             dto.Size = 0;
             dto.CreatedAt = DateTime.Now;
-            dto.SubFolderId = null;
+            dto.ParentFolderId = null;
             dto.FileGuid = Guid.NewGuid();
 
             await _folderService.AddAsync(_mapper.Map<Folder>(dto));
@@ -69,7 +72,7 @@ namespace FileManagement.API.Controllers
             {
                 dto.Size = 0;
                 dto.CreatedAt = DateTime.Now;
-                dto.SubFolderId = id;
+                dto.ParentFolderId = id;
                 dto.FileGuid = Guid.NewGuid();
 
                 await _folderService.AddAsync(_mapper.Map<Folder>(dto));
@@ -115,27 +118,83 @@ namespace FileManagement.API.Controllers
 
 
 
-        [HttpGet("[action]/{id}")]
-        public async Task<IActionResult> DownloadFolder(int id)
-        {
-            var folder = await _folderService.FindFolderById(id);
-            var subFolders = await _folderService.GetSubFoldersByFolderId(id);
-            var user = await _userService.GetById(folder.AppUserId);
-           
-            
-            
-            string userPath = $"/users/{user.Username}/";
+        //[HttpGet("[action]/{id}")]
+        //public async Task<IActionResult> DownloadFolder(int id)
+        //{
+        //    var mainfolder = await _folderService.FindFolderById(id);
+        //    var user = await _userService.GetById(mainfolder.AppUserId);
+        //    var fileName = string.Format("{0}_files.zip", DateTime.Today.Date.ToString("dd-MM-yyyy") + "_1");
+        //    var temppath = _webHostEnviroment.WebRootPath + "/TempFiles/";
+        //    if (!Directory.Exists(temppath))
+        //    {
+        //        Directory.CreateDirectory(temppath);
+        //    }
 
-            return Ok();
-        }
+        //    var tempOutPutPath = Path.Combine(temppath, fileName);
+
+        //    var subfolders = await _folderService.GetAllSubFolders(id);
+        //    using (ZipOutputStream s = new ZipOutputStream(System.IO.File.Create(tempOutPutPath)))
+        //    {
+        //        s.SetLevel(9);
+        //        byte[] buffer = new byte[4096];
+        //        var filepathList = new List<string>();
+        //        foreach (var subfolder in subfolders)
+        //        {
+        //            string currentfilepath = Path.Combine(_webHostEnviroment.WebRootPath + $"/users/{user.Username}/{subfolder.FileGuid}".TrimStart(new char[] { '\\', '/' }));
+        //            ZipEntry entry = new ZipEntry(currentfilepath)
+        //            {
+        //                DateTime = DateTime.Now,
+        //                IsUnicodeText = true,
+        //            };
+
+        //            s.PutNextEntry(entry);
+
+        //            using FileStream fs = System.IO.File.OpenRead(currentfilepath);
+        //            int sourceBytes;
+        //            do
+        //            {
+        //                sourceBytes = fs.Read(buffer, 0, buffer.Length);
+        //                s.Write(buffer, 0, sourceBytes);
+        //            } while (sourceBytes > 0);
+        //        }
+
+        //        s.Finish();
+        //        s.Flush();
+        //        s.Close();
+        //    }
+
+        //    byte[] finalResult = System.IO.File.ReadAllBytes(tempOutPutPath);
+        //    if (System.IO.File.Exists(tempOutPutPath))
+        //        System.IO.File.Delete(tempOutPutPath);
+
+        //    if (finalResult== null)
+        //    {
+        //        throw new Exception(string.Format("No Files"));
+        //    }
+
+        //    return File(finalResult, "application/zip");
+        //}
+
 
         [HttpGet("[action]")]
         [AllowAnonymous]
-        public async Task<IActionResult> Demo()
+        public IActionResult Demo()
         {
-            var result = await _folderService.GetAllSubFolders(2,null);
-            return Ok(result);
-        }
+            var webRoot = _webHostEnviroment.WebRootPath;
+            var fileName = "MyZip.zip";
+            var tempOutput = webRoot + "/TempFiles/" + fileName;
+            var sourcefile = "connectionstring.txt";
+            var sourcefile2 = "ne.txt";
 
+            var source = Path.Combine(webRoot, sourcefile2);
+
+            var zip = ZipFile.Open(tempOutput, ZipArchiveMode.Create);
+            zip.CreateEntryFromFile(source,$"Folder1/{sourcefile}",CompressionLevel.Fastest);
+            zip.CreateEntryFromFile(source,$"Folder1/{sourcefile2}",CompressionLevel.Fastest);
+
+            zip.Dispose();
+
+            return Ok();
+        }
     }
 }
