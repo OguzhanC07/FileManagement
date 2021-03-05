@@ -19,7 +19,7 @@ namespace FileManagement.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class FileController : UploadController
+    public class FileController : BaseController
     {
 
         private readonly IFolderService _folderService;
@@ -27,7 +27,7 @@ namespace FileManagement.API.Controllers
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnviroment;
 
-        public FileController(IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment)
+        public FileController(IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService)
         {
             _folderService = folderService;
             _fileService = fileService;
@@ -36,32 +36,35 @@ namespace FileManagement.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetShowableFileById(int id)
+        public async Task<IActionResult> GetSingleFile(int id)
         {
             var file = await _fileService.GetFileByIdAsync(id);
             var folder = await _folderService.FindFolderById(file.FolderId);
             var user = await _userService.GetById(folder.AppUserId);
             if (string.IsNullOrEmpty(file.FileName))
             {
-                return NotFound(new { Message = "Dosya bulunamadı", Code = "FILE_NOT_UPLOADED" });
+                return NotFound(new SingleResponseMessageModel<string> { Result = false, Message = "File not found." });
             }
 
-            var path = Path.Combine(_webHostEnviroment.WebRootPath, $"/users/{user.Username}/{folder.FileGuid}/{file.FileGuid}".TrimStart(new char[] { '\\', '/' }));
-            string mimetype =MimeTypesMap.GetMimeType(file.FileGuid.Split(".").Last());
-            return PhysicalFile(path,mimetype);
+
+            string[] paths = { _webHostEnviroment.WebRootPath, @"users/", user.Username, folder.FileGuid.ToString(), file.FileGuid };
+            //_webHostEnviroment.WebRootPath, $"/users/{user.Username}/{folder.FileGuid}/{file.FileGuid}".TrimStart(new char[] { '\\', '/' }) old version
+            var path = Path.Combine(paths);
+            string mimetype = MimeTypesMap.GetMimeType(file.FileGuid.Split(".").Last());
+            return PhysicalFile(path, mimetype);
         }
 
         [HttpPost("[action]/{folderId}")]
-        public async Task<IActionResult> UploadFile(int folderId, [FromForm]IFormFileCollection formFiles)
+        public async Task<IActionResult> UploadFile(int folderId, [FromForm] IFormFileCollection formFiles)
         {
             var folder = await _folderService.FindFolderById(folderId);
             var user = await _userService.GetById(folder.AppUserId);
             int folderSize = 0;
-            foreach ( var file in formFiles)
+            foreach (var file in formFiles)
             {
                 var newName = Guid.NewGuid() + Path.GetExtension(file.FileName);
                 var result = await UploadFile(file, folder.FileGuid.ToString(), user.Username, newName);
-                if (result==true)
+                if (result == true)
                 {
                     await _fileService.AddAsync(new DataAccess.File
                     {
@@ -77,26 +80,26 @@ namespace FileManagement.API.Controllers
                 }
                 else
                 {
-                    return BadRequest(new { Message = "Dosyalar yüklenirken bir sorun oluştu", Code = "FILE_NOT_UPLOADED" });
+                    return BadRequest(new SingleResponseMessageModel<string> { Result= false, Message="File(s) not uploaded"});
                 }
             }
 
             folder.Size += folderSize;
             await _folderService.UpdateAsync(folder);
-            return Created("", new { Message = "Dosya(lar) başarıyla yüklendi.", Code = "FILE_UPLOADED_SUCCESSFULLY" });
+            return Created("", new SingleResponseMessageModel<string> { Result=true, Message="File(s) uploaded successfully" });
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> EditFile(int id, FileEditDto dto)
         {
-            if (id!=dto.Id)
+            if (id != dto.Id)
             {
-                return BadRequest(new { Message = "Id'ler uyuşmuyor.", Code = "IDS_ARE_NOT_MATCHED" });
+                return BadRequest(new SingleResponseMessageModel<string> { Result =false, Message="Id's are not match"});
             }
             var file = await _fileService.GetFileByIdAsync(id);
             file.FileName = dto.FileName;
             await _fileService.UpdateAsync(file);
-            return Ok(new { Message = "Başarıyla güncellendi.", Code = "UPDATED_SUCCESSFULLY" });
+            return Ok(new SingleResponseMessageModel<string> { Result=true, Message="File name edited successfully" });
         }
 
         [HttpDelete("{id}")]
@@ -106,7 +109,7 @@ namespace FileManagement.API.Controllers
             file.IsActive = false;
             await _fileService.UpdateAsync(file);
 
-            return Ok(new { Message = "Dosya başarıyla silindi.", Code = "FILE_DELETED_SUCCESSFULLY" });
+            return Ok(new SingleResponseMessageModel<string> { Result=true, Message="File deleted successfully." });
         }
     }
 }

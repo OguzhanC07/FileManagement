@@ -1,1 +1,0 @@
-Server=DESKTOP-FERHVEV\SQLEXPRESS;Database=FileManagement;uid=sa;pwd=1234;

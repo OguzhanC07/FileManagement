@@ -1,4 +1,5 @@
-﻿using FileManagement.Business.DTOs.UserDto;
+﻿using FileManagement.API.Models;
+using FileManagement.Business.DTOs.UserDto;
 using FileManagement.Business.Interfaces;
 using FileManagement.Business.JwtTool;
 using Microsoft.AspNetCore.Http;
@@ -37,10 +38,19 @@ namespace FileManagement.API.Controllers
                     Directory.CreateDirectory(userDirectory);
                 }
 
-                return Created("", token);
+                return Created("", new SingleResponseMessageModel<JwtToken>
+                {
+                    Result = true,
+                    Message="Giriş Başarılı",
+                    Data = token
+                }); 
             }
 
-            return NotFound(new { Error = "Kullanıcı adı veya şifre yanlış.", Code = "USERNAME_OR_PASSWORD_WRONG" });
+            return NotFound(new SingleResponseMessageModel<JwtToken>
+            {
+                Result=false,
+                Message="Kullanıcı adı veya şifre yanlış."
+            });
         }
     }
 }

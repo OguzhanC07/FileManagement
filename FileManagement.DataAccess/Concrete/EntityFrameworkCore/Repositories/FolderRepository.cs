@@ -43,7 +43,6 @@ namespace FileManagement.DataAccess.Concrete.EntityFrameworkCore.Repositories
                     }
                 }
             }
-
         }
     }
 }

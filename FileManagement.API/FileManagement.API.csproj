@@ -19,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\users\" />
+    <Folder Include="wwwroot\TempFiles\" />
+    <Folder Include="wwwroot\users\test\" />
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using FileManagement.API.Models;
 using FileManagement.Business.DTOs.FolderDto;
 using FileManagement.Business.Interfaces;
 using FileManagement.DataAccess;
+using HeyRed.Mime;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FileManagement.API.Controllers
@@ -17,74 +21,76 @@ namespace FileManagement.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class FolderController : ControllerBase
+    public class FolderController : BaseController
     {
         private readonly IFolderService _folderService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
         private readonly IWebHostEnvironment _webHostEnviroment;
-     
-        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment)
+
+        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment) : base(fileService)
         {
             _folderService = folderService;
             _userService = userService;
             _fileService = fileService;
             _mapper = mapper;
             _webHostEnviroment = webHostEnvironment;
-          
-        }
 
+        }
 
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetFoldersByAppUserId(int id)
         {
-            return Ok(_mapper.Map<List<FolderListDto>>(await _folderService.GetFoldersByUserId(id)));
+            return Ok(new MultipleDataResponseMessageModel<FolderListDto>
+            {
+                Result = true,
+                Message = "Successfully sended.",
+                Data = _mapper.Map<List<FolderListDto>>(await _folderService.GetFoldersByUserId(id))
+            });
         }
 
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetSubFoldersByFolderId(int id)
         {
-            return Ok(_mapper.Map<List<FolderListDto>>(await _folderService.GetSubFoldersByFolderId(id)));
+            return Ok(new MultipleDataResponseMessageModel<FolderListDto>
+            {
+                Result = true,
+                Message = "Successfully sended.",
+                Data = _mapper.Map<List<FolderListDto>>(await _folderService.GetFoldersByUserId(id))
+            });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddFolder(AddFolderDto dto)
+        [HttpPost("{id?}")]
+        public async Task<IActionResult> AddSubOrMainFolder(int? id, AddFolderDto dto)
         {
+            if (id != null)
+            {
+                if (await _folderService.FindFolderById(Convert.ToInt32(id)) == null)
+                {
+                    return BadRequest(new SingleResponseMessageModel<int>
+                    {
+                        Result = false,
+                        Message = "You can't create folder if parent folder does not exist.",
+                    });
+                }
+                dto.ParentFolderId = id;
+            }
             dto.Size = 0;
             dto.CreatedAt = DateTime.Now;
-            dto.ParentFolderId = null;
             dto.FileGuid = Guid.NewGuid();
-
+            dto.AppUserId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             await _folderService.AddAsync(_mapper.Map<Folder>(dto));
             var user = await _userService.GetById(dto.AppUserId);
             string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.FileGuid}";
             Directory.CreateDirectory(userDirectory);
 
-            return Created("", new { Message = "Başarıyla klasör oluşturuldu.", Code = "CREATED_SUCCESSFULLY" });
-        }
-
-        [HttpPost("{id}")]
-        public async Task<IActionResult> AddSubFolder(int id, AddFolderDto dto)
-        {
-            var file = await _folderService.FindFolderById(id);
-            if (file!=null)
+            return Created("", new SingleResponseMessageModel<AddFolderDto>
             {
-                dto.Size = 0;
-                dto.CreatedAt = DateTime.Now;
-                dto.ParentFolderId = id;
-                dto.FileGuid = Guid.NewGuid();
-
-                await _folderService.AddAsync(_mapper.Map<Folder>(dto));
-                var user = await _userService.GetById(dto.AppUserId);
-                string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.FileGuid}";
-                Directory.CreateDirectory(userDirectory);
-                return Created("", new { Message = "Başarıyla klasör oluşturuldu.", Code = "CREATED_SUCCESSFULLY" });
-            }
-            else
-            {
-                return BadRequest(new { Message = "Ana klasör olmadığından oluşturamazsınız.", Code = "PARENT_FOLDER_NOT_EXIST" });
-            }
+                Result = true,
+                Message = "Folder created succesfully",
+                Data = dto
+            });
         }
 
         [HttpDelete("{id}")]
@@ -94,7 +100,11 @@ namespace FileManagement.API.Controllers
             folder.IsDeleted = true;
             await _folderService.UpdateAsync(folder);
 
-            return Ok(new { Message = "Başarıyla silindi", Code = "DELETED_SUCCESSFULLY" });
+            return Ok(new SingleResponseMessageModel<string>
+            {
+                Result = true,
+                Message = "Deleted successfully"
+            });
         }
 
 
@@ -103,98 +113,51 @@ namespace FileManagement.API.Controllers
         {
             if (id != folderEditDto.Id)
             {
-                return BadRequest(new { Error = "Id'ler uyuşmuyor", Code = "ID_IS_NOT_MATCHED" });
+                return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id'ler uyuşmuyor" });
             }
             var folder = await _folderService.GetById(id);
-            if (folder!=null)
+            if (folder != null)
             {
                 folder.FolderName = folderEditDto.FolderName;
 
                 await _folderService.UpdateAsync(folder);
-                return Ok(new { Message = "Başarıyla güncellendi", Code = "UPDATED_SUCCESSFULLY" });
+                return Ok();
             }
-            return NotFound("Böyle bir klasör bulunamadı.");
+            return NotFound(new SingleResponseMessageModel<string> { Result = false, Message = "Böyle bir klasör bulunmamaktadır." });
         }
 
-
-
-        //[HttpGet("[action]/{id}")]
-        //public async Task<IActionResult> DownloadFolder(int id)
-        //{
-        //    var mainfolder = await _folderService.FindFolderById(id);
-        //    var user = await _userService.GetById(mainfolder.AppUserId);
-        //    var fileName = string.Format("{0}_files.zip", DateTime.Today.Date.ToString("dd-MM-yyyy") + "_1");
-        //    var temppath = _webHostEnviroment.WebRootPath + "/TempFiles/";
-        //    if (!Directory.Exists(temppath))
-        //    {
-        //        Directory.CreateDirectory(temppath);
-        //    }
-
-        //    var tempOutPutPath = Path.Combine(temppath, fileName);
-
-        //    var subfolders = await _folderService.GetAllSubFolders(id);
-        //    using (ZipOutputStream s = new ZipOutputStream(System.IO.File.Create(tempOutPutPath)))
-        //    {
-        //        s.SetLevel(9);
-        //        byte[] buffer = new byte[4096];
-        //        var filepathList = new List<string>();
-        //        foreach (var subfolder in subfolders)
-        //        {
-        //            string currentfilepath = Path.Combine(_webHostEnviroment.WebRootPath + $"/users/{user.Username}/{subfolder.FileGuid}".TrimStart(new char[] { '\\', '/' }));
-        //            ZipEntry entry = new ZipEntry(currentfilepath)
-        //            {
-        //                DateTime = DateTime.Now,
-        //                IsUnicodeText = true,
-        //            };
-
-        //            s.PutNextEntry(entry);
-
-        //            using FileStream fs = System.IO.File.OpenRead(currentfilepath);
-        //            int sourceBytes;
-        //            do
-        //            {
-        //                sourceBytes = fs.Read(buffer, 0, buffer.Length);
-        //                s.Write(buffer, 0, sourceBytes);
-        //            } while (sourceBytes > 0);
-        //        }
-
-        //        s.Finish();
-        //        s.Flush();
-        //        s.Close();
-        //    }
-
-        //    byte[] finalResult = System.IO.File.ReadAllBytes(tempOutPutPath);
-        //    if (System.IO.File.Exists(tempOutPutPath))
-        //        System.IO.File.Delete(tempOutPutPath);
-
-        //    if (finalResult== null)
-        //    {
-        //        throw new Exception(string.Format("No Files"));
-        //    }
-
-        //    return File(finalResult, "application/zip");
-        //}
-
-
-        [HttpGet("[action]")]
-        [AllowAnonymous]
-        public IActionResult Demo()
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> DownloadFolder(int id)
         {
-            var webRoot = _webHostEnviroment.WebRootPath;
-            var fileName = "MyZip.zip";
-            var tempOutput = webRoot + "/TempFiles/" + fileName;
-            var sourcefile = "connectionstring.txt";
-            var sourcefile2 = "ne.txt";
+            //zipname and zip path.
+            var zipName = Guid.NewGuid().ToString() + ".zip";
+            var tempOutput = Path.Combine(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\"), zipName);
 
-            var source = Path.Combine(webRoot, sourcefile2);
 
+            //check main folder and files also look new path for folders
+            var folder = await _folderService.FindFolderById(id);
+            var user = await _userService.GetById(id);
+            var files = await _fileService.GetFilesByFolderId(id);
+            var mainPath = Path.Combine(_webHostEnviroment.WebRootPath, "users", user.Username);
+
+            //create zip
             var zip = ZipFile.Open(tempOutput, ZipArchiveMode.Create);
-            zip.CreateEntryFromFile(source,$"Folder1/{sourcefile}",CompressionLevel.Fastest);
-            zip.CreateEntryFromFile(source,$"Folder1/{sourcefile2}",CompressionLevel.Fastest);
 
+            //look for files and add to zip
+            foreach (var file in files)
+            {
+                string[] zipPaths = { folder.FolderName, file.FileName };
+                var source = Path.Combine(mainPath, folder.FileGuid.ToString(), file.FileGuid);
+                var zipSource = Path.Combine(zipPaths);
+                zip.CreateEntryFromFile(source, zipSource, CompressionLevel.Fastest);
+            }
             zip.Dispose();
 
-            return Ok();
+            var subfolders = await _folderService.GetAllSubFolders(id);
+            await AddSubFoldersToZip(mainPath, tempOutput, subfolders);
+
+            string mimetype = MimeTypesMap.GetMimeType(zipName);
+            return PhysicalFile(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\", zipName), mimetype, zipName);
         }
     }
 }

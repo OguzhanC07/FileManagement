@@ -19,7 +19,7 @@ namespace FileManagement.Business.Concrete
 
         public async Task<List<File>> GetFilesByFolderId(int id)
         {
-            return await _genericDal.GetAllByFilter(I => I.Id == id && I.IsActive==true);
+            return await _genericDal.GetAllByFilter(I => I.FolderId == id && I.IsActive==true);
         }
 
         public async Task<File> GetFileByIdAsync(int id)
