@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FileManagement.API.CustomFilters;
 using FileManagement.API.Models;
 using FileManagement.Business.DTOs.FolderDto;
 using FileManagement.Business.Interfaces;
@@ -23,7 +24,7 @@ namespace FileManagement.API.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FolderController : BaseController
     {
-        private readonly IFolderService _folderService;
+        public readonly IFolderService _folderService;
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
@@ -36,10 +37,11 @@ namespace FileManagement.API.Controllers
             _fileService = fileService;
             _mapper = mapper;
             _webHostEnviroment = webHostEnvironment;
-
         }
 
         [HttpGet("[action]/{id}")]
+        [ServiceFilter(typeof(ValidId<User>))]
+        [UserHasAccessFolder(CheckUserId=true)]
         public async Task<IActionResult> GetFoldersByAppUserId(int id)
         {
             return Ok(new MultipleDataResponseMessageModel<FolderListDto>
@@ -51,6 +53,8 @@ namespace FileManagement.API.Controllers
         }
 
         [HttpGet("[action]/{id}")]
+        [ServiceFilter(typeof(ValidId<Folder>))]
+        [UserHasAccessFolder(CheckUserId =false)]
         public async Task<IActionResult> GetSubFoldersByFolderId(int id)
         {
             return Ok(new MultipleDataResponseMessageModel<FolderListDto>
@@ -62,6 +66,7 @@ namespace FileManagement.API.Controllers
         }
 
         [HttpPost("{id?}")]
+        [UserHasAccessFolder(CheckUserId =false)]
         public async Task<IActionResult> AddSubOrMainFolder(int? id, AddFolderDto dto)
         {
             if (id != null)
@@ -71,14 +76,18 @@ namespace FileManagement.API.Controllers
                     return BadRequest(new SingleResponseMessageModel<int>
                     {
                         Result = false,
-                        Message = "You can't create folder if parent folder does not exist.",
+                        Message = "You can't create folder if main folder does not exist.",
                     });
                 }
-                dto.ParentFolderId = id;
+                else
+                    dto.ParentFolderId = id;
             }
+
+
             dto.Size = 0;
             dto.CreatedAt = DateTime.Now;
             dto.FileGuid = Guid.NewGuid();
+            dto.FolderName.Trim();
             dto.AppUserId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             await _folderService.AddAsync(_mapper.Map<Folder>(dto));
             var user = await _userService.GetById(dto.AppUserId);
@@ -94,6 +103,8 @@ namespace FileManagement.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [ServiceFilter(typeof(ValidId<Folder>))]
+        [UserHasAccessFolder(CheckUserId =false)]
         public async Task<IActionResult> DeleteFolder(int id)
         {
             var folder = await _folderService.FindFolderById(id);
@@ -109,24 +120,26 @@ namespace FileManagement.API.Controllers
 
 
         [HttpPut("{id}")]
+        [ServiceFilter(typeof(ValidId<Folder>))]
+        [UserHasAccessFolder(CheckUserId =false)]
         public async Task<IActionResult> EditFolder(int id, FolderEditDto folderEditDto)
         {
             if (id != folderEditDto.Id)
             {
                 return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id'ler uyuşmuyor" });
             }
+            
             var folder = await _folderService.GetById(id);
-            if (folder != null)
-            {
-                folder.FolderName = folderEditDto.FolderName;
 
-                await _folderService.UpdateAsync(folder);
-                return Ok();
-            }
-            return NotFound(new SingleResponseMessageModel<string> { Result = false, Message = "Böyle bir klasör bulunmamaktadır." });
+            folder.FolderName = folderEditDto.FolderName.Trim();
+            await _folderService.UpdateAsync(folder);
+            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "Folder name changed successfully" });
+
         }
 
         [HttpGet("[action]/{id}")]
+        [ServiceFilter(typeof(ValidId<Folder>))]
+        [UserHasAccessFolder(CheckUserId =false)]
         public async Task<IActionResult> DownloadFolder(int id)
         {
             //zipname and zip path.
@@ -136,14 +149,14 @@ namespace FileManagement.API.Controllers
 
             //check main folder and files also look new path for folders
             var folder = await _folderService.FindFolderById(id);
-            var user = await _userService.GetById(id);
+            var user = await _userService.GetById(Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value));
             var files = await _fileService.GetFilesByFolderId(id);
             var mainPath = Path.Combine(_webHostEnviroment.WebRootPath, "users", user.Username);
 
             //create zip
             var zip = ZipFile.Open(tempOutput, ZipArchiveMode.Create);
 
-            //look for files and add to zip
+            //look for files in main folder and add to zip
             foreach (var file in files)
             {
                 string[] zipPaths = { folder.FolderName, file.FileName };

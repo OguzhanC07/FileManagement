@@ -1,8 +1,13 @@
 ﻿using FileManagement.Business.Concrete;
+using FileManagement.Business.DTOs.FileDto;
+using FileManagement.Business.DTOs.FolderDto;
+using FileManagement.Business.DTOs.UserDto;
+using FileManagement.Business.FluentValidation;
 using FileManagement.Business.Interfaces;
 using FileManagement.Business.JwtTool;
 using FileManagement.DataAccess.Concrete.EntityFrameworkCore.Repositories;
 using FileManagement.DataAccess.Interfaces;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -30,6 +35,11 @@ namespace FileManagement.Business.MicrosoftIoC
 
 
             services.AddScoped<IJwtService, JwtManager>();
+
+            services.AddTransient<IValidator<UserLoginDto>, UserLoginDtoValidator>();
+            services.AddTransient<IValidator<AddFolderDto>, AddFolderDtoValidation>();
+            services.AddTransient<IValidator<FolderEditDto>, EditFolderValidation>();
+            services.AddTransient<IValidator<FileEditDto>, FileEditDtoValdiator>();
         }
     }
 }

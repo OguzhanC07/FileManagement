@@ -1,3 +1,4 @@
+using FileManagement.API.CustomFilters;
 using FileManagement.Business.Interfaces;
 using FileManagement.Business.JwtTool;
 using FileManagement.Business.MicrosoftIoC;
@@ -5,6 +6,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace FileManagement.API
@@ -32,7 +35,8 @@ namespace FileManagement.API
             services.AddAutoMapper(typeof(Startup));
 
             services.AddDependicies();
-
+            services.AddScoped(typeof(ValidId<>));
+            
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
             {
                 opt.RequireHttpsMetadata = false;
@@ -51,9 +55,20 @@ namespace FileManagement.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FileManagement.API", Version = "v1" });
             });
 
-            services.AddControllers().AddNewtonsoftJson(opt => {
+            services.AddControllers(opt=> {
+                opt.Filters.Add(typeof(ValidateModelStateAttribute));
+            
+            }).AddNewtonsoftJson(opt =>
+            {
                 opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            }).AddFluentValidation();
+            }).AddFluentValidation(fvc => fvc.RegisterValidatorsFromAssemblyContaining<Startup>());
+
+
+            services.Configure<ApiBehaviorOptions>(opt =>
+            {
+                opt.SuppressModelStateInvalidFilter = true;
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
