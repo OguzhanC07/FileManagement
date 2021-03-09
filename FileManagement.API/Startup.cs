@@ -34,6 +34,8 @@ namespace FileManagement.API
 
             services.AddAutoMapper(typeof(Startup));
 
+            services.AddCors();
+            
             services.AddDependicies();
             services.AddScoped(typeof(ValidId<>));
             
@@ -81,6 +83,12 @@ namespace FileManagement.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FileManagement.API v1"));
             }
             app.UseRouting();
+
+            app.UseCors(x => x
+            .AllowAnyMethod()
+            .AllowAnyOrigin()
+            .AllowAnyHeader());
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthorization();
