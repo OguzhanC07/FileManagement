@@ -17,7 +17,7 @@ namespace FileManagement.Business.JwtTool
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConstant.SecretKey));
             SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            JwtSecurityToken token = new JwtSecurityToken(issuer: JwtConstant.Issuer, audience: JwtConstant.Audience, claims: SetClaims(user),notBefore:DateTime.Now,expires:DateTime.Now.AddMinutes(60),signingCredentials:credentials);
+            JwtSecurityToken token = new JwtSecurityToken(issuer: JwtConstant.Issuer, audience: JwtConstant.Audience, claims: SetClaims(user),notBefore:DateTime.Now,expires:DateTime.Now.AddMinutes(JwtConstant.ExpiresIn),signingCredentials:credentials);
 
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             JwtToken jwtToken = new JwtToken();

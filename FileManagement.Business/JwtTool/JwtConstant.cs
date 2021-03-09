@@ -11,5 +11,6 @@ namespace FileManagement.Business.JwtTool
         public const string Issuer = "http://localhost";
         public const string Audience= "http://localhost";
         public const string SecretKey= "my-super-uber-secret-jwt-key";
+        public const int ExpiresIn = 60;
     }
 }

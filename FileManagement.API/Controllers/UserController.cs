@@ -2,6 +2,8 @@
 using FileManagement.Business.DTOs.UserDto;
 using FileManagement.Business.Interfaces;
 using FileManagement.Business.JwtTool;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -38,11 +40,11 @@ namespace FileManagement.API.Controllers
                     Directory.CreateDirectory(userDirectory);
                 }
 
-                return Created("", new SingleResponseMessageModel<JwtToken>
+                return Created("", new SingleResponseMessageModel<object>
                 {
                     Result = true,
                     Message="Giriş Başarılı",
-                    Data = token
+                    Data = new { token.Token, user.Username, user.Id, ExpirationDate=JwtConstant.ExpiresIn * 1000  }
                 }); 
             }
 
@@ -52,5 +54,15 @@ namespace FileManagement.API.Controllers
                 Message="Kullanıcı adı veya şifre yanlış."
             });
         }
+
+        //[HttpGet]
+        //[Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+        //public async Task<IActionResult> GetActiveUser()
+        //{
+        //    var user = await _userService.CheckEmailorUsernameAsync(User.Identity.Name);
+
+        //    return Ok(new SingleResponseMessageModel<object> { Result = true, Message = "Başarılı", Data = new { user.Username, user.Id, user.Email } });
+        //}
+
     }
 }

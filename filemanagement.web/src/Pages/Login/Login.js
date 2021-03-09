@@ -3,18 +3,20 @@ import "semantic-ui-css/semantic.min.css";
 import { Button, Form, Grid, Segment } from "semantic-ui-react";
 
 import "./Login.css";
+import * as authService from "../../services/authService";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const submitFormHandler = () => {
-    setIsLoading(true);
+  const loginHandler = async (e) => {
+    e.preventDefault();
     setError(null);
-    if (email !== "" && password !== "") {
-      //login process
+    setIsLoading(true);
+    if (username !== "" && password !== "") {
+      await authService.signin(username, password);
       setIsLoading(false);
     } else {
       setError("Kullanıcı adı ve şifre gereklidir.");
@@ -36,7 +38,7 @@ const Login = () => {
                 label="Username"
                 placeholder="Username"
                 type="text"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setUsername(e.target.value)}
               />
             </Form.Field>
             <Form.Field>
@@ -48,7 +50,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Field>
-            <Button onClick={submitFormHandler} primary>
+            <Button onClick={(e) => loginHandler(e)} primary>
               Login
             </Button>
             <p style={{ textAlign: "center", color: "red" }}>{error}</p>
