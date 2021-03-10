@@ -40,18 +40,27 @@ namespace FileManagement.API.Controllers
                     Directory.CreateDirectory(userDirectory);
                 }
 
+
+
+
                 return Created("", new SingleResponseMessageModel<object>
                 {
                     Result = true,
-                    Message="Giriş Başarılı",
-                    Data = new { token.Token, user.Username, user.Id, ExpirationDate=JwtConstant.ExpiresIn * 1000  }
-                }); 
+                    Message = "Giriş Başarılı",
+                    Data = new
+                    {
+                        token.Token,
+                        user.Username,
+                        user.Id,
+                        ExpirationDate = new DateTimeOffset(DateTime.UtcNow.AddMinutes(JwtConstant.ExpiresIn)).ToUnixTimeMilliseconds()
+                    }
+                });
             }
 
             return NotFound(new SingleResponseMessageModel<JwtToken>
             {
-                Result=false,
-                Message="Kullanıcı adı veya şifre yanlış."
+                Result = false,
+                Message = "Kullanıcı adı veya şifre yanlış."
             });
         }
 

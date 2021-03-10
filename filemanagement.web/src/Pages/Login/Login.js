@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import "semantic-ui-css/semantic.min.css";
 import { Button, Form, Grid, Segment } from "semantic-ui-react";
 
 import "./Login.css";
+import { AuthContext, SIGNIN } from "../../context/AuthContext";
 import * as authService from "../../services/authService";
 
 const Login = () => {
@@ -11,12 +12,30 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const { dispatch } = useContext(AuthContext);
+
   const loginHandler = async (e) => {
     e.preventDefault();
     setError(null);
-    setIsLoading(true);
     if (username !== "" && password !== "") {
-      await authService.signin(username, password);
+      setIsLoading(true);
+      try {
+        const response = await authService.signin(username, password);
+
+        dispatch({
+          type: SIGNIN,
+          user: {
+            token: response.data.token,
+            userId: response.data.id,
+            expirationDate: response.data.expirationDate,
+            isAuth: true,
+          },
+        });
+
+        console.log(response);
+      } catch (error) {
+        setError(error.message);
+      }
       setIsLoading(false);
     } else {
       setError("Kullanıcı adı ve şifre gereklidir.");

@@ -1,17 +1,11 @@
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import AuthContextProvider from "./context/AuthContext";
-import Login from "./Pages/Login/Login";
+import CollectionContainer from "./routes/CollectionContainer";
 
 function App() {
   return (
     <AuthContextProvider>
-      <Router>
-        <Switch>
-          <Route path="/" component={Login} />
-        </Switch>
-      </Router>
+      <CollectionContainer />
     </AuthContextProvider>
   );
 }
-
 export default App;

@@ -1,18 +1,29 @@
 import React, { createContext, useReducer } from "react";
 
-import apiUrl from "../constants/apiUrl";
-
 export const SIGNIN = "SIGNIN";
+export const TRYAL = "TRYAL";
 
 export const AuthContext = createContext();
 
 const authReducer = (state, action) => {
   switch (action.type) {
     case SIGNIN:
+      localStorage.setItem("userinfo", JSON.stringify(action.user));
       return {
-        token: action.token,
-        userId: action.userId,
+        token: action.user.token,
+        userId: action.user.userId,
+        expirationDate: action.user.expirationDate,
+        isAuth: true,
       };
+    case TRYAL: {
+      return {
+        token: action.user.token,
+        userId: action.user.userId,
+        expirationDate: action.user.expirationDate,
+        isAuth: action.user.isAuth,
+        didtryAl: action.user.didtryAl,
+      };
+    }
     default:
       return state;
   }
@@ -21,7 +32,9 @@ const authReducer = (state, action) => {
 const initialState = {
   token: "",
   userId: "",
-  errorMessage: "",
+  expirationDate: 0,
+  isAuth: false,
+  didtryAl: false,
 };
 
 const AuthContextProvider = (props) => {
