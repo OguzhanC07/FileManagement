@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { BrowserRouter as Router } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import IsAuthenticated from "../Pages/Login/IsAuthenticated";
 import FolderRoute from "./FolderRoute";
@@ -9,11 +8,11 @@ const CollectionContainer = () => {
   const { auth } = useContext(AuthContext);
 
   return (
-    <Router>
+    <div>
       {auth.isAuth && <FolderRoute />}
       {!auth.isAuth && !auth.didtryAl && <IsAuthenticated />}
       {!auth.isAuth && auth.didtryAl && <AuthRoute />}
-    </Router>
+    </div>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { createContext, useReducer } from "react";
 
 export const SIGNIN = "SIGNIN";
 export const TRYAL = "TRYAL";
+export const LOGOUT = "LOGOUT";
 
 export const AuthContext = createContext();
 
@@ -22,6 +23,13 @@ const authReducer = (state, action) => {
         expirationDate: action.user.expirationDate,
         isAuth: action.user.isAuth,
         didtryAl: action.user.didtryAl,
+      };
+    }
+    case LOGOUT: {
+      localStorage.removeItem("userinfo");
+      return {
+        ...initialState,
+        didtryAl: true,
       };
     }
     default:
