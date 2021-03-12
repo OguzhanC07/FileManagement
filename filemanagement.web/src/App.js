@@ -1,10 +1,16 @@
 import AuthContextProvider from "./context/AuthContext";
+import FileContextProvider from "./context/FileContext";
+import FolderContextProvider from "./context/FolderContext";
 import CollectionContainer from "./routes/CollectionContainer";
 
 function App() {
   return (
     <AuthContextProvider>
-      <CollectionContainer />
+      <FolderContextProvider>
+        <FileContextProvider>
+          <CollectionContainer />
+        </FileContextProvider>
+      </FolderContextProvider>
     </AuthContextProvider>
   );
 }

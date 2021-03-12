@@ -1,4 +1,5 @@
-﻿using FileManagement.API.CustomFilters;
+﻿using AutoMapper;
+using FileManagement.API.CustomFilters;
 using FileManagement.API.Models;
 using FileManagement.Business.DTOs.FileDto;
 using FileManagement.Business.Interfaces;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -27,14 +29,25 @@ namespace FileManagement.API.Controllers
         public readonly IFileService _fileService;
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnviroment;
+        private readonly IMapper _mapper;
 
-        public FileController(IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService)
+        public FileController(IMapper mapper,IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService)
         {
             _folderService = folderService;
             _fileService = fileService;
             _userService = userService;
+            _mapper = mapper;
             _webHostEnviroment = webHostEnvironment;
         }
+
+        [HttpGet("[action]/{id}")]
+        [ServiceFilter(typeof(ValidId<DataAccess.File>))]
+        [UserHasAccessFile(HaveFolderId =true)]
+        public async Task<IActionResult> GetFiles(int id)
+        {
+            return Ok(_mapper.Map<List<FileListDto>>(await _fileService.GetFilesByFolderId(id)));
+        }
+
 
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ValidId<DataAccess.File>))]
@@ -71,7 +84,6 @@ namespace FileManagement.API.Controllers
            
             foreach (var file in formFiles)
             {
-                
                 var newName = Guid.NewGuid() + Path.GetExtension(file.FileName);
                 var result = await UploadFile(file, folder.FileGuid.ToString(), user.Username, newName);
                 if (result == true)

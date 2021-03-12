@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Menu, Icon } from "semantic-ui-react";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 
 import "../styles/index.css";
@@ -14,7 +14,7 @@ const SideMenu = (props) => {
     return (
       <Menu fixed="left" borderless className="side" vertical>
         <Menu.Item
-          as={"a"}
+          as={Link}
           to={"/"}
           name="home"
           active={activeItem === "home"}
@@ -25,8 +25,8 @@ const SideMenu = (props) => {
           <Icon name="home" />
           Home
         </Menu.Item>
-        <Menu.Item
-          as={"a"}
+        {/* <Menu.Item
+          as={Link}
           to={"/folder"}
           name="folder2"
           active={activeItem === "folder"}
@@ -36,7 +36,7 @@ const SideMenu = (props) => {
         >
           <Icon name="folder" />
           Route2
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     );
   };

@@ -33,6 +33,9 @@ namespace FileManagement.API.DtoMapping
             #region File
             CreateMap<File, FileEditDto>();
             CreateMap<FileEditDto, File>();
+
+            CreateMap<File, FileListDto>();
+            CreateMap<FileListDto, File>();
             #endregion
         }
     }

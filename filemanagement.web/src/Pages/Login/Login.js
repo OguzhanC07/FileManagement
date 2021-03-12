@@ -31,13 +31,13 @@ const Login = () => {
             isAuth: true,
           },
         });
+        setIsLoading(false);
       } catch (error) {
         setError(error.message);
+        setIsLoading(false);
       }
-      setIsLoading(false);
     } else {
       setError("Kullanıcı adı ve şifre gereklidir.");
-      setIsLoading(false);
     }
   };
 
