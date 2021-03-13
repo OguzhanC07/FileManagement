@@ -1,25 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Loader from "react-loader-spinner";
 
 import { getfolders } from "../services/folderService";
 import FolderTable from "./FolderTable";
 import "../styles/table.css";
+import { FolderContext, SETFOLDERS } from "../context/FolderContext";
 
 const FetchingData = (props) => {
-  const [folders, setFolders] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { folder, dispatch } = useContext(FolderContext);
+
   useEffect(() => {
     setIsLoading(true);
     getfolders()
       .then((res) => {
-        setFolders(res.data.data);
+        dispatch({
+          type: SETFOLDERS,
+          folders: res.data.data,
+        });
       })
       .catch((err) => {
-        setError(err);
+        setError(err.message);
       });
     setIsLoading(false);
-  }, []);
+  }, [dispatch]);
 
   if (error) {
     return (
@@ -43,10 +48,10 @@ const FetchingData = (props) => {
 
   return (
     <div className="table">
-      {folders.length === 0 && !error && !isLoading ? (
+      {folder.folders.length === 0 && !error && !isLoading ? (
         <p>Hiç klasör bulunamadı. Yeni klasör eklemek ister misiniz?</p>
       ) : (
-        <FolderTable data={folders} />
+        <FolderTable data={folder.folders} />
       )}
     </div>
   );

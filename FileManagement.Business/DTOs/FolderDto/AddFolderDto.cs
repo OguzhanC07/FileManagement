@@ -14,6 +14,5 @@ namespace FileManagement.Business.DTOs.FolderDto
         public int Size { get; set; }
         public int AppUserId { get; set; }
         public DateTime CreatedAt { get; set; }
-
     }
 }

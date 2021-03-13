@@ -4,13 +4,9 @@ import FetchingData from "../../components/FetchingData";
 import Layout from "../../components/Layout";
 
 const Folder = (props) => {
-  const addFolderHandler = (name) => {
-    console.log(name);
-  };
-
   return (
     <Layout>
-      <AddFolderModal addfolder={addFolderHandler} />
+      <AddFolderModal />
       <FetchingData />
     </Layout>
   );

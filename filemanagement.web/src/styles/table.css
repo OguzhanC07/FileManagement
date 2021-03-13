@@ -1,3 +1,11 @@
 .table {
   padding-top: 10px;
 }
+
+.zui-table-highlight tbody tr:hover {
+  background-color: #cce7e7;
+}
+.zui-table-horizontal tbody td {
+  border-left: none;
+  border-right: none;
+}

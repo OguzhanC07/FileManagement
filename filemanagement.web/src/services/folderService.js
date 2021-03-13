@@ -35,7 +35,7 @@ export const addfolders = async (name, id) => {
         { folderName: name },
         {
           headers: {
-            Authorization: "Bearer" + userInfo.token,
+            Authorization: "Bearer " + userInfo.token,
           },
         }
       );
@@ -47,7 +47,7 @@ export const addfolders = async (name, id) => {
         { folderName: name },
         {
           headers: {
-            Authorization: "Bearer" + userInfo.token,
+            Authorization: "Bearer " + userInfo.token,
           },
         }
       );
@@ -67,4 +67,52 @@ export const addfolders = async (name, id) => {
   }
 };
 
-export const getsubfolders = (id) => {};
+export const editfolder = async (id, name) => {
+  const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  try {
+    const response = await axios.put(
+      apiUrl.baseUrl + `/Folder/${id}`,
+      { id, folderName: name },
+      {
+        headers: {
+          Authorization: "Bearer " + userInfo.token,
+        },
+      }
+    );
+    return response;
+  } catch (error) {
+    if (error.response) {
+      throw new Error("Folder name must be alphanumeric characters");
+    } else if (error.request) {
+      console.log(error.response);
+      throw new Error("Bağlantı sorunu");
+    } else {
+      console.log(error);
+      throw new Error("Bir şeyler ters gitti!");
+    }
+  }
+};
+
+export const deletefolder = async (id) => {
+  const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  try {
+    const response = await axios.delete(apiUrl.baseUrl + `/Folder/${id}`, {
+      headers: {
+        Authorization: "Bearer " + userInfo.token,
+      },
+    });
+
+    return response;
+  } catch (error) {
+    if (error.response) {
+      console.log(error.response);
+      throw new Error(error.response);
+    } else if (error.request) {
+      console.log(error.response);
+      throw new Error("Bağlantı sorunu");
+    } else {
+      console.log(error);
+      throw new Error("Bir şeyler ters gitti!");
+    }
+  }
+};

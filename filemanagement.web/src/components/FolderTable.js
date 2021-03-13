@@ -1,53 +1,55 @@
-import React from "react";
-import { Table, Icon } from "semantic-ui-react";
+import React, { useContext } from "react";
+import { Table, Image, Icon } from "semantic-ui-react";
+
+import { FolderContext } from "../context/FolderContext";
+import DeleteFolderModal from "./DeleteFolderModal";
+import EditFolderModal from "./EditFolderModal";
+import img from "../assets/foldericon.jpg";
+import UploadFolder from "./UploadFolder";
 
 const FolderTable = (props) => {
-  const deleteHandler = (id) => {
-    console.log(id);
-  };
-  const editHandler = (id) => {
-    console.log(id);
-  };
-
+  const { folder } = useContext(FolderContext);
   return (
-    <Table>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell onClick={(e) => {}}>Name</Table.HeaderCell>
-          <Table.HeaderCell onClick={(e) => {}}>Size</Table.HeaderCell>
-          <Table.HeaderCell onClick={() => {}}>Created At</Table.HeaderCell>
-          <Table.HeaderCell>Operations</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {props.data.map((folder) => (
-          <Table.Row
-            key={folder.id}
-            onClick={() => {
-              console.log("clicked this" + folder.id);
-            }}
-          >
-            <Table.Cell>{folder.folderName}</Table.Cell>
-            <Table.Cell>{folder.size}</Table.Cell>
-            <Table.Cell>{folder.createdAt}</Table.Cell>
-            <Table.Cell>
-              <Icon
-                name="edit"
+    <div>
+      <UploadFolder />
+      <div style={{ paddingTop: 10 }}>
+        <Table selectable>
+          <Table.Header>
+            <Table.Row>
+              <Table.HeaderCell onClick={(e) => {}}>Name</Table.HeaderCell>
+              <Table.HeaderCell onClick={(e) => {}}>Size</Table.HeaderCell>
+              <Table.HeaderCell onClick={() => {}}>Created At</Table.HeaderCell>
+              <Table.HeaderCell>Operations</Table.HeaderCell>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
+            {folder.folders.map((folder) => (
+              <Table.Row
+                key={folder.id}
                 onClick={() => {
-                  editHandler(folder.id);
+                  console.log("clicked this row " + folder.id);
                 }}
-              />
-              <Icon
-                name="delete"
-                onClick={() => {
-                  deleteHandler(folder.id);
-                }}
-              />
-            </Table.Cell>
-          </Table.Row>
-        ))}
-      </Table.Body>
-    </Table>
+              >
+                <Table.Cell collapsing>
+                  <Image src={img} />
+                  {folder.folderName}
+                </Table.Cell>
+                <Table.Cell>{folder.size}</Table.Cell>
+                <Table.Cell>
+                  {new Date(folder.createdAt).toLocaleDateString("TR-tr")}-
+                  {new Date(folder.createdAt).toLocaleTimeString("TR-tr")}
+                </Table.Cell>
+                <Table.Cell>
+                  <EditFolderModal id={folder.id} name={folder.folderName} />
+                  <DeleteFolderModal id={folder.id} />
+                  {folder.size === 0 ? null : <Icon name="download" />}
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      </div>
+    </div>
   );
 };
 

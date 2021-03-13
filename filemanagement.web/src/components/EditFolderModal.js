@@ -1,39 +1,34 @@
 import React, { useContext, useState } from "react";
-import { Button, Modal, Form } from "semantic-ui-react";
+import { Icon, Modal, Form, Button } from "semantic-ui-react";
 
-import { FolderContext, SETFOLDERS } from "../context/FolderContext";
-import { getfolders, addfolders } from "../services/folderService";
+import { EDITFOLDER, FolderContext } from "../context/FolderContext";
+import { editfolder } from "../services/folderService";
 
-const AddFolderModal = () => {
+const EditFolderModal = (props) => {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(props.name);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { folder, dispatch } = useContext(FolderContext);
 
-  const addFolderModalHandler = async () => {
+  const { dispatch } = useContext(FolderContext);
+
+  const editHandler = async () => {
     setError("");
     if (name !== "") {
       try {
         setIsLoading(true);
-        const response = await addfolders(name, folder.id);
+        const response = await editfolder(props.id, name);
         console.log(response);
-        getfolders()
-          .then((res) => {
-            dispatch({
-              type: SETFOLDERS,
-              folders: res.data.data,
-            });
-            setOpen(false);
-          })
-          .catch((err) => {
-            console.log(err.message);
-            setOpen(false);
-          });
-        setName("");
+        dispatch({
+          type: EDITFOLDER,
+          fid: props.id,
+          name: name,
+        });
         setIsLoading(false);
+        setOpen(false);
       } catch (error) {
         setError(error.message);
+        setIsLoading(false);
       }
     } else {
       setError("Klasör adı boş olamaz");
@@ -42,14 +37,13 @@ const AddFolderModal = () => {
 
   return (
     <div>
-      <Button
-        primary
+      <Icon
+        name="edit"
         onClick={() => {
           setOpen(true);
         }}
-      >
-        Add Folder
-      </Button>
+      />
+
       <Modal
         onOpen={() => setOpen(true)}
         closeIcon
@@ -59,12 +53,14 @@ const AddFolderModal = () => {
           setOpen(false);
         }}
       >
-        <h3 style={{ textAlign: "center", paddingBottom: 10 }}>Add Folder</h3>
+        <h3 style={{ textAlign: "center", paddingBottom: 10 }}>
+          Edit Folder Name
+        </h3>
         <hr />
         <div style={{ margin: 20 }}>
           <Form
             onSubmit={() => {
-              addFolderModalHandler();
+              editHandler();
             }}
           >
             <Form.Field>
@@ -87,4 +83,4 @@ const AddFolderModal = () => {
   );
 };
 
-export default AddFolderModal;
+export default EditFolderModal;

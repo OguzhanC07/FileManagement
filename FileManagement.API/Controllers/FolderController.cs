@@ -69,7 +69,7 @@ namespace FileManagement.API.Controllers
         [UserHasAccessFolder(CheckUserId =false)]
         public async Task<IActionResult> AddSubOrMainFolder(int? id, AddFolderDto dto)
         {
-            if (id != null)
+            if (id != null && id!=0)
             {
                 if (await _folderService.FindFolderById(Convert.ToInt32(id)) == null)
                 {
