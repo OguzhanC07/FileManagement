@@ -93,6 +93,34 @@ export const editfolder = async (id, name) => {
   }
 };
 
+export const downloadfolder = async (id) => {
+  const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+
+  try {
+    const response = await axios.get(
+      apiUrl.baseUrl + `/Folder/DownloadFolder/${id}`,
+      {
+        headers: {
+          Authorization: "Bearer " + userInfo.token,
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    if (error.response) {
+      console.log(error.response);
+      throw new Error(error.response);
+    } else if (error.request) {
+      console.log(error.response);
+      throw new Error("Bağlantı sorunu");
+    } else {
+      console.log(error);
+      throw new Error("Bir şeyler ters gitti!");
+    }
+  }
+};
+
 export const deletefolder = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
   try {

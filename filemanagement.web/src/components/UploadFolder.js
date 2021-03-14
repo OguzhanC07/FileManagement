@@ -1,6 +1,7 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import { Modal, Button, Icon } from "semantic-ui-react";
+import { FolderContext } from "../context/FolderContext";
 
 import { uploadfile } from "../services/fileService";
 
@@ -32,6 +33,8 @@ const UploadFolder = (props) => {
   const [myFiles, setMyFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const { folder } = useContext(FolderContext);
 
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -79,10 +82,32 @@ const UploadFolder = (props) => {
     [isDragActive, isDragAccept]
   );
 
-  const uploadHandler = () => {
-    console.log(myFiles);
-    uploadfile(14, myFiles);
-    removeAll();
+  const uploadHandler = async () => {
+    setError("");
+
+    if (folder.folderId > 0) {
+      try {
+        setIsLoading(true);
+        const response = await uploadfile(folder.folderId, myFiles);
+        console.log(response);
+        setIsLoading(false);
+        removeAll();
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
+    } else {
+      try {
+        setIsLoading(true);
+        const response = await uploadfile(folder.folders[0].id, myFiles);
+        console.log(response);
+        setIsLoading(false);
+        removeAll();
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
+    }
   };
   return (
     <section>
@@ -95,6 +120,7 @@ const UploadFolder = (props) => {
         <div style={{ textAlign: "center", paddingBottom: 10 }}>
           <p style={{ fontSize: 25 }}>You can remove unwanted files</p>
           {files}
+          <Button onClick={removeAll}>Remove All</Button>
           <div style={{ paddingTop: 20 }}>
             <Button
               style={{ marginRight: 10 }}
@@ -121,7 +147,6 @@ const UploadFolder = (props) => {
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
         </div>
       </Modal>
-      {/* {files.length > 0 && <button onClick={removeAll}>Remove All</button>} */}
     </section>
   );
 };

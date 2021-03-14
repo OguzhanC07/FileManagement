@@ -146,6 +146,10 @@ namespace FileManagement.API.Controllers
             var zipName = Guid.NewGuid().ToString() + ".zip";
             var tempOutput = Path.Combine(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\"), zipName);
 
+            if (!Directory.Exists(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\")))
+            {
+                Directory.CreateDirectory(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\"));
+            }
 
             //check main folder and files also look new path for folders
             var folder = await _folderService.FindFolderById(id);

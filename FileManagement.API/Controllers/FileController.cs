@@ -80,7 +80,7 @@ namespace FileManagement.API.Controllers
             var folder = await _folderService.FindFolderById(id);
             var user = await _userService.GetById(folder.AppUserId);
             int folderSize = 0;
-            Regex rgx = new Regex("[^a-zA-Z0-9 -]");
+            Regex rgx = new Regex("^[0-9a-zA-Z\\.]");
            
             foreach (var file in formFiles)
             {
