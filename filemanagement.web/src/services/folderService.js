@@ -42,10 +42,10 @@ export const getfolders = async (id) => {
         console.log(error.response);
       } else if (error.request) {
         console.log(error.response);
-        throw new Error("Bağlantı sorunu");
+        throw new Error("Connection problem");
       } else {
         console.log(error);
-        throw new Error("Bir şeyler ters gitti!");
+        throw new Error("Something went wrong!");
       }
     }
   }
@@ -81,13 +81,13 @@ export const addfolders = async (name, id) => {
     }
   } catch (error) {
     if (error.response) {
-      console.log(error.response);
+      throw new Error(error.response);
     } else if (error.request) {
       console.log(error.response);
-      throw new Error("Bağlantı sorunu");
+      throw new Error("Connection problem");
     } else {
       console.log(error);
-      throw new Error("Bir şeyler ters gitti!");
+      throw new Error("Something went wrong!");
     }
   }
 };
@@ -107,13 +107,13 @@ export const editfolder = async (id, name) => {
     return response;
   } catch (error) {
     if (error.response) {
-      throw new Error("Folder name must be alphanumeric characters");
+      return error.response;
     } else if (error.request) {
       console.log(error.response);
-      throw new Error("Bağlantı sorunu");
+      throw new Error("Connection problem");
     } else {
       console.log(error);
-      throw new Error("Bir şeyler ters gitti!");
+      throw new Error("Something went wrong!");
     }
   }
 };
@@ -135,14 +135,13 @@ export const downloadfolder = async (id) => {
     return response;
   } catch (error) {
     if (error.response) {
-      console.log(error.response);
       throw new Error(error.response.data);
     } else if (error.request) {
       console.log(error.response);
-      throw new Error("Bağlantı sorunu");
+      throw new Error("Connection problem");
     } else {
       console.log(error);
-      throw new Error("Bir şeyler ters gitti!");
+      throw new Error("Something went wrong!");
     }
   }
 };
@@ -159,14 +158,12 @@ export const deletefolder = async (id) => {
     return response;
   } catch (error) {
     if (error.response) {
-      console.log(error.response);
       throw new Error(error.response);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Bağlantı sorunu");
+      throw new Error("Connection problem");
     } else {
       console.log(error);
-      throw new Error("Bir şeyler ters gitti!");
+      throw new Error("Something went wrong!");
     }
   }
 };

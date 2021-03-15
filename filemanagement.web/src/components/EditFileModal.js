@@ -18,7 +18,6 @@ const EditFileModal = (props) => {
       try {
         setIsLoading(true);
         const response = await editfile(props.id, name);
-        console.log(response);
         if (response.status < 400) {
           dispatch({
             type: EDITFILE,

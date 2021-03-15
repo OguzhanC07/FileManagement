@@ -12,6 +12,7 @@ import { getsinglefile } from "../services/fileService";
 import { FileContext } from "../context/FileContext";
 import EditFileModal from "./EditFileModal";
 import DeleteFileModal from "./DeleteFileModal";
+import PdfViewer from "./PdfViewer";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -85,7 +86,8 @@ const FolderTable = (props) => {
               >
                 <Table.Cell collapsing>
                   <Image src={img} />
-                  {folder.folderName}
+                  {folder.folderName.substring(0, 10)}
+                  {folder.folderName.length > 10 ? "..." : null}
                 </Table.Cell>
                 <Table.Cell>{convertHandler(folder.size)}</Table.Cell>
                 <Table.Cell>
@@ -132,6 +134,9 @@ const FolderTable = (props) => {
                           }}
                         />
                       )}
+                      {file.fileName.split(".")[1] === "pdf" ? (
+                        <PdfViewer />
+                      ) : null}
                     </Table.Cell>
                   </Table.Row>
                 ))

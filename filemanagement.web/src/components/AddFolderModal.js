@@ -33,6 +33,7 @@ const AddFolderModal = () => {
         setIsLoading(false);
       } catch (error) {
         setError(error.message);
+        setIsLoading(false);
       }
     } else {
       setError("Klasör adı boş olamaz");
