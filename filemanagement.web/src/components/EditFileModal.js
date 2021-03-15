@@ -1,75 +1,75 @@
 import React, { useContext, useState } from "react";
-import { Button, Modal, Form } from "semantic-ui-react";
+import { Icon, Modal, Form, Button } from "semantic-ui-react";
 
-import { FolderContext, SETFOLDERS } from "../context/FolderContext";
-import { getfolders, addfolders } from "../services/folderService";
+import { FileContext, EDITFILE } from "../context/FileContext";
+import { editfile } from "../services/fileService";
 
-const AddFolderModal = () => {
+const EditFileModal = (props) => {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(props.name.split(".")[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { folder, dispatch } = useContext(FolderContext);
 
-  const addFolderModalHandler = async () => {
+  const { dispatch } = useContext(FileContext);
+
+  const editHandler = async () => {
     setError("");
     if (name !== "") {
       try {
         setIsLoading(true);
-        await addfolders(name, folder.folderId);
-        getfolders(folder.folderId)
-          .then((res) => {
-            dispatch({
-              type: SETFOLDERS,
-              folders: res.data.data,
-            });
-            setOpen(false);
-          })
-          .catch((err) => {
-            console.log(err.message);
-            setOpen(false);
+        const response = await editfile(props.id, name);
+        console.log(response);
+        if (response.status < 400) {
+          dispatch({
+            type: EDITFILE,
+            fid: props.id,
+            name: name + "." + props.name.split(".")[1],
           });
-        setName("");
+        } else {
+          setError(response.data.message);
+        }
         setIsLoading(false);
+        setOpen(false);
       } catch (error) {
         setError(error.message);
+        setIsLoading(false);
       }
     } else {
-      setError("Klasör adı boş olamaz");
+      setError("File name can't be empty");
     }
   };
 
   return (
     <div>
-      <Button
-        primary
+      <Icon
+        name="edit"
         onClick={() => {
           setOpen(true);
         }}
-      >
-        Add Folder
-      </Button>
+      />
+
       <Modal
         onOpen={() => setOpen(true)}
         closeIcon
         open={open}
-        size="small"
         onClose={() => {
           setOpen(false);
         }}
       >
-        <h3 style={{ textAlign: "center", paddingBottom: 10 }}>Add Folder</h3>
+        <h3 style={{ textAlign: "center", paddingBottom: 10 }}>
+          Edit File Name
+        </h3>
         <hr />
         <div style={{ margin: 20 }}>
           <Form
             onSubmit={() => {
-              addFolderModalHandler();
+              editHandler();
             }}
           >
             <Form.Field>
-              <label>Folder Name</label>
+              <label>File Name</label>
               <input
-                placeholder="Folder Name"
+                placeholder="File Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
@@ -86,4 +86,4 @@ const AddFolderModal = () => {
   );
 };
 
-export default AddFolderModal;
+export default EditFileModal;

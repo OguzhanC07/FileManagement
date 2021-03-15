@@ -30,7 +30,7 @@ namespace FileManagement.API.Controllers
         private readonly IFileService _fileService;
         private readonly IWebHostEnvironment _webHostEnviroment;
 
-        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment) : base(fileService)
+        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment) : base(fileService,webHostEnvironment)
         {
             _folderService = folderService;
             _userService = userService;
@@ -41,7 +41,7 @@ namespace FileManagement.API.Controllers
 
         [HttpGet("[action]/{id}")]
         [ServiceFilter(typeof(ValidId<User>))]
-        [UserHasAccessFolder(CheckUserId=true)]
+        [UserHasAccessFolder(CheckUserId = true)]
         public async Task<IActionResult> GetFoldersByAppUserId(int id)
         {
             return Ok(new MultipleDataResponseMessageModel<FolderListDto>
@@ -54,22 +54,22 @@ namespace FileManagement.API.Controllers
 
         [HttpGet("[action]/{id}")]
         [ServiceFilter(typeof(ValidId<Folder>))]
-        [UserHasAccessFolder(CheckUserId =false)]
+        [UserHasAccessFolder(CheckUserId = false)]
         public async Task<IActionResult> GetSubFoldersByFolderId(int id)
         {
             return Ok(new MultipleDataResponseMessageModel<FolderListDto>
             {
                 Result = true,
                 Message = "Successfully sended.",
-                Data = _mapper.Map<List<FolderListDto>>(await _folderService.GetFoldersByUserId(id))
+                Data = _mapper.Map<List<FolderListDto>>(await _folderService.GetSubFoldersByFolderId(id))
             });
         }
 
         [HttpPost("{id?}")]
-        [UserHasAccessFolder(CheckUserId =false)]
+        [UserHasAccessFolder(CheckUserId = false)]
         public async Task<IActionResult> AddSubOrMainFolder(int? id, AddFolderDto dto)
         {
-            if (id != null && id!=0)
+            if (id != null && id != 0)
             {
                 if (await _folderService.FindFolderById(Convert.ToInt32(id)) == null)
                 {
@@ -104,7 +104,7 @@ namespace FileManagement.API.Controllers
 
         [HttpDelete("{id}")]
         [ServiceFilter(typeof(ValidId<Folder>))]
-        [UserHasAccessFolder(CheckUserId =false)]
+        [UserHasAccessFolder(CheckUserId = false)]
         public async Task<IActionResult> DeleteFolder(int id)
         {
             var folder = await _folderService.FindFolderById(id);
@@ -121,14 +121,14 @@ namespace FileManagement.API.Controllers
 
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidId<Folder>))]
-        [UserHasAccessFolder(CheckUserId =false)]
+        [UserHasAccessFolder(CheckUserId = false)]
         public async Task<IActionResult> EditFolder(int id, FolderEditDto folderEditDto)
         {
             if (id != folderEditDto.Id)
             {
                 return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id'ler uyuşmuyor" });
             }
-            
+
             var folder = await _folderService.GetById(id);
 
             folder.FolderName = folderEditDto.FolderName.Trim();
@@ -139,7 +139,7 @@ namespace FileManagement.API.Controllers
 
         [HttpGet("[action]/{id}")]
         [ServiceFilter(typeof(ValidId<Folder>))]
-        [UserHasAccessFolder(CheckUserId =false)]
+        [UserHasAccessFolder(CheckUserId = false)]
         public async Task<IActionResult> DownloadFolder(int id)
         {
             //zipname and zip path.
@@ -171,7 +171,10 @@ namespace FileManagement.API.Controllers
             zip.Dispose();
 
             var subfolders = await _folderService.GetAllSubFolders(id);
-            await AddSubFoldersToZip(mainPath, tempOutput, subfolders);
+            if (subfolders.Count > 0)
+            {
+                await AddSubFoldersToZip(mainPath, tempOutput, subfolders);
+            }
 
             string mimetype = MimeTypesMap.GetMimeType(zipName);
             return PhysicalFile(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\", zipName), mimetype, zipName);

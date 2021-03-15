@@ -1,22 +1,22 @@
 import React, { useContext, useState } from "react";
 import { Icon, Modal, Button } from "semantic-ui-react";
 
-import { DELETEFOLDER, FolderContext } from "../context/FolderContext";
-import { deletefolder } from "../services/folderService";
+import { DELETEFILE, FileContext } from "../context/FileContext";
+import { deletefile } from "../services/fileService";
 
-const DeleteFolderModal = (props) => {
+const DeleteFileModal = (props) => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { dispatch } = useContext(FolderContext);
+  const { dispatch } = useContext(FileContext);
 
   const deleteHandler = async () => {
     setError("");
     try {
       setIsLoading(true);
-      await deletefolder(props.id);
+      await deletefile(props.id);
       dispatch({
-        type: DELETEFOLDER,
+        type: DELETEFILE,
         fid: props.id,
       });
       setIsLoading(false);
@@ -26,7 +26,6 @@ const DeleteFolderModal = (props) => {
       setIsLoading(false);
     }
   };
-
   return (
     <div>
       <Icon
@@ -77,4 +76,4 @@ const DeleteFolderModal = (props) => {
   );
 };
 
-export default DeleteFolderModal;
+export default DeleteFileModal;

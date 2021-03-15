@@ -28,7 +28,7 @@ namespace FileManagement.DataAccess.Concrete.EntityFrameworkCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=DESKTOP-NDB2B06\\SQLEXPRESS;Initial Catalog=FileManagement;Persist Security Info=True;User ID=sa;Password=1234");
+                optionsBuilder.UseSqlServer("Data Source=DESKTOP-FERHVEV\\SQLEXPRESS;Initial Catalog=FileManagement;Persist Security Info=True;User ID=sa;Password=1234");
             }
         }
 

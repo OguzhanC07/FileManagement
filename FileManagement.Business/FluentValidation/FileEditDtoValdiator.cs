@@ -14,9 +14,7 @@ namespace FileManagement.Business.FluentValidation
         public FileEditDtoValdiator()
         {
             RuleFor(I => I.FileName).NotEmpty().WithMessage("File name can't be empty");
-            RuleFor(I => I.FileName).Matches("^[A-Za-z0-9' -]+$", RegexOptions.CultureInvariant).WithMessage("Folder name must be alphanumeric characters");
-            Regex regex = new Regex(@"^[\w\-. ]+$", RegexOptions.IgnoreCase);
-            RuleFor(I => I.FileName).Matches(regex).WithMessage("File name is not correct");
+            RuleFor(I => I.FileName).Matches("^[A-Za-z0-9' -]+$").WithMessage("File name must be alphanumeric characters");
         }
     }
 }

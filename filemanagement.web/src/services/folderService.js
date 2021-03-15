@@ -1,27 +1,52 @@
 import axios from "axios";
 import apiUrl from "../constants/apiUrl";
 
-export const getfolders = async () => {
+export const getfolders = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
-  try {
-    const response = await axios.get(
-      apiUrl.baseUrl + `/Folder/GetFoldersByAppUserId/${userInfo.userId}`,
-      {
-        headers: {
-          Authorization: "Bearer " + userInfo.token,
-        },
+  if (id > 0 && !isNaN(id) && id !== undefined) {
+    try {
+      const response = await axios.get(
+        apiUrl.baseUrl + `/Folder/GetSubFoldersByFolderId/${id}`,
+        {
+          headers: {
+            Authorization: "Bearer " + userInfo.token,
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response);
+      } else if (error.request) {
+        console.log(error.response);
+        throw new Error("Connection problem");
+      } else {
+        console.log(error);
+        throw new Error("Something went wrong");
       }
-    );
-    return response;
-  } catch (error) {
-    if (error.response) {
-      console.log(error.response);
-    } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Bağlantı sorunu");
-    } else {
-      console.log(error);
-      throw new Error("Bir şeyler ters gitti!");
+    }
+  } else {
+    try {
+      const response = await axios.get(
+        apiUrl.baseUrl + `/Folder/GetFoldersByAppUserId/${userInfo.userId}`,
+        {
+          headers: {
+            Authorization: "Bearer " + userInfo.token,
+          },
+        }
+      );
+      return response;
+    } catch (error) {
+      if (error.response) {
+        console.log(error.response);
+      } else if (error.request) {
+        console.log(error.response);
+        throw new Error("Bağlantı sorunu");
+      } else {
+        console.log(error);
+        throw new Error("Bir şeyler ters gitti!");
+      }
     }
   }
 };
@@ -100,6 +125,7 @@ export const downloadfolder = async (id) => {
     const response = await axios.get(
       apiUrl.baseUrl + `/Folder/DownloadFolder/${id}`,
       {
+        responseType: "blob",
         headers: {
           Authorization: "Bearer " + userInfo.token,
         },
@@ -110,7 +136,7 @@ export const downloadfolder = async (id) => {
   } catch (error) {
     if (error.response) {
       console.log(error.response);
-      throw new Error(error.response);
+      throw new Error(error.response.data);
     } else if (error.request) {
       console.log(error.response);
       throw new Error("Bağlantı sorunu");

@@ -2,6 +2,7 @@
 using FileManagement.DataAccess;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -19,18 +20,23 @@ namespace FileManagement.API.Controllers
     public class BaseController : ControllerBase
     {
         private readonly IFileService _fileService;
-        public BaseController(IFileService fileService)
+        private readonly IWebHostEnvironment _webHostEnviroment;
+        public BaseController(IFileService fileService,IWebHostEnvironment webHostEnvironment)
         {
             _fileService = fileService;
+            _webHostEnviroment = webHostEnvironment;
         }
 
         internal async Task<bool> UploadFile(IFormFile file, string foldername,string username,string guidName)
         {
             try
             {
-                var path = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot/users/{username}/{foldername}/{guidName}");
-                var stream = new FileStream(path, FileMode.Create);
-                await file.CopyToAsync(stream);
+                string[] savePath = { _webHostEnviroment.WebRootPath, "users", username, foldername, guidName };   /* "/users/{username}/{foldername}/{guidName}"*/
+                var path = Path.Combine(savePath);
+                using (var stream = System.IO.File.Create(path)) 
+                {
+                    await file.CopyToAsync(stream);
+                }
                 return true;
             }
             catch (Exception e)
@@ -46,11 +52,7 @@ namespace FileManagement.API.Controllers
                 if (subfolder.InverseParentFolder.Count == 0)
                 {
                     var files = await _fileService.GetFilesByFolderId(subfolder.Id);
-                    if (files.Count == 0)
-                    {
-                        break;
-                    }
-                    else
+                    if(files.Count>0)
                     {
                         using FileStream zipToOpen = new FileStream(zipPath, FileMode.Open);
                         using ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update);
@@ -65,11 +67,7 @@ namespace FileManagement.API.Controllers
                 else
                 {
                     var files = await _fileService.GetFilesByFolderId(subfolder.Id);
-                    if (files.Count == 0)
-                    {
-                        break;
-                    }
-                    else
+                    if(files.Count>0)
                     {
                         using FileStream zipToOpen = new FileStream(zipPath, FileMode.Open);
                         using ZipArchive archive = new ZipArchive(zipToOpen, ZipArchiveMode.Update);

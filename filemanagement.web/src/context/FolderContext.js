@@ -4,6 +4,8 @@ export const SETFOLDERS = "SETFOLDERS";
 export const ADDFOLDER = "ADDFOLDER";
 export const EDITFOLDER = "EDITFOLDER";
 export const DELETEFOLDER = "DELETEFOLDER";
+export const REMOVEFROMFOLDERSTACK = "REMOVEFROMFOLDERSTACK";
+export const ADDTOFOLDERSTACK = "ADDTOFOLDERSTACK";
 
 export const FolderContext = createContext();
 
@@ -34,6 +36,23 @@ const folderReducer = (state, action) => {
       return {
         ...state,
         folders: filteredFolders,
+      };
+    case REMOVEFROMFOLDERSTACK:
+      const newStackArr = [...state.folderStack];
+      const stackIndex = newStackArr.findIndex(
+        (stck) => stck.id === action.fid
+      );
+      newStackArr.splice(stackIndex + 1);
+      return {
+        ...state,
+        folderId: action.fid,
+        folderStack: newStackArr,
+      };
+    case ADDTOFOLDERSTACK:
+      return {
+        ...state,
+        folderId: action.folderInfo.id,
+        folderStack: [...state.folderStack, action.folderInfo],
       };
     default:
       return state;

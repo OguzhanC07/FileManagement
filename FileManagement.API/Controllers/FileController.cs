@@ -31,7 +31,7 @@ namespace FileManagement.API.Controllers
         private readonly IWebHostEnvironment _webHostEnviroment;
         private readonly IMapper _mapper;
 
-        public FileController(IMapper mapper,IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService)
+        public FileController(IMapper mapper, IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService,webHostEnvironment)
         {
             _folderService = folderService;
             _fileService = fileService;
@@ -41,8 +41,8 @@ namespace FileManagement.API.Controllers
         }
 
         [HttpGet("[action]/{id}")]
-        [ServiceFilter(typeof(ValidId<DataAccess.File>))]
-        [UserHasAccessFile(HaveFolderId =true)]
+        [ServiceFilter(typeof(ValidId<Folder>))]
+        [UserHasAccessFile(HaveFolderId = true)]
         public async Task<IActionResult> GetFiles(int id)
         {
             return Ok(_mapper.Map<List<FileListDto>>(await _fileService.GetFilesByFolderId(id)));
@@ -51,7 +51,7 @@ namespace FileManagement.API.Controllers
 
         [HttpGet("{id}")]
         [ServiceFilter(typeof(ValidId<DataAccess.File>))]
-        [UserHasAccessFile(HaveFolderId =false)]
+        [UserHasAccessFile(HaveFolderId = false)]
         public async Task<IActionResult> GetSingleFile(int id)
         {
             var file = await _fileService.GetFileByIdAsync(id);
@@ -72,25 +72,25 @@ namespace FileManagement.API.Controllers
 
         [HttpPost("[action]/{id}")]
         [ServiceFilter(typeof(ValidId<Folder>))]
-        [UserHasAccessFile(HaveFolderId =true)]
+        [UserHasAccessFile(HaveFolderId = true)]
         //action id is folderId.
-        public async Task<IActionResult> UploadFile(int id, [FromForm] IFormFileCollection formFiles)
+        public async Task<IActionResult> UploadFile(int id, [FromForm] List<IFormFile> formFiles)
         {
-            
+
             var folder = await _folderService.FindFolderById(id);
             var user = await _userService.GetById(folder.AppUserId);
             int folderSize = 0;
-            Regex rgx = new Regex("^[0-9a-zA-Z\\.]");
-           
+            //Regex rgx = new Regex("^[0-9a-zA-Z\\.]");
+
             foreach (var file in formFiles)
             {
-                var newName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                var newName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 var result = await UploadFile(file, folder.FileGuid.ToString(), user.Username, newName);
                 if (result == true)
                 {
                     await _fileService.AddAsync(new DataAccess.File
                     {
-                        FileName = rgx.Replace(file.FileName, "a").Trim(),
+                        FileName = file.FileName,/*rgx.Replace(file.FileName, "a").Trim(),*/
                         FileGuid = newName,
                         FolderId = folder.Id,
                         IsActive = true,
@@ -102,13 +102,13 @@ namespace FileManagement.API.Controllers
                 }
                 else
                 {
-                    return BadRequest(new SingleResponseMessageModel<string> { Result= false, Message="File(s) not uploaded"});
+                    return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "File(s) not uploaded" });
                 }
             }
 
             folder.Size += folderSize;
             await _folderService.UpdateAsync(folder);
-            return Created("", new SingleResponseMessageModel<string> { Result=true, Message="File(s) uploaded successfully" });
+            return Created("", new SingleResponseMessageModel<string> { Result = true, Message = "File(s) uploaded successfully" });
         }
 
         [HttpPut("{id}")]
@@ -119,12 +119,12 @@ namespace FileManagement.API.Controllers
         {
             if (id != dto.Id)
             {
-                return BadRequest(new SingleResponseMessageModel<string> { Result =false, Message="Id's are not match"});
+                return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
             file.FileName = dto.FileName;
             await _fileService.UpdateAsync(file);
-            return Ok(new SingleResponseMessageModel<string> { Result=true, Message="File name edited successfully" });
+            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "File name edited successfully" });
         }
 
         [HttpDelete("{id}")]
@@ -137,7 +137,7 @@ namespace FileManagement.API.Controllers
             file.IsActive = false;
             await _fileService.UpdateAsync(file);
 
-            return Ok(new SingleResponseMessageModel<string> { Result=true, Message="File deleted successfully." });
+            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "File deleted successfully." });
         }
     }
 }

@@ -1,9 +1,10 @@
 import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import { Modal, Button, Icon } from "semantic-ui-react";
+import { FileContext, SETFILES } from "../context/FileContext";
 import { FolderContext } from "../context/FolderContext";
 
-import { uploadfile } from "../services/fileService";
+import { uploadfile, getfiles } from "../services/fileService";
 
 const baseStyle = {
   flex: 1,
@@ -35,6 +36,7 @@ const UploadFolder = (props) => {
   const [error, setError] = useState("");
 
   const { folder } = useContext(FolderContext);
+  const { dispatch } = useContext(FileContext);
 
   const onDrop = useCallback(
     (acceptedFiles) => {
@@ -84,12 +86,16 @@ const UploadFolder = (props) => {
 
   const uploadHandler = async () => {
     setError("");
-
     if (folder.folderId > 0) {
       try {
         setIsLoading(true);
-        const response = await uploadfile(folder.folderId, myFiles);
-        console.log(response);
+        await uploadfile(folder.folderId, myFiles);
+        getfiles(folder.folderId).then((res) => {
+          dispatch({
+            type: SETFILES,
+            files: res.data,
+          });
+        });
         setIsLoading(false);
         removeAll();
       } catch (error) {
@@ -101,6 +107,12 @@ const UploadFolder = (props) => {
         setIsLoading(true);
         const response = await uploadfile(folder.folders[0].id, myFiles);
         console.log(response);
+        getfiles(folder.folder[0].id).then((res) => {
+          dispatch({
+            type: SETFILES,
+            files: res.data,
+          });
+        });
         setIsLoading(false);
         removeAll();
       } catch (error) {
