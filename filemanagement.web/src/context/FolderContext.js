@@ -6,6 +6,7 @@ export const EDITFOLDER = "EDITFOLDER";
 export const DELETEFOLDER = "DELETEFOLDER";
 export const REMOVEFROMFOLDERSTACK = "REMOVEFROMFOLDERSTACK";
 export const ADDTOFOLDERSTACK = "ADDTOFOLDERSTACK";
+export const SORTFOLDERS = "SORTFOLDERS";
 
 export const FolderContext = createContext();
 
@@ -53,6 +54,28 @@ const folderReducer = (state, action) => {
         ...state,
         folderId: action.folderInfo.id,
         folderStack: [...state.folderStack, action.folderInfo],
+      };
+    case SORTFOLDERS:
+      const folderArr = state.folders.slice();
+      folderArr.sort(function (a, b) {
+        if (action.sortName === "folderName") {
+          var nameA = a[action.sortName].toLowerCase(),
+            nameB = b[action.sortName].toLowerCase();
+          if (nameA < nameB) return -1;
+          if (nameA > nameB) return 1;
+          return 0;
+        } else {
+          return a[action.sortName] - b[action.sortName];
+        }
+      });
+
+      if (action.sortType === "desc") {
+        folderArr.reverse();
+      }
+
+      return {
+        ...state,
+        folders: folderArr,
       };
     default:
       return state;

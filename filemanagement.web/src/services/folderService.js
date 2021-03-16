@@ -137,7 +137,6 @@ export const downloadfolder = async (id) => {
     if (error.response) {
       throw new Error(error.response.data);
     } else if (error.request) {
-      console.log(error.response);
       throw new Error("Connection problem");
     } else {
       console.log(error);

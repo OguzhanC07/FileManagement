@@ -10,8 +10,9 @@ const DeleteFileModal = (props) => {
   const [error, setError] = useState(null);
   const { dispatch } = useContext(FileContext);
 
-  const deleteHandler = async () => {
+  const deleteHandler = async (e) => {
     setError("");
+    e.preventDefault();
     try {
       setIsLoading(true);
       await deletefile(props.id);
@@ -63,7 +64,7 @@ const DeleteFileModal = (props) => {
             color="green"
             loading={isLoading}
             inverted
-            onClick={() => deleteHandler()}
+            onClick={(e) => deleteHandler(e)}
           >
             <Icon name="checkmark" /> Yes
           </Button>

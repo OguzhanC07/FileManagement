@@ -12,7 +12,8 @@ const EditFolderModal = (props) => {
 
   const { dispatch } = useContext(FolderContext);
 
-  const editHandler = async () => {
+  const editHandler = async (e) => {
+    e.preventDefault();
     setError("");
     if (name !== "") {
       try {
@@ -62,8 +63,8 @@ const EditFolderModal = (props) => {
         <hr />
         <div style={{ margin: 20 }}>
           <Form
-            onSubmit={() => {
-              editHandler();
+            onSubmit={(e) => {
+              editHandler(e);
             }}
           >
             <Form.Field>

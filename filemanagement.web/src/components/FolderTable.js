@@ -1,15 +1,17 @@
 import React, { useContext, useState } from "react";
-import { Table, Image, Icon } from "semantic-ui-react";
+import { Table, Image, Icon, Loader } from "semantic-ui-react";
 import uuid from "uuid/dist/v1";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-import { FolderContext } from "../context/FolderContext";
+import { FolderContext, SORTFOLDERS } from "../context/FolderContext";
 import DeleteFolderModal from "./DeleteFolderModal";
 import EditFolderModal from "./EditFolderModal";
 import img from "../assets/foldericon.jpg";
 import fileimg from "../assets/fileicon.png";
 import { downloadfolder } from "../services/folderService";
 import { getsinglefile } from "../services/fileService";
-import { FileContext } from "../context/FileContext";
+import { FileContext, SORTFILE } from "../context/FileContext";
 import EditFileModal from "./EditFileModal";
 import DeleteFileModal from "./DeleteFileModal";
 import PdfViewer from "./PdfViewer";
@@ -18,20 +20,23 @@ import VideoViewer from "./VideoViewer";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
-
-  const { folder } = useContext(FolderContext);
-  const { file } = useContext(FileContext);
+  const [sortType, setSortType] = useState("asc");
+  const [error, setError] = useState("");
+  const { folder, dispatch } = useContext(FolderContext);
+  const { file, dispatch: fileDispatch } = useContext(FileContext);
 
   const downloadHandler = async (id, type) => {
     let response = "";
+    setError("");
     switch (type) {
       case "file":
         try {
           setIsDisabled(true);
           response = await getsinglefile(id);
           setIsDisabled(false);
-        } catch (error) {
-          console.log(error.message);
+        } catch (responseError) {
+          console.log(responseError);
+          setError(responseError.message);
           setIsDisabled(false);
         }
         break;
@@ -40,8 +45,8 @@ const FolderTable = (props) => {
           setIsDisabled(true);
           response = await downloadfolder(id);
           setIsDisabled(false);
-        } catch (error) {
-          console.log(error.message);
+        } catch (responseError) {
+          setError(responseError.message);
           setIsDisabled(false);
         }
         break;
@@ -49,14 +54,18 @@ const FolderTable = (props) => {
       default:
         break;
     }
-    setIsDisabled(true);
-    var data = new Blob([response.data], { type: response.data.type });
-    var folderData = window.URL.createObjectURL(data);
-    const tempLink = document.createElement("a");
-    tempLink.href = folderData;
-    tempLink.setAttribute("download", uuid());
-    tempLink.click();
-    setIsDisabled(false);
+    if (error !== "") {
+      toast.error("Folder couldn't downloaded. Error:" + error);
+    } else {
+      setIsDisabled(true);
+      var data = new Blob([response.data], { type: response.data.type });
+      var folderData = window.URL.createObjectURL(data);
+      const tempLink = document.createElement("a");
+      tempLink.href = folderData;
+      tempLink.setAttribute("download", uuid());
+      tempLink.click();
+      setIsDisabled(false);
+    }
   };
 
   const convertHandler = (bytes) => {
@@ -66,14 +75,59 @@ const FolderTable = (props) => {
     return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
   };
 
+  const sortingHandler = (type) => {
+    sortType === "asc" ? setSortType("desc") : setSortType("asc");
+
+    switch (type) {
+      case "name":
+        dispatch({
+          type: SORTFOLDERS,
+          sortType: sortType,
+          sortName: "folderName",
+        });
+        fileDispatch({
+          type: SORTFILE,
+          sortType: sortType,
+          sortName: "fileName",
+        });
+        break;
+      case "size":
+        dispatch({
+          type: SORTFOLDERS,
+          sortType: sortType,
+          sortName: "size",
+        });
+        fileDispatch({
+          type: SORTFILE,
+          sortType: sortType,
+          sortName: "size",
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <div>
       <div>
         <Table style={{ paddingTop: 10 }} selectable>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Size</Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => {
+                  sortingHandler("name");
+                }}
+              >
+                Name
+              </Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => {
+                  sortingHandler("size");
+                }}
+              >
+                Size
+              </Table.HeaderCell>
               <Table.HeaderCell>Created At</Table.HeaderCell>
               <Table.HeaderCell>Operations</Table.HeaderCell>
             </Table.Row>
@@ -99,7 +153,9 @@ const FolderTable = (props) => {
                 <Table.Cell>
                   <EditFolderModal id={folder.id} name={folder.folderName} />
                   <DeleteFolderModal id={folder.id} />
-                  {folder.size === 0 ? null : (
+                  {folder.size === 0 ? null : isDisabled ? (
+                    <Loader active inline />
+                  ) : (
                     <Icon
                       disabled={isDisabled}
                       name="download"
@@ -129,7 +185,7 @@ const FolderTable = (props) => {
                       <DeleteFileModal id={file.id} />
                       {file.size === 0 ? null : (
                         <Icon
-                          disabled={isDisabled}
+                          loading={isDisabled}
                           name="download"
                           onClick={(e) => {
                             downloadHandler(file.id, "file");
@@ -153,6 +209,17 @@ const FolderTable = (props) => {
               : null}
           </Table.Body>
         </Table>
+        <ToastContainer
+          position="top-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
       </div>
     </div>
   );

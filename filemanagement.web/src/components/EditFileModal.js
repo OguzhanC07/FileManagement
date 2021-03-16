@@ -12,8 +12,9 @@ const EditFileModal = (props) => {
 
   const { dispatch } = useContext(FileContext);
 
-  const editHandler = async () => {
+  const editHandler = async (e) => {
     setError("");
+    e.preventDefault();
     if (name !== "") {
       try {
         setIsLoading(true);
@@ -61,8 +62,8 @@ const EditFileModal = (props) => {
         <hr />
         <div style={{ margin: 20 }}>
           <Form
-            onSubmit={() => {
-              editHandler();
+            onSubmit={(e) => {
+              editHandler(e);
             }}
           >
             <Form.Field>

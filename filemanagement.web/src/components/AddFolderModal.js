@@ -11,8 +11,9 @@ const AddFolderModal = () => {
   const [error, setError] = useState(null);
   const { folder, dispatch } = useContext(FolderContext);
 
-  const addFolderModalHandler = async () => {
+  const addFolderModalHandler = async (e) => {
     setError("");
+    e.preventDefault();
     if (name !== "") {
       try {
         setIsLoading(true);
@@ -63,8 +64,8 @@ const AddFolderModal = () => {
         <hr />
         <div style={{ margin: 20 }}>
           <Form
-            onSubmit={() => {
-              addFolderModalHandler();
+            onSubmit={(e) => {
+              addFolderModalHandler(e);
             }}
           >
             <Form.Field>

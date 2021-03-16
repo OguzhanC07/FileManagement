@@ -10,8 +10,9 @@ const DeleteFolderModal = (props) => {
   const [error, setError] = useState(null);
   const { dispatch } = useContext(FolderContext);
 
-  const deleteHandler = async () => {
+  const deleteHandler = async (e) => {
     setError("");
+    e.preventDefault();
     try {
       setIsLoading(true);
       await deletefolder(props.id);
@@ -64,7 +65,7 @@ const DeleteFolderModal = (props) => {
             color="green"
             loading={isLoading}
             inverted
-            onClick={() => deleteHandler()}
+            onClick={(e) => deleteHandler(e)}
           >
             <Icon name="checkmark" /> Yes
           </Button>
