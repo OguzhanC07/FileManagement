@@ -28,7 +28,7 @@ const DeleteFolderModal = (props) => {
   };
 
   return (
-    <div>
+    <span>
       <Icon
         name="delete"
         onClick={() => {
@@ -73,7 +73,7 @@ const DeleteFolderModal = (props) => {
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
         </div>
       </Modal>
-    </div>
+    </span>
   );
 };
 

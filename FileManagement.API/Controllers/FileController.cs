@@ -64,7 +64,6 @@ namespace FileManagement.API.Controllers
 
 
             string[] paths = { _webHostEnviroment.WebRootPath, @"users/", user.Username, folder.FileGuid.ToString(), file.FileGuid };
-            //_webHostEnviroment.WebRootPath, $"/users/{user.Username}/{folder.FileGuid}/{file.FileGuid}".TrimStart(new char[] { '\\', '/' }) old version
             var path = Path.Combine(paths);
             string mimetype = MimeTypesMap.GetMimeType(file.FileGuid.Split(".").Last());
             return PhysicalFile(path, mimetype);
@@ -107,6 +106,12 @@ namespace FileManagement.API.Controllers
             }
 
             folder.Size += folderSize;
+            if (folder.ParentFolderId!=null)
+            {
+                var mainfolder = await _folderService.FindFolderById(Convert.ToInt32(folder.ParentFolderId));
+                mainfolder.Size += folderSize;
+                await _folderService.UpdateAsync(mainfolder);
+            }
             await _folderService.UpdateAsync(folder);
             return Created("", new SingleResponseMessageModel<string> { Result = true, Message = "File(s) uploaded successfully" });
         }

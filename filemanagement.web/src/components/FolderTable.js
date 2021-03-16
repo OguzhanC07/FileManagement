@@ -13,6 +13,8 @@ import { FileContext } from "../context/FileContext";
 import EditFileModal from "./EditFileModal";
 import DeleteFileModal from "./DeleteFileModal";
 import PdfViewer from "./PdfViewer";
+import ImgViewer from "./ImgViewer";
+import VideoViewer from "./VideoViewer";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -135,7 +137,15 @@ const FolderTable = (props) => {
                         />
                       )}
                       {file.fileName.split(".")[1] === "pdf" ? (
-                        <PdfViewer />
+                        <PdfViewer id={file.id} />
+                      ) : null}
+                      {file.fileName.match(
+                        /[^/]+(jpg|png|gif|tif|tiff|bmp|jpeg)$/
+                      ) ? (
+                        <ImgViewer id={file.id} />
+                      ) : null}
+                      {file.fileName.split(".")[1] === "mp4" ? (
+                        <VideoViewer id={file.id} />
                       ) : null}
                     </Table.Cell>
                   </Table.Row>

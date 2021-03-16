@@ -27,7 +27,7 @@ const DeleteFileModal = (props) => {
     }
   };
   return (
-    <div>
+    <span>
       <Icon
         name="delete"
         onClick={() => {
@@ -72,7 +72,7 @@ const DeleteFileModal = (props) => {
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
         </div>
       </Modal>
-    </div>
+    </span>
   );
 };
 

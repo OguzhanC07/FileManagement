@@ -93,7 +93,9 @@ const FetchingData = (props) => {
 
   return (
     <div className="table">
-      <UploadFolder />
+      {folder.folders.length === 0 && folder.folderId === 0 ? null : (
+        <UploadFolder />
+      )}
       <BreadcrumbComponent
         removeStack={removeStackHandler}
         folderStack={folder.folderStack}

@@ -39,7 +39,7 @@ const EditFolderModal = (props) => {
   };
 
   return (
-    <div>
+    <span>
       <Icon
         name="edit"
         onClick={() => {
@@ -82,7 +82,7 @@ const EditFolderModal = (props) => {
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
         </div>
       </Modal>
-    </div>
+    </span>
   );
 };
 
