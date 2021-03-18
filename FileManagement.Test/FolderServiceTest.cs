@@ -50,27 +50,133 @@ namespace FileManagement.Test
             Assert.Equal(folderName, mockFolder.FolderName);
         }
 
+        [Fact]
+        public async Task GetFolderById_ShouldReturnNothing_WhenFolderDoesNotExits()
+        {
+            //Arrange
+            var random = new Random();
+            int folderId = random.Next(1, 100);
+            _folderRepoMock.Setup(x => x.GetById(It.IsAny<int>())).ReturnsAsync(() => null);
+
+            //Act
+            var file = await _sut.GetById(folderId);
+
+            //Assert
+            Assert.Null(file);
+        }
+        
+        [Fact]
+        public async Task AddFolders_ShouldReturnNothing_WhenUserExist()
+        {
+            //Arrange
+            var random = new Random();
+            int folderId = random.Next(1, 100);
+            var folderName = "test filename";
+
+            var mockFolder = new Folder
+            {
+                Id = folderId,
+                FolderName = folderName,
+                FileGuid = Guid.NewGuid(),
+                Size = 500,
+                CreatedAt = DateTime.Now,
+                IsDeleted = false,
+                AppUserId = 1,
+            };
+
+            _folderRepoMock.Setup(x => x.AddAsync(It.IsAny<Folder>())).Verifiable();
+
+            //Act
+            await _sut.AddAsync(mockFolder);
+
+            //Assert
+            _folderRepoMock.Verify(x => x.AddAsync(It.IsAny<Folder>()), Times.Once());
+        }
 
         [Fact]
-        public async Task GetFoldersByAppUserId_ShouldReturnListOfFiles_WhenUserExist()
+        public async Task UpdateFolderById_ShouldReturnNothing_WhenFolderExists()
+        {
+            //Arrange
+            var random = new Random();
+            int folderId = random.Next(1, 100);
+            var folderName = "test filename";
+
+            var mockFolder = new Folder
+            {
+                Id = folderId,
+                FolderName = folderName,
+                FileGuid = Guid.NewGuid(),
+                Size = 500,
+                CreatedAt = DateTime.Now,
+                IsDeleted = false,
+                AppUserId = 1,
+            };
+            _folderRepoMock.Setup(x => x.UpdateAsync(It.IsAny<Folder>())).Verifiable();
+            _folderRepoMock.Setup(x => x.AddAsync(It.IsAny<Folder>())).Verifiable();
+
+            //Act
+            await _sut.AddAsync(mockFolder);
+            mockFolder.FolderName = "test foldername2";
+            await _sut.UpdateAsync(mockFolder);
+
+            //Arrange
+            _folderRepoMock.Verify(x => x.AddAsync(It.IsAny<Folder>()), Times.Once());
+            _folderRepoMock.Verify(x => x.UpdateAsync(It.IsAny<Folder>()), Times.Once());
+        }
+
+        [Fact]
+        public async Task DeleteFolderById_ShouldReturnNothing_WhenFolderExists()
+        {
+            //Arrange
+            var random = new Random();
+            int folderId = random.Next(1, 100);
+            var folderName = "test filename";
+
+            var mockFolder = new Folder
+            {
+                Id = folderId,
+                FolderName = folderName,
+                FileGuid = Guid.NewGuid(),
+                Size = 500,
+                CreatedAt = DateTime.Now,
+                IsDeleted = false,
+                AppUserId = 1,
+            };
+            _folderRepoMock.Setup(x => x.RemoveAsync(It.IsAny<Folder>())).Verifiable();
+            _folderRepoMock.Setup(x => x.AddAsync(It.IsAny<Folder>())).Verifiable();
+
+            //Act
+            await _sut.AddAsync(mockFolder);
+            await _sut.RemoveAsync(mockFolder);
+
+            //Arrange
+            _folderRepoMock.Verify(x => x.AddAsync(It.IsAny<Folder>()), Times.Once());
+            _folderRepoMock.Verify(x => x.RemoveAsync(It.IsAny<Folder>()), Times.Once());
+        }
+
+
+        [Fact]
+        public async Task GetFoldersByAppUserId_ShouldReturnListOfFolders_WhenUserExist()
         {
             //Arrange
             Mock<IFolderService> folderServiceMock = new Mock<IFolderService>();
-            folderServiceMock.Setup(x => x.GetFoldersByUserId(1)).ReturnsAsync(GetSampleFolder());
+            folderServiceMock.Setup(x => x.GetFoldersByUserId(It.IsAny<int>())).ReturnsAsync(GetSampleFolder);
             var expected = GetSampleFolder();
-            //Act
-            var actual = await _sut.GetFoldersByUserId(1);
-            Console.WriteLine(actual);
-            //Assert 
 
+            //Act
+            //throws exception for what ? 
+            //this returns null beacuse _sut object dont accept constructor for IUserService
+            //how can i test this method ? 
+            var actual = await _sut.GetFoldersByUserId(1);  
+
+            //Assert 
             Assert.Equal(expected.Count, actual.Count);
 
             for (int i = 0; i < expected.Count; i++)
             {
                 Assert.Equal(expected[i].FolderName, actual[i].FolderName);
                 Assert.Equal(expected[i].Size, actual[i].Size);
-            }
-
+            } 
         }
 
         private List<Folder> GetSampleFolder()
