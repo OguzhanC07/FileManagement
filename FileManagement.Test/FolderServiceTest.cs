@@ -154,6 +154,35 @@ namespace FileManagement.Test
             _folderRepoMock.Verify(x => x.RemoveAsync(It.IsAny<Folder>()), Times.Once());
         }
 
+        [Fact]
+        public async Task GetAllSubFoldersWithFolderId_ShouldReturnListOfFolders_WhenFolderExists()
+        {
+            List<Folder> mockData = new List<Folder>{
+                new Folder
+                {
+                    Id = 1,
+                    FolderName = "test",
+                    CreatedAt = DateTime.Now,
+                    Size = 500,
+                    FileGuid = Guid.NewGuid(),
+                    AppUserId = 1,
+                    IsDeleted = false,
+                    ParentFolderId = null,
+                    InverseParentFolder = new List<Folder>
+                    {
+                        new Folder{Id=6,FolderName="InverseSub",AppUserId=1,FileGuid=Guid.NewGuid(),CreatedAt=DateTime.Now.AddMinutes(1),ParentFolderId=1,IsDeleted=false,Size=800}
+                    }
+                }
+            };
+            //Arrange
+            _folderDalMock.Setup(x => x.GetAllSubFolders(It.IsAny<int>())).ReturnsAsync(mockData);
+            var expected = mockData.Count;
+            //Act
+            var actual = await _sut.GetAllSubFolders(1);
+            //Assert
+            Assert.Equal(expected, actual.Count);
+        }
+
 
         [Fact]
         public async Task GetFoldersByAppUserId_ShouldReturnListOfFolders_WhenUserExist()
@@ -192,7 +221,11 @@ namespace FileManagement.Test
                     FileGuid=Guid.NewGuid(),
                     AppUserId=1,
                     IsDeleted=false,
-                    ParentFolderId=null
+                    ParentFolderId=null,
+                    InverseParentFolder= new List<Folder>
+                    {
+                        new Folder{Id=6,FolderName="InverseSub",AppUserId=1,FileGuid=Guid.NewGuid(),CreatedAt=DateTime.Now.AddMinutes(1),ParentFolderId=1,IsDeleted=false,Size=800}
+                    }
                 },
                 new Folder
                 {
