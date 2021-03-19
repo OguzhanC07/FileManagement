@@ -1,9 +1,11 @@
 import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useDropzone } from "react-dropzone";
+import { toast, ToastContainer } from "react-toastify";
 import { Modal, Button, Icon } from "semantic-ui-react";
+import "react-toastify/dist/ReactToastify.css";
+
 import { FileContext, SETFILES } from "../context/FileContext";
 import { FolderContext } from "../context/FolderContext";
-
 import { uploadfile, getfiles } from "../services/fileService";
 
 const baseStyle = {
@@ -30,7 +32,7 @@ const acceptStyle = {
   borderColor: "#00e676",
 };
 
-const UploadFolder = (props) => {
+const UploadFile = (props) => {
   const [myFiles, setMyFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -121,6 +123,7 @@ const UploadFolder = (props) => {
       }
     }
   };
+
   return (
     <section>
       <div {...getRootProps({ style })}>
@@ -159,8 +162,9 @@ const UploadFolder = (props) => {
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
         </div>
       </Modal>
+      <ToastContainer />
     </section>
   );
 };
 
-export default UploadFolder;
+export default UploadFile;

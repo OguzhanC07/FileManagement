@@ -25,18 +25,6 @@ const SideMenu = (props) => {
           <Icon name="home" />
           Home
         </Menu.Item>
-        {/* <Menu.Item
-          as={Link}
-          to={"/folder"}
-          name="folder2"
-          active={activeItem === "folder"}
-          onClick={() => {
-            handleItemClick("folder");
-          }}
-        >
-          <Icon name="folder" />
-          Route2
-        </Menu.Item> */}
       </Menu>
     );
   };

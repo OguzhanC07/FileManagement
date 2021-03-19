@@ -10,11 +10,9 @@ import fileimg from "../assets/fileicon.png";
 import { downloadfolder } from "../services/folderService";
 import { getsinglefile } from "../services/fileService";
 import { FileContext, SORTFILE } from "../context/FileContext";
-import PdfViewer from "./PdfViewer";
-import ImgViewer from "./ImgViewer";
-import VideoViewer from "./VideoViewer";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
+import Viewer from "./Viewer";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -198,17 +196,15 @@ const FolderTable = (props) => {
                           }}
                         />
                       )}
-                      {file.fileName.split(".")[1] === "pdf" ? (
-                        <PdfViewer id={file.id} />
-                      ) : null}
+                      {file.fileName.split(".")[1] === "pdf" && (
+                        <Viewer type="pdf" id={file.id} />
+                      )}
                       {file.fileName.match(
                         /[^/]+(jpg|png|gif|tif|tiff|bmp|jpeg)$/
-                      ) ? (
-                        <ImgViewer id={file.id} />
-                      ) : null}
-                      {file.fileName.split(".")[1] === "mp4" ? (
-                        <VideoViewer id={file.id} />
-                      ) : null}
+                      ) && <Viewer type="img" id={file.id} />}
+                      {file.fileName.split(".")[1] === "mp4" && (
+                        <Viewer id={file.id} type="video" />
+                      )}
                     </Table.Cell>
                   </Table.Row>
                 ))

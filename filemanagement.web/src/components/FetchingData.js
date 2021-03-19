@@ -4,7 +4,6 @@ import Loader from "react-loader-spinner";
 import { getfolders } from "../services/folderService";
 import FolderTable from "./FolderTable";
 import "../styles/table.css";
-import UploadFolder from "./UploadFolder";
 import {
   FolderContext,
   SETFOLDERS,
@@ -14,6 +13,7 @@ import {
 import BreadcrumbComponent from "./BreadcrumbComponent";
 import { FileContext, REMOVEFILES, SETFILES } from "../context/FileContext";
 import { getfiles } from "../services/fileService";
+import UploadFile from "./UploadFile";
 
 const FetchingData = (props) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -94,7 +94,7 @@ const FetchingData = (props) => {
   return (
     <div className="table">
       {folder.folders.length === 0 && folder.folderId === 0 ? null : (
-        <UploadFolder />
+        <UploadFile />
       )}
       <BreadcrumbComponent
         removeStack={removeStackHandler}
