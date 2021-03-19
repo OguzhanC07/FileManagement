@@ -7,6 +7,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -23,38 +24,68 @@ namespace FileManagement.Test
         }
 
         [Fact]
-        public void CheckUserByEmailOrUsername_ShouldReturnUser_IfUserExists()
+        public async Task CheckUserByEmailOrUsername_ShouldReturnUser_IfUserExists()
         {
             //Arrange
-            string email = "test@test123.com";
-            var user = new User { Email = email, Id = 1, Password = "1234", isActive = true, Username = "tester" };
-            var mock = new Mock<IUserService>();
-            mock.Setup(x => x.CheckEmailorUsernameAsync(It.IsAny<string>())).ReturnsAsync(user);
-
+            string email = "test@test1.com";
+            var expected = users.Where(I => I.Email == email).SingleOrDefault();
+            _userMockRepo.Setup(x => x.GetByFilter(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync((Expression<Func<User,bool>> exp)=> 
+            {
+                return users.Where(exp.Compile()).SingleOrDefault();
+            });
 
             //Act
-            var actual = mock.Object.CheckEmailorUsernameAsync(email).Result; //its not valid.  /*_sut.CheckEmailorUsernameAsync(email).Result;*/
+            var actual = await _sut.CheckEmailorUsernameAsync(email);
 
             //Assert
-            Assert.Equal(email, actual.Email);
+            Assert.NotNull(actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void CheckUserNameAndPassword_ShouldReturnUser_IfUserExists()
+        public async Task CheckUserNameAndPassword_ShouldReturnUser_IfUserExists()
         {
             //Arrange
-            string username = "test1234";
+            string username = "tester";
             string password = "1234";
             var dto = new UserLoginDto { UserName = username, Password = password};
-            var user = new User { Email = "test1234@test.com", Id = 1, Password = password, isActive = true, Username = username };
-            var mock = new Mock<IUserService>();
-            mock.Setup(x => x.CheckUserNameOrPasswordAsync(It.IsAny<UserLoginDto>())).ReturnsAsync(user);
+            var expected = users.Where(I => I.Username == dto.UserName && I.Password == dto.Password).SingleOrDefault();
+            _userMockRepo.Setup(x => x.GetByFilter(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync((Expression<Func<User, bool>> exp) =>
+               {
+                   return users.Where(exp.Compile()).SingleOrDefault();
+               });
 
             //Act
-            var actual = mock.Object.CheckUserNameOrPasswordAsync(dto).Result; /*_sut.CheckUserNameOrPasswordAsync(dto).Result; this returns null beacuse this object dont accept any ctor for IUserService*/
-
+            var actual = await _sut.CheckUserNameOrPasswordAsync(dto);
             //Assert
-            Assert.Equal(username, actual.Username);
+            Assert.Equal(expected, actual);
         }
+
+        [Fact]
+        public async Task CheckUserNameAndPassword_ShouldReturnNull_IfUserDontExists()
+        {
+            //Arrange
+            string username = "tester21";
+            string password = "1234";
+            var dto = new UserLoginDto { UserName = username, Password = password };
+            var expected = users.Where(I => I.Username == dto.UserName && I.Password == dto.Password).SingleOrDefault();
+            _userMockRepo.Setup(x => x.GetByFilter(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(()=>null);
+
+            //Act
+            var actual = await _sut.CheckUserNameOrPasswordAsync(dto);
+            //Assert
+            Assert.Null(actual);
+            Assert.Equal(expected, actual);
+        }
+
+
+
+        private List<User> users = new List<User>
+        {
+            new User { Email = "test@test1.com", Id = 1, Password = "1234", isActive = true, Username = "tester" },
+            new User { Email = "test@test2.com", Id = 2, Password = "1234", isActive = true, Username = "tester1" },
+            new User { Email = "test@test3.com", Id = 3, Password = "1234", isActive = true, Username = "tester2" },
+            new User { Email = "test@test4.com", Id = 4, Password = "1234", isActive = true, Username = "tester3" },
+        };
     }
 }

@@ -6,6 +6,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -159,12 +160,15 @@ namespace FileManagement.Test
         public async Task GetFilesByFolderId_ShouldReturnListOfFiles_WhenFolderExists()
         {
             //Arrange
-            Mock<IFileService> fileServiceMock = new Mock<IFileService>();
-            fileServiceMock.Setup(x => x.GetFilesByFolderId(It.IsAny<int>())).ReturnsAsync(GenerateFakeFiles);
-            var expected = GenerateFakeFiles();
+            int folderId = 1;
+            var expected = mockFiles.Where(I => I.FolderId == folderId && I.IsActive == true).ToList();
+            _fileRepoMock.Setup(x => x.GetAllByFilter(It.IsAny<Expression<Func<File, bool>>>())).ReturnsAsync((Expression<Func<File, bool>> exp) =>
+               {
+                   return mockFiles.Where(exp.Compile()).ToList();
+               });
 
             //Act
-            var actual = await fileServiceMock.Object.GetFilesByFolderId(1);
+            var actual = await _sut.GetFilesByFolderId(folderId);
 
             //Assert
             Assert.Equal(expected.Count, actual.Count);
@@ -179,27 +183,28 @@ namespace FileManagement.Test
         public async Task GetFileByIdAsync_ShouldReturnFile_WhenFileExists()
         {
             //Arrange
-            Mock<IFileService> fileServiceMock = new Mock<IFileService>();
-            File mockFile = new File { Id = 1, FileName = "test name 1", FileGuid = Guid.NewGuid().ToString(), Size = 500, UploadedAt = DateTime.Now, IsActive = true, FolderId = 1 };
-            fileServiceMock.Setup(x => x.GetFileByIdAsync(It.IsAny<int>())).ReturnsAsync(mockFile);
+            int id = 1;
+            var expected = mockFiles.Where(I => I.Id == id && I.IsActive == true).SingleOrDefault();
+            _fileRepoMock.Setup(x => x.GetByFilter(It.IsAny<Expression<Func<File, bool>>>())).ReturnsAsync((Expression<Func<File, bool>> exp) =>
+              {
+                  return mockFiles.Where(exp.Compile()).SingleOrDefault();
+              });
 
             //Act
-            var actual = await fileServiceMock.Object.GetFileByIdAsync(1);
+            var actual = await _sut.GetFileByIdAsync(id);
 
             //Assert
-            Assert.Equal(actual, mockFile);
-
+            Assert.NotNull(actual);
+            Assert.Equal(expected, actual);
         }
 
-        private static List<File> GenerateFakeFiles()
-        {
-            return new List<File>
+
+        private List<File> mockFiles = new List<File>
             {
                 new File{Id=1,FileName="test name 1",FileGuid = Guid.NewGuid().ToString(), Size = 500 , UploadedAt = DateTime.Now, IsActive =true,FolderId=1 },
-                new File{Id=2,FileName="test name 2",FileGuid = Guid.NewGuid().ToString(), Size = 600 , UploadedAt = DateTime.Now.AddSeconds(1), IsActive =true,FolderId=1 },
+                new File{Id=2,FileName="test name 2",FileGuid = Guid.NewGuid().ToString(), Size = 600 , UploadedAt = DateTime.Now.AddSeconds(1), IsActive =false,FolderId=1 },
                 new File{Id=3,FileName="test name 3",FileGuid = Guid.NewGuid().ToString(), Size = 700 , UploadedAt = DateTime.Now.AddSeconds(2), IsActive =true,FolderId=1 },
-                new File{Id=4,FileName="test name 4",FileGuid = Guid.NewGuid().ToString(), Size = 800 , UploadedAt = DateTime.Now.AddSeconds(3), IsActive =true,FolderId=1 },
+                new File{Id=4,FileName="test name 4",FileGuid = Guid.NewGuid().ToString(), Size = 800 , UploadedAt = DateTime.Now.AddSeconds(3), IsActive =true,FolderId=2 },
             };
-        }
     }
 }

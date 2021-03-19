@@ -6,6 +6,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
@@ -157,6 +158,7 @@ namespace FileManagement.Test
         [Fact]
         public async Task GetAllSubFoldersWithFolderId_ShouldReturnListOfFolders_WhenFolderExists()
         {
+            //Arrange
             List<Folder> mockData = new List<Folder>{
                 new Folder
                 {
@@ -174,7 +176,6 @@ namespace FileManagement.Test
                     }
                 }
             };
-            //Arrange
             _folderDalMock.Setup(x => x.GetAllSubFolders(It.IsAny<int>())).ReturnsAsync(mockData);
             var expected = mockData.Count;
             //Act
@@ -188,19 +189,19 @@ namespace FileManagement.Test
         public async Task GetFoldersByUserId_ShouldReturnListOfFolders_WhenUserExist()
         {
             //Arrange
-            Mock<IFolderService> folderServiceMock = new Mock<IFolderService>();
-            var expected = GetSampleFolder();
-            folderServiceMock.Setup(x => x.GetFoldersByUserId(It.IsAny<int>())).ReturnsAsync(expected);
-            _folderRepoMock.Setup(x => x.GetAllByFilter(I => I.AppUserId == It.IsAny<int>() && I.IsDeleted == false && I.ParentFolderId == null)).ReturnsAsync(expected);
+            var userId = 1;
+            var expected = testFolderList.Where(I => I.AppUserId == userId && I.IsDeleted == false && I.ParentFolderId == null).ToList();
+
+            _folderRepoMock.Setup(x => x.GetAllByFilter(It.IsAny<Expression<Func<Folder, bool>>>())).ReturnsAsync((Expression<Func<Folder, bool>> exp) =>
+               {
+                   return testFolderList.Where(exp.Compile()).ToList();
+               });
 
 
-            //Act
-            //throws exception for what ? 
-            //this returns null beacuse _sut and _sut don't accept this setup above
-            //how can i test this method ? 
-            var actual = await _sut.GetFoldersByUserId(1); /* _sut.GetFoldersByUserId(1)*/
+            //Actual
+            var actual = await _sut.GetFoldersByUserId(userId);
 
-            //Assert 
+            //Assert
             Assert.Equal(expected.Count, actual.Count);
 
             for (int i = 0; i < expected.Count; i++)
@@ -208,20 +209,25 @@ namespace FileManagement.Test
                 Assert.Equal(expected[i].FolderName, actual[i].FolderName);
                 Assert.Equal(expected[i].Size, actual[i].Size);
             }
+
         }
 
         [Fact]
         public async Task GetSubFoldersByFolderId_ShouldReturnListOfFolders_WhenFolderExists()
         {
             //Arrange
-            Mock<IFolderService> folderServiceMock = new Mock<IFolderService>();
-            var expected = GetSampleFolder();
-            folderServiceMock.Setup(x => x.GetSubFoldersByFolderId(It.IsAny<int>())).ReturnsAsync(expected);
+            var folderId = 2;
+            var expected = testFolderList.Where(I => I.ParentFolderId == folderId && I.IsDeleted == false).ToList();
+            _folderRepoMock.Setup(x => x.GetAllByFilter(It.IsAny<Expression<Func<Folder, bool>>>())).ReturnsAsync((Expression<Func<Folder, bool>> exp) =>
+            {
+                return testFolderList.Where(exp.Compile()).ToList();
+            });
 
             //Act
-            var actual = await folderServiceMock.Object.GetSubFoldersByFolderId(1);
+            var actual = await _sut.GetSubFoldersByFolderId(folderId);
 
-            //Assert
+
+            ////Assert
             Assert.Equal(expected.Count, actual.Count);
 
             for (int i = 0; i < expected.Count; i++)
@@ -234,74 +240,25 @@ namespace FileManagement.Test
         public async Task FindFolderById_ShouldReturnFolder_WhenFolderExists()
         {
             //Arrange
-            Mock<IFolderService> folderServiceMock = new Mock<IFolderService>();
-            Folder mockFolder = new Folder { Id = 1, FolderName = "test", CreatedAt = DateTime.Now, Size = 500, FileGuid = Guid.NewGuid(), AppUserId = 1, IsDeleted = false, ParentFolderId = null };
-            folderServiceMock.Setup(x => x.FindFolderById(It.IsAny<int>())).ReturnsAsync(mockFolder);
-            
+            var expected = testFolderList.Where(I => I.Id == 1 && I.IsDeleted == false).SingleOrDefault();
+            _folderRepoMock.Setup(x => x.GetByFilter(It.IsAny<Expression<Func<Folder, bool>>>())).ReturnsAsync((Expression<Func<Folder, bool>> exp) => 
+            {
+                return testFolderList.Where(exp.Compile()).SingleOrDefault();
+            });
             //Act
             var actual = await _sut.FindFolderById(1);
 
             //Assert
             Assert.NotNull(actual);
-            Assert.Equal(mockFolder, actual);
+            Assert.Equal(expected,actual);
         }
 
-        private List<Folder> GetSampleFolder()
-        {
-            List<Folder> output = new List<Folder>
+        private List<Folder> testFolderList= new List<Folder>
             {
-                new Folder
-                {
-                    Id=1,
-                    FolderName="test",
-                    CreatedAt=DateTime.Now,
-                    Size=500,
-                    FileGuid=Guid.NewGuid(),
-                    AppUserId=1,
-                    IsDeleted=false,
-                    ParentFolderId=null,
-                    InverseParentFolder= new List<Folder>
-                    {
-                        new Folder{Id=6,FolderName="InverseSub",AppUserId=1,FileGuid=Guid.NewGuid(),CreatedAt=DateTime.Now.AddMinutes(1),ParentFolderId=1,IsDeleted=false,Size=800}
-                    }
-                },
-                new Folder
-                {
-                    Id=2,
-                    FolderName="test2",
-                    CreatedAt=DateTime.Now.AddSeconds(1),
-                    Size=600,
-                    FileGuid=Guid.NewGuid(),
-                    AppUserId=1,
-                    IsDeleted=false,
-                    ParentFolderId=1
-                },
-                new Folder
-                {
-                    Id=3,
-                    FolderName="test3",
-                    CreatedAt=DateTime.Now.AddSeconds(2),
-                    Size=700,
-                    FileGuid=Guid.NewGuid(),
-                    AppUserId=1,
-                    IsDeleted=false,
-                    ParentFolderId=null
-                },
-                new Folder
-                {
-                    Id=4,
-                    FolderName="test4",
-                    CreatedAt=DateTime.Now,
-                    Size=800,
-                    FileGuid=Guid.NewGuid(),
-                    AppUserId=1,
-                    IsDeleted=false,
-                    ParentFolderId=null
-                },
+                new Folder() { Id=1,AppUserId=1, IsDeleted=false, ParentFolderId=null, FolderName = "a", Size = 1 },
+                new Folder() { Id=2, AppUserId=1, IsDeleted=true, ParentFolderId=null, FolderName = "b", Size = 2 },
+                new Folder() { Id=3, AppUserId=1, IsDeleted=false, ParentFolderId=2, FolderName = "c", Size = 3 },
+                new Folder() { Id=4, AppUserId=2, IsDeleted=false, ParentFolderId=null, FolderName = "a", Size = 4 },
             };
-
-            return output;
-        }
-
     }
 }
