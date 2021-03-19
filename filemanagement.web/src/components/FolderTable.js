@@ -5,18 +5,16 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { FolderContext, SORTFOLDERS } from "../context/FolderContext";
-import DeleteFolderModal from "./DeleteFolderModal";
-import EditFolderModal from "./EditFolderModal";
 import img from "../assets/foldericon.jpg";
 import fileimg from "../assets/fileicon.png";
 import { downloadfolder } from "../services/folderService";
 import { getsinglefile } from "../services/fileService";
 import { FileContext, SORTFILE } from "../context/FileContext";
-import EditFileModal from "./EditFileModal";
-import DeleteFileModal from "./DeleteFileModal";
 import PdfViewer from "./PdfViewer";
 import ImgViewer from "./ImgViewer";
 import VideoViewer from "./VideoViewer";
+import EditModal from "./EditModal";
+import DeleteModal from "./DeleteModal";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -55,7 +53,7 @@ const FolderTable = (props) => {
         break;
     }
     if (error !== "") {
-      toast.error("Folder couldn't downloaded. Error:" + error);
+      toast.error("The requested item couldn't downloaded. Error:" + error);
     } else {
       setIsDisabled(true);
       var data = new Blob([response.data], { type: response.data.type });
@@ -151,8 +149,12 @@ const FolderTable = (props) => {
                   {new Date(folder.createdAt).toLocaleTimeString("TR-tr")}
                 </Table.Cell>
                 <Table.Cell>
-                  <EditFolderModal id={folder.id} name={folder.folderName} />
-                  <DeleteFolderModal id={folder.id} />
+                  <EditModal
+                    id={folder.id}
+                    name={folder.folderName}
+                    type="folder"
+                  />
+                  <DeleteModal id={folder.id} type="folder" />
                   {folder.size === 0 ? null : isDisabled ? (
                     <Loader active inline />
                   ) : (
@@ -181,8 +183,12 @@ const FolderTable = (props) => {
                       {new Date(file.uploadedAt).toLocaleTimeString("TR-tr")}
                     </Table.Cell>
                     <Table.Cell>
-                      <EditFileModal id={file.id} name={file.fileName} />
-                      <DeleteFileModal id={file.id} />
+                      <EditModal
+                        id={file.id}
+                        type="file"
+                        name={file.fileName}
+                      />
+                      <DeleteModal id={file.id} type="file" />
                       {file.size === 0 ? null : (
                         <Icon
                           loading={isDisabled}

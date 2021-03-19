@@ -126,7 +126,7 @@ namespace FileManagement.API.Controllers
                 return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
-            file.FileName = dto.FileName;
+            file.FileName = dto.FileName +"."+ file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
             return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "File name edited successfully" });
         }

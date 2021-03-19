@@ -112,8 +112,6 @@ const FetchingData = (props) => {
           openFolder={(id, name) => {
             setFolderHandler(id, name);
           }}
-          data={folder.folders}
-          fileData={file.files}
         />
       )}
     </div>

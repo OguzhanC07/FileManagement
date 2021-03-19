@@ -64,7 +64,7 @@ namespace FileManagement.Test
             //Assert
             Assert.Null(file);
         }
-        
+
         [Fact]
         public async Task AddFolders_ShouldReturnNothing_WhenUserExist()
         {
@@ -185,18 +185,20 @@ namespace FileManagement.Test
 
 
         [Fact]
-        public async Task GetFoldersByAppUserId_ShouldReturnListOfFolders_WhenUserExist()
+        public async Task GetFoldersByUserId_ShouldReturnListOfFolders_WhenUserExist()
         {
             //Arrange
             Mock<IFolderService> folderServiceMock = new Mock<IFolderService>();
-            folderServiceMock.Setup(x => x.GetFoldersByUserId(It.IsAny<int>())).ReturnsAsync(GetSampleFolder);
             var expected = GetSampleFolder();
+            folderServiceMock.Setup(x => x.GetFoldersByUserId(It.IsAny<int>())).ReturnsAsync(expected);
+            _folderRepoMock.Setup(x => x.GetAllByFilter(I => I.AppUserId == It.IsAny<int>() && I.IsDeleted == false && I.ParentFolderId == null)).ReturnsAsync(expected);
+
 
             //Act
             //throws exception for what ? 
-            //this returns null beacuse _sut object dont accept constructor for IUserService
+            //this returns null beacuse _sut and _sut don't accept this setup above
             //how can i test this method ? 
-            var actual = await _sut.GetFoldersByUserId(1);  
+            var actual = await _sut.GetFoldersByUserId(1); /* _sut.GetFoldersByUserId(1)*/
 
             //Assert 
             Assert.Equal(expected.Count, actual.Count);
@@ -205,7 +207,43 @@ namespace FileManagement.Test
             {
                 Assert.Equal(expected[i].FolderName, actual[i].FolderName);
                 Assert.Equal(expected[i].Size, actual[i].Size);
-            } 
+            }
+        }
+
+        [Fact]
+        public async Task GetSubFoldersByFolderId_ShouldReturnListOfFolders_WhenFolderExists()
+        {
+            //Arrange
+            Mock<IFolderService> folderServiceMock = new Mock<IFolderService>();
+            var expected = GetSampleFolder();
+            folderServiceMock.Setup(x => x.GetSubFoldersByFolderId(It.IsAny<int>())).ReturnsAsync(expected);
+
+            //Act
+            var actual = await folderServiceMock.Object.GetSubFoldersByFolderId(1);
+
+            //Assert
+            Assert.Equal(expected.Count, actual.Count);
+
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.Equal(expected[i].FolderName, actual[i].FolderName);
+            }
+        }
+
+        [Fact]
+        public async Task FindFolderById_ShouldReturnFolder_WhenFolderExists()
+        {
+            //Arrange
+            Mock<IFolderService> folderServiceMock = new Mock<IFolderService>();
+            Folder mockFolder = new Folder { Id = 1, FolderName = "test", CreatedAt = DateTime.Now, Size = 500, FileGuid = Guid.NewGuid(), AppUserId = 1, IsDeleted = false, ParentFolderId = null };
+            folderServiceMock.Setup(x => x.FindFolderById(It.IsAny<int>())).ReturnsAsync(mockFolder);
+            
+            //Act
+            var actual = await _sut.FindFolderById(1);
+
+            //Assert
+            Assert.NotNull(actual);
+            Assert.Equal(mockFolder, actual);
         }
 
         private List<Folder> GetSampleFolder()

@@ -119,10 +119,10 @@ export const uploadfile = async (id, data) => {
       console.log(error.response);
     } else if (error.request) {
       console.log(error.response);
-      throw new Error("Bağlantı sorunu");
+      throw new Error("Connection problem");
     } else {
       console.log(error);
-      throw new Error("Bir şeyler ters gitti!");
+      throw new Error("Something went wrong.");
     }
   }
 };

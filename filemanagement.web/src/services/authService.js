@@ -11,11 +11,11 @@ export const signin = async (userName, password) => {
     return response.data;
   } catch (error) {
     if (error.response) {
-      throw new Error("Kullanıcı adı veya şifre yanlış");
+      throw new Error("Username or password is not valid.");
     } else if (error.request) {
-      throw new Error("Bağlantı sorunu");
+      throw new Error("Connection Problem");
     } else {
-      throw new Error("Bir şeyler ters gitti!");
+      throw new Error("Something went wrong");
     }
   }
 };
