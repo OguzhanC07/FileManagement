@@ -21,6 +21,7 @@ const Login = () => {
       setIsLoading(true);
       try {
         const response = await authService.signin(username, password);
+        setIsLoading(false);
 
         dispatch({
           type: SIGNIN,
@@ -31,7 +32,6 @@ const Login = () => {
             isAuth: true,
           },
         });
-        setIsLoading(false);
       } catch (error) {
         setError(error.message);
         setIsLoading(false);
@@ -54,6 +54,7 @@ const Login = () => {
                 fluid
                 label="Username"
                 placeholder="Username"
+                id="username"
                 type="text"
                 onChange={(e) => setUsername(e.target.value)}
               />
@@ -61,6 +62,7 @@ const Login = () => {
             <Form.Field>
               <Form.Input
                 fluid
+                id="password"
                 label="Password"
                 placeholder="Password"
                 type="password"
@@ -70,7 +72,9 @@ const Login = () => {
             <Button onClick={(e) => loginHandler(e)} primary>
               Login
             </Button>
-            <p style={{ textAlign: "center", color: "red" }}>{error}</p>
+            {error && (
+              <p style={{ textAlign: "center", color: "red" }}>{error}</p>
+            )}
           </Form>
         </Segment>
       </Grid.Column>

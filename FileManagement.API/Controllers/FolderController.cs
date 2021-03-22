@@ -134,7 +134,6 @@ namespace FileManagement.API.Controllers
             folder.FolderName = folderEditDto.FolderName.Trim();
             await _folderService.UpdateAsync(folder);
             return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "Folder name changed successfully" });
-
         }
 
         [HttpGet("[action]/{id}")]

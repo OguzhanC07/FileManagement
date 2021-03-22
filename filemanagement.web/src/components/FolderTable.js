@@ -170,7 +170,7 @@ const FolderTable = (props) => {
 
             {file.files.length > 0
               ? file.files.map((file) => (
-                  <Table.Row key={file.id}>
+                  <Table.Row className="file" key={file.id}>
                     <Table.Cell collapsing>
                       <Image src={fileimg} />
                       {file.fileName}

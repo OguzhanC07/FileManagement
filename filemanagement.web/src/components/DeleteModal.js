@@ -21,12 +21,12 @@ const DeleteModal = (props) => {
         try {
           setIsLoading(true);
           await deletefolder(props.id);
+          setIsLoading(false);
+          setOpen(false);
           dispatch({
             type: DELETEFOLDER,
             fid: props.id,
           });
-          setIsLoading(false);
-          setOpen(false);
         } catch (error) {
           setError(error.message);
           setIsLoading(false);
@@ -36,12 +36,12 @@ const DeleteModal = (props) => {
         try {
           setIsLoading(true);
           await deletefile(props.id);
+          setIsLoading(false);
+          setOpen(false);
           fileDispatch({
             type: DELETEFILE,
             fid: props.id,
           });
-          setIsLoading(false);
-          setOpen(false);
         } catch (error) {
           setError(error.message);
           setIsLoading(false);

@@ -25,13 +25,13 @@ const EditModal = (props) => {
           try {
             setIsLoading(true);
             response = await editfolder(props.id, name);
+            setIsLoading(false);
             if (response.status < 400) {
               dispatch({
                 type: EDITFOLDER,
                 fid: props.id,
                 name: name,
               });
-              setIsLoading(false);
               setOpen(false);
             } else {
               setError(response.data.message);

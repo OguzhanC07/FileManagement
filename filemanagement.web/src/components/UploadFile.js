@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useDropzone } from "react-dropzone";
-import { toast, ToastContainer } from "react-toastify";
 import { Modal, Button, Icon } from "semantic-ui-react";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -162,7 +161,6 @@ const UploadFile = (props) => {
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
         </div>
       </Modal>
-      <ToastContainer />
     </section>
   );
 };
