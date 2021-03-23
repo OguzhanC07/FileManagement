@@ -16,13 +16,13 @@ namespace FileManagement.SeleniumTest
         [SetUp]
         public async Task Setup()
         {
-            IFolderService folderService = new FolderService();
+            IFolderService folderService = new FolderService("test","1234");
             Driver = new ChromeDriver();
             Driver.Navigate().GoToUrl("http://localhost:3000/");
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered two column grid container']")));
             
-            if (!await folderService.AddAsync("test", "1234", "testfolder"))
+            if (!await folderService.AddAsync("testfolder"))
             {
                 Assert.Fail("Folder didn't added");
             }
@@ -131,10 +131,9 @@ namespace FileManagement.SeleniumTest
         public async Task CloseDriver()
         {
             var element = Driver.FindElement(By.XPath("//tbody//tr[1]"));
-
             var id = element.GetAttribute("id");
-            IFolderService folderService = new FolderService();
-            if (!await folderService.RemoveAsync("test", "1234", int.Parse(id)))
+            IFolderService folderService = new FolderService("test","1234");
+            if (!await folderService.RemoveAsync(int.Parse(id)))
             {
                 Assert.Fail("Folder didn't remove");
             }

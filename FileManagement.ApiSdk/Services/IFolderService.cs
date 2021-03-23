@@ -8,7 +8,7 @@ namespace FileManagement.ApiSdk.Services
 {
     public interface IFolderService
     {
-        Task<bool> RemoveAsync(string userName, string password, int id);
-        Task<bool> AddAsync(string userName, string password, string folderName);
+        Task<bool> RemoveAsync(int id);
+        Task<bool> AddAsync(string folderName);
     }
 }

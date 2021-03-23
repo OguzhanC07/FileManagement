@@ -22,10 +22,10 @@ namespace FileManagement.SeleniumTest
         public async Task Setup()
         {
             Driver = new ChromeDriver();
-            IFileService fileService = new FileService();
-            IFolderService folderService = new FolderService();
+            IFileService fileService = new FileService("test","1234");
+            IFolderService folderService = new FolderService("test", "1234");
 
-            if (!await folderService.AddAsync("test", "1234", "test"))
+            if (!await folderService.AddAsync("test"))
             {
                 Assert.Fail("Folder didn't added");
             }
@@ -63,7 +63,7 @@ namespace FileManagement.SeleniumTest
             string[] filePaths = { AppDomain.CurrentDomain.BaseDirectory.Split(new string[] { "\\bin" }, StringSplitOptions.None)[0], "Files", "dummy.pdf" };
             string path = Path.Combine(filePaths);
 
-            await fileService.UploadFile("test", "1234",int.Parse(id),path);
+            await fileService.UploadFile(int.Parse(id),path);
 
             var tableRow = Driver.FindElement(By.XPath("//table//tbody//tr[1]"));
             new Actions(Driver).DoubleClick(tableRow).Perform();
@@ -144,14 +144,13 @@ namespace FileManagement.SeleniumTest
 
         }
 
-
         [TearDown]
         public void CloseDriver()
         {
             var element = Driver.FindElement(By.XPath("//div[@class='ui breadcrumb']//div[@class='section']"));
             var id = element.GetAttribute("id");
-            IFolderService folderService = new FolderService();
-            folderService.RemoveAsync("test", "1234",int.Parse(id));
+            IFolderService folderService = new FolderService("test","1234");
+            folderService.RemoveAsync(int.Parse(id));
             Driver.Close();
         }
     }

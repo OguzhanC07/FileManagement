@@ -8,7 +8,7 @@ namespace FileManagement.ApiSdk.Services
 {
     public interface IFileService
     {
-        Task<bool> RemoveFile(string username, string password, int id);
-        Task<bool> UploadFile(string username, string password, int folderId, string filePath);
+        Task<bool> RemoveFile(int id);
+        Task<bool> UploadFile(int folderId, string filePath);
     }
 }

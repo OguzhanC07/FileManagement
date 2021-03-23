@@ -12,63 +12,54 @@ namespace FileManagement.ApiSdk.Services
 {
     public class FolderService : IFolderService
     {
-        public async Task<bool> RemoveAsync(string userName, string password, int id)
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(ApiConstants.ApiUrl);
+        private readonly HttpClient client = new HttpClient { BaseAddress = new Uri(ApiConstants.ApiUrl) };
 
-            var userData = new UserLogin { UserName = userName, Password = password };
+        public FolderService(string username, string password)
+        {
+
+            var userData = new UserLogin { UserName = username, Password = password };
 
             var loginJson = JsonConvert.SerializeObject(userData);
             StringContent loginContent = new StringContent(loginJson, Encoding.UTF8, "application/json");
 
-            var loginRes = await client.PostAsync("User", loginContent);
-
-            //LoginRoot loginToken = JsonConvert.DeserializeObject<LoginRoot>(await loginRes.Content.ReadAsStringAsync());
-            if (loginRes.IsSuccessStatusCode)
+            try
             {
-                var loginInfo = JsonConvert.DeserializeObject<GenericData<LoginData>>(await loginRes.Content.ReadAsStringAsync());
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginInfo.Data.Token);
-                var response = await client.DeleteAsync($"Folder/{id}");
-                if (response.IsSuccessStatusCode)
+                var loginRes = client.PostAsync("User", loginContent).Result;
+                if (loginRes.IsSuccessStatusCode)
                 {
-                    return true;
+                    var loginData = JsonConvert.DeserializeObject<GenericData<LoginData>>(loginRes.Content.ReadAsStringAsync().Result);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", loginData.Data.Token);
                 }
-                return false;
             }
-            return false;
-        }
+            catch (AggregateException)
+            {
+                Console.WriteLine("Internet is not working");
+            }
 
-        public async Task<bool> AddAsync(string userName, string password, string folderName)
+        }
+        public async Task<bool> RemoveAsync(int id)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(ApiConstants.ApiUrl);
-
-            var userData = new UserLogin { UserName = userName, Password = password };
-
-            var loginJson = JsonConvert.SerializeObject(userData);
-            StringContent loginContent = new StringContent(loginJson, Encoding.UTF8, "application/json");
-
-            var loginRes = await client.PostAsync("User", loginContent);
-
-            //LoginRoot loginToken = JsonConvert.DeserializeObject<LoginRoot>(await loginRes.Content.ReadAsStringAsync());
-            if (loginRes.IsSuccessStatusCode)
+            var response = await client.DeleteAsync($"Folder/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                var loginInfo = JsonConvert.DeserializeObject<GenericData<LoginData>>(await loginRes.Content.ReadAsStringAsync());
-                var jsonData = JsonConvert.SerializeObject(new { FolderName = folderName });
-                StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",loginInfo.Data.Token);
-                var response = await client.PostAsync("Folder", content);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    return true;
-                }
-                return false;
+                return true;
             }
             return false;
         }
 
-        
+        public async Task<bool> AddAsync(string folderName)
+        {
+            var jsonData = JsonConvert.SerializeObject(new { FolderName = folderName });
+            StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("Folder", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+        }
+
+
     }
 }
