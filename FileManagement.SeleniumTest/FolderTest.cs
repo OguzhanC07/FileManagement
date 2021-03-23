@@ -1,24 +1,32 @@
-﻿using NUnit.Framework;
+﻿using FileManagement.ApiSdk.Services;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FileManagement.SeleniumTest
 {
     public class FolderTest
     {
         private IWebDriver Driver;
-        
         [SetUp]
-        public void Setup()
+        public async Task Setup()
         {
+            IFolderService folderService = new FolderService();
             Driver = new ChromeDriver();
             Driver.Navigate().GoToUrl("http://localhost:3000/");
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered two column grid container']")));
+            
+            if (!await folderService.AddAsync("test", "1234", "testfolder"))
+            {
+                Assert.Fail("Folder didn't added");
+            }
+
 
             Driver.FindElement(By.Id("username")).SendKeys("test");
             Driver.FindElement(By.Id("password")).SendKeys("1234");
@@ -34,7 +42,7 @@ namespace FileManagement.SeleniumTest
             }
         }
 
-        [Test, Order(1)]
+        [Test]
         public void AddNewFolder()
         {
             Driver.FindElement(By.XPath("//div//button[@class='ui primary button']")).Click();
@@ -56,7 +64,7 @@ namespace FileManagement.SeleniumTest
             }
         }
 
-        [Test, Order(2)]
+        [Test]
         public void EditFolderName()
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
@@ -89,8 +97,7 @@ namespace FileManagement.SeleniumTest
             }
         }
 
-        [Test, Order(3)]
-        //Ordering tests are not true. Every test should work independently
+        [Test]
         public void DeleteFolder()
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
@@ -121,8 +128,16 @@ namespace FileManagement.SeleniumTest
         }
 
         [TearDown]
-        public void CloseDriver()
+        public async Task CloseDriver()
         {
+            var element = Driver.FindElement(By.XPath("//tbody//tr[1]"));
+
+            var id = element.GetAttribute("id");
+            IFolderService folderService = new FolderService();
+            if (!await folderService.RemoveAsync("test", "1234", int.Parse(id)))
+            {
+                Assert.Fail("Folder didn't remove");
+            }
             Driver.Close();
         }
     }

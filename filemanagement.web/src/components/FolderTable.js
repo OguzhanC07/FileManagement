@@ -132,6 +132,7 @@ const FolderTable = (props) => {
             {folder.folders.map((folder) => (
               <Table.Row
                 key={folder.id}
+                id={folder.id.toString()}
                 onDoubleClick={() => {
                   props.openFolder(folder.id, folder.folderName);
                 }}
@@ -170,7 +171,7 @@ const FolderTable = (props) => {
 
             {file.files.length > 0
               ? file.files.map((file) => (
-                  <Table.Row className="file" key={file.id}>
+                  <Table.Row className="file" id={file.id} key={file.id}>
                     <Table.Cell collapsing>
                       <Image src={fileimg} />
                       {file.fileName}

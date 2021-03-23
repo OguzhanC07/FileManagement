@@ -1,11 +1,16 @@
-﻿using NUnit.Framework;
+﻿using FileManagement.ApiSdk.Services;
+using Microsoft.AspNetCore.Http;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace FileManagement.SeleniumTest
 {
@@ -14,9 +19,17 @@ namespace FileManagement.SeleniumTest
         private IWebDriver Driver;
 
         [SetUp]
-        public void Setup()
+        public async Task Setup()
         {
             Driver = new ChromeDriver();
+            IFileService fileService = new FileService();
+            IFolderService folderService = new FolderService();
+
+            if (!await folderService.AddAsync("test", "1234", "test"))
+            {
+                Assert.Fail("Folder didn't added");
+            }
+
             Driver.Navigate().GoToUrl("http://localhost:3000/");
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered two column grid container']")));
@@ -43,17 +56,28 @@ namespace FileManagement.SeleniumTest
                 Assert.Fail("Folder list are not loaded");
             }
 
+            var element = Driver.FindElement(By.XPath("//tbody//tr[1]"));
+
+            var id = element.GetAttribute("id");
+
+            string[] filePaths = { AppDomain.CurrentDomain.BaseDirectory.Split(new string[] { "\\bin" }, StringSplitOptions.None)[0], "Files", "dummy.pdf" };
+            string path = Path.Combine(filePaths);
+
+            await fileService.UploadFile("test", "1234",int.Parse(id),path);
+
             var tableRow = Driver.FindElement(By.XPath("//table//tbody//tr[1]"));
             new Actions(Driver).DoubleClick(tableRow).Perform();
             wait.Until(e => e.FindElement(By.XPath("//div[@tabindex='0']")));
         }
 
-        [Test, Order(1)]
+        [Test]
         public void UploadFile()
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-            //Find a way for upload files with a good file path
-            Driver.FindElement(By.XPath("//input[@type='file']")).SendKeys(@"C:\Users\lenovoE50\Desktop\selenium\NUnitSelenium\TestFiles\dummy.pdf");
+
+            string[] filePaths = { AppDomain.CurrentDomain.BaseDirectory.Split(new string[] { "\\bin" }, StringSplitOptions.None)[0], "Files", "dummy.pdf" };
+            string exampleFile = Path.Combine(filePaths);
+            Driver.FindElement(By.XPath("//input[@type='file']")).SendKeys(exampleFile);
             Driver.FindElement(By.XPath("//button[@class='ui green inverted button']")).Click();
 
             try
@@ -70,7 +94,7 @@ namespace FileManagement.SeleniumTest
             }
         }
 
-        [Test, Order(2)]
+        [Test]
         public void EditFile()
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
@@ -96,7 +120,7 @@ namespace FileManagement.SeleniumTest
 
         }
 
-        [Test, Order(3)]
+        [Test]
         public void DeleteFile()
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
@@ -124,6 +148,10 @@ namespace FileManagement.SeleniumTest
         [TearDown]
         public void CloseDriver()
         {
+            var element = Driver.FindElement(By.XPath("//div[@class='ui breadcrumb']//div[@class='section']"));
+            var id = element.GetAttribute("id");
+            IFolderService folderService = new FolderService();
+            folderService.RemoveAsync("test", "1234",int.Parse(id));
             Driver.Close();
         }
     }

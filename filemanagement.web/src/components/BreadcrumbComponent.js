@@ -14,7 +14,7 @@ const BreadcrumbComponent = (props) => {
         </Breadcrumb.Section>
         {props.folderStack.map((folder, i, { length }) =>
           length - 1 === i ? (
-            <Breadcrumb.Section key={folder.id}>
+            <Breadcrumb.Section id={folder.id} key={folder.id}>
               {folder.folderName}
             </Breadcrumb.Section>
           ) : (

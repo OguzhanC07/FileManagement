@@ -75,7 +75,6 @@ namespace FileManagement.API.Controllers
         //action id is folderId.
         public async Task<IActionResult> UploadFile(int id, [FromForm] List<IFormFile> formFiles)
         {
-
             var folder = await _folderService.FindFolderById(id);
             var user = await _userService.GetById(folder.AppUserId);
             int folderSize = 0;

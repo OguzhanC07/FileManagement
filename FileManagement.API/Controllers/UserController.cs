@@ -40,9 +40,6 @@ namespace FileManagement.API.Controllers
                     Directory.CreateDirectory(userDirectory);
                 }
 
-
-
-
                 return Created("", new SingleResponseMessageModel<object>
                 {
                     Result = true,
