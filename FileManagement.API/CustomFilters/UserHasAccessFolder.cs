@@ -4,6 +4,7 @@ using FileManagement.Business.Interfaces;
 using FileManagement.DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +21,7 @@ namespace FileManagement.API.CustomFilters
             var thisController = ((FolderController)context.Controller);
 
             IFolderService sr = thisController._folderService;
+            IStringLocalizer<FolderController> localizer = thisController._localizer;
 
             int userId = Convert.ToInt32(context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
@@ -31,7 +33,7 @@ namespace FileManagement.API.CustomFilters
                 {
                     if (Convert.ToInt32(dictionary) != userId)
                     {
-                        context.Result = new UnauthorizedObjectResult(new SingleResponseMessageModel<string> { Result = false, Message = "You don't have access for this folders" });
+                        context.Result = new UnauthorizedObjectResult(new SingleResponseMessageModel<string> { Result = false, Message = localizer["DontHaveAccessFolder"] });
                     }
                 }
             }
@@ -43,7 +45,7 @@ namespace FileManagement.API.CustomFilters
                     context.Result = new UnauthorizedObjectResult(new SingleResponseMessageModel<string>
                     {
                         Result = false,
-                        Message = "You don't have access for this folder"
+                        Message = localizer["DontHaveAccessFolder"]
                     });
                 }
             }

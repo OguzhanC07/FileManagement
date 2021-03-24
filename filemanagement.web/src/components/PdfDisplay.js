@@ -33,7 +33,7 @@ const PdfDisplay = (props) => {
           Go Back
         </Button>
         <p>
-          Page {pageNumber} of {numPages}
+          {pageNumber} / {numPages}
         </p>
         <Button
           className="inner"

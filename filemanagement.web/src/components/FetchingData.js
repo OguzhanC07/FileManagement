@@ -36,7 +36,7 @@ const FetchingData = (props) => {
             if (res.status < 400) {
               fileDispatch({
                 type: SETFILES,
-                files: res.data,
+                files: res.data.data,
               });
             }
             setIsLoading(false);

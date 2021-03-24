@@ -1,0 +1,59 @@
+{
+  "loginScreen": {
+    "username": "Kullanıcı adı",
+    "password": "Şifre",
+    "login": "Giriş Yap",
+    "loginError": "Kullanıcı adı ve şifre boş bırakılamaz"
+  },
+  "topMenu": {
+    "logOut": "Çıkış Yap"
+  },
+  "sideMenu": {
+    "home": "Ana Sayfa"
+  },
+  "addfolderModal": {
+    "addValidation": "Klasör adı boş bırakılamaz",
+    "addFolder": "Klasör Ekle",
+    "folderName": "Klasör Adı",
+    "submit": "Ekle"
+  },
+  "fetchingData": {
+    "fetchDataError": "Verileri çekerken bir hata oluştu",
+    "emptyFolderMessage": "Bu klasör boş. Yeni bir klasör oluşturmak veya dosya yüklemek ister misin ?"
+  },
+  "uploadFile": {
+    "dragnDropText": "Dosyaları sürükleyip bu alana bırakabilirsin. Aynı zamanda tıklayıp da dosya seçebilirsin",
+    "fileUploadText": "Dosya Yüke",
+    "removeInfo": "İstemediğin dosyaları kaldırabilirsin",
+    "removeAllBtn": "Tümünü Kaldır",
+    "cancelBtn": "İptal",
+    "uploadFileBtn": "Dosyaları Yükle"
+  },
+  "folderTable": {
+    "downloadError": "İstenilen dosya/klasör indirilemedi. Lütfen tekrar deneyiniz. Hata:",
+    "tableHeaderName": "Ad",
+    "tableHeaderSize": "Boyut",
+    "tableHeaderCreatedAt": "Oluşturulma Tarihi",
+    "tableHeaderOperations": "İşlemler"
+  },
+  "editModal": {
+    "editModalValidaton": "Ad boş olamaz",
+    "file": "Dosya",
+    "folder": "Klasör",
+    "edit": "Düzenle",
+    "name": "Ad",
+    "submit": "Gönder"
+  },
+  "deleteModal": {
+    "file": "Dosya",
+    "folder": "Klasör",
+    "delete": "Sil",
+    "deleteValidation": "Silmek istediğine emin misin?",
+    "noBtn": "Hayır",
+    "yesBtn": "Evet"
+  },
+  "pdfDisplay": {
+    "goBack": "Geri Git",
+    "goForward": "İleri Git"
+  }
+}

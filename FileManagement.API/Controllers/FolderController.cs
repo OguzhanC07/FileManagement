@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,9 +30,11 @@ namespace FileManagement.API.Controllers
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
         private readonly IWebHostEnvironment _webHostEnviroment;
+        public readonly IStringLocalizer<FolderController> _localizer;
 
-        public FolderController(IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment) : base(fileService,webHostEnvironment)
+        public FolderController(IStringLocalizer<FolderController> localizer, IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment) : base(fileService,webHostEnvironment)
         {
+            _localizer = localizer;
             _folderService = folderService;
             _userService = userService;
             _fileService = fileService;
@@ -47,7 +50,7 @@ namespace FileManagement.API.Controllers
             return Ok(new MultipleDataResponseMessageModel<FolderListDto>
             {
                 Result = true,
-                Message = "Successfully sended.",
+                Message = _localizer["FolderSendSuccess"],
                 Data = _mapper.Map<List<FolderListDto>>(await _folderService.GetFoldersByUserId(id))
             });
         }
@@ -60,7 +63,7 @@ namespace FileManagement.API.Controllers
             return Ok(new MultipleDataResponseMessageModel<FolderListDto>
             {
                 Result = true,
-                Message = "Successfully sended.",
+                Message = _localizer["FolderSendSuccess"],
                 Data = _mapper.Map<List<FolderListDto>>(await _folderService.GetSubFoldersByFolderId(id))
             });
         }
@@ -76,7 +79,7 @@ namespace FileManagement.API.Controllers
                     return BadRequest(new SingleResponseMessageModel<int>
                     {
                         Result = false,
-                        Message = "You can't create folder if main folder does not exist.",
+                        Message = _localizer["AddSubFolderToDoesNotExistFolder"],
                     });
                 }
                 else
@@ -97,7 +100,7 @@ namespace FileManagement.API.Controllers
             return Created("", new SingleResponseMessageModel<AddFolderDto>
             {
                 Result = true,
-                Message = "Folder created succesfully",
+                Message = _localizer["FolderCreateSuccess"],
                 Data = dto
             });
         }
@@ -114,7 +117,7 @@ namespace FileManagement.API.Controllers
             return Ok(new SingleResponseMessageModel<string>
             {
                 Result = true,
-                Message = "Deleted successfully"
+                Message = _localizer["FolderDeleteSuccess"]
             });
         }
 
@@ -126,14 +129,14 @@ namespace FileManagement.API.Controllers
         {
             if (id != folderEditDto.Id)
             {
-                return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id'ler uyuşmuyor" });
+                return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = _localizer["IdsAreNotMatch"] });
             }
 
             var folder = await _folderService.GetById(id);
 
             folder.FolderName = folderEditDto.FolderName.Trim();
             await _folderService.UpdateAsync(folder);
-            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "Folder name changed successfully" });
+            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FolderEditSuccess"] });
         }
 
         [HttpGet("[action]/{id}")]

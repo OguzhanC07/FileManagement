@@ -1,0 +1,59 @@
+{
+  "loginScreen": {
+    "username": "Username",
+    "password": "Password",
+    "login": "Login",
+    "loginError": "Username or password required"
+  },
+  "topMenu": {
+    "logOut": "Log Out"
+  },
+  "sideMenu": {
+    "home": "Home"
+  },
+  "addfolderModal": {
+    "addValidation": "Folder name can't be empty",
+    "addFolder": "Add Folder",
+    "folderName": "Folder Name",
+    "submit": "Submit"
+  },
+  "fetchingData": {
+    "fetchDataError": "There's a problem when a fetching datas.",
+    "emptyFolderMessage": "This folder is empty. Do you want to add new folder or upload files ?"
+  },
+  "uploadFile": {
+    "dragnDropText": "Drag 'n' drop some files here, or click to select files",
+    "fileUploadText": "File Upload",
+    "removeInfo": "You can remove unwanted files",
+    "removeAllBtn": "Remove All",
+    "cancelBtn": "Cancel",
+    "uploadFileBtn": "Upload Files"
+  },
+  "folderTable": {
+    "downloadError": "The requested item couldn't downloaded. Error:",
+    "tableHeaderName": "Name",
+    "tableHeaderSize": "Size",
+    "tableHeaderCreatedAt": "Created At",
+    "tableHeaderOperations": "Operations"
+  },
+  "editModal": {
+    "editModalValidaton": "Name cannot be empty",
+    "file": "File",
+    "folder": "Folder",
+    "edit": "Edit",
+    "name": "Name",
+    "submit": "Submit"
+  },
+  "deleteModal": {
+    "file": "File",
+    "folder": "Folder",
+    "delete": "Delete",
+    "deleteValidation": " Do you really want to delete ?",
+    "noBtn": "No",
+    "yesBtn": "Yes"
+  },
+  "pdfDisplay": {
+    "goBack": "Go Back",
+    "goForward": "Go Forward"
+  }
+}

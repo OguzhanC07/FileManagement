@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,9 +31,11 @@ namespace FileManagement.API.Controllers
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnviroment;
         private readonly IMapper _mapper;
+        public readonly IStringLocalizer<FileController> _localizer;
 
-        public FileController(IMapper mapper, IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService, webHostEnvironment)
+        public FileController(IStringLocalizer<FileController> localizer, IMapper mapper, IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService, webHostEnvironment)
         {
+            _localizer = localizer;
             _folderService = folderService;
             _fileService = fileService;
             _userService = userService;
@@ -45,7 +48,12 @@ namespace FileManagement.API.Controllers
         [UserHasAccessFile(HaveFolderId = true)]
         public async Task<IActionResult> GetFiles(int id)
         {
-            return Ok(_mapper.Map<List<FileListDto>>(await _fileService.GetFilesByFolderId(id)));
+            return Ok(new MultipleDataResponseMessageModel<FileListDto>
+            {
+                Result = true,
+                Message = _localizer["FileSendSuccess"],
+                Data = _mapper.Map<List<FileListDto>>(await _fileService.GetFilesByFolderId(id))
+            });
         }
 
 
@@ -59,7 +67,7 @@ namespace FileManagement.API.Controllers
             
             if (folder == null)
             {
-                return NotFound(new SingleResponseMessageModel<string> { Result = false, Message = "File not found." });
+                return NotFound(new SingleResponseMessageModel<string> { Result = false, Message = _localizer["FolderNotFound"] });
             }
 
             var user = await _userService.GetById(folder.AppUserId);
@@ -100,7 +108,7 @@ namespace FileManagement.API.Controllers
                 }
                 else
                 {
-                    return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "File(s) not uploaded" });
+                    return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = _localizer["FileUploadError"] });
                 }
             }
 
@@ -112,7 +120,7 @@ namespace FileManagement.API.Controllers
                 await _folderService.UpdateAsync(mainfolder);
             }
             await _folderService.UpdateAsync(folder);
-            return Created("", new SingleResponseMessageModel<string> { Result = true, Message = "File(s) uploaded successfully" });
+            return Created("", new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FileUploadSuccess"] });
         }
 
         [HttpPut("{id}")]
@@ -128,7 +136,7 @@ namespace FileManagement.API.Controllers
             var file = await _fileService.GetFileByIdAsync(id);
             file.FileName = dto.FileName + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
-            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "File name edited successfully" });
+            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
         }
 
         [HttpDelete("{id}")]
@@ -141,7 +149,7 @@ namespace FileManagement.API.Controllers
             file.IsActive = false;
             await _fileService.UpdateAsync(file);
 
-            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "File deleted successfully." });
+            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FileDelete"] });
         }
     }
 }

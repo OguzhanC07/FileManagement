@@ -94,7 +94,7 @@ const UploadFile = (props) => {
         getfiles(folder.folderId).then((res) => {
           dispatch({
             type: SETFILES,
-            files: res.data,
+            files: res.data.data,
           });
         });
         setIsLoading(false);

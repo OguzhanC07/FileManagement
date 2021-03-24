@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,11 +21,13 @@ namespace FileManagement.API.Controllers
     {
         private readonly IJwtService _jwtService;
         private readonly IUserService _userService;
+        private readonly IStringLocalizer<UserController> _localizer;
 
-        public UserController(IJwtService jwtService, IUserService userService)
+        public UserController(IJwtService jwtService, IUserService userService, IStringLocalizer<UserController> localizer)
         {
             _jwtService = jwtService;
             _userService = userService;
+            _localizer = localizer;
         }
 
         [HttpPost]
@@ -43,7 +46,7 @@ namespace FileManagement.API.Controllers
                 return Created("", new SingleResponseMessageModel<object>
                 {
                     Result = true,
-                    Message = "Giriş Başarılı",
+                    Message = _localizer["UserLoginSuccess"],
                     Data = new
                     {
                         token.Token,
@@ -57,18 +60,8 @@ namespace FileManagement.API.Controllers
             return NotFound(new SingleResponseMessageModel<JwtToken>
             {
                 Result = false,
-                Message = "Kullanıcı adı veya şifre yanlış."
+                Message = _localizer["UserLoginFailed"]
             });
         }
-
-        //[HttpGet]
-        //[Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
-        //public async Task<IActionResult> GetActiveUser()
-        //{
-        //    var user = await _userService.CheckEmailorUsernameAsync(User.Identity.Name);
-
-        //    return Ok(new SingleResponseMessageModel<object> { Result = true, Message = "Başarılı", Data = new { user.Username, user.Id, user.Email } });
-        //}
-
     }
 }
