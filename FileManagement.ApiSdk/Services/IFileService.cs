@@ -1,7 +1,5 @@
-﻿using System;
+﻿using FileManagement.ApiSdk.RequestClasses;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FileManagement.ApiSdk.Services
@@ -9,6 +7,9 @@ namespace FileManagement.ApiSdk.Services
     public interface IFileService
     {
         Task<bool> RemoveFile(int id);
-        Task<bool> UploadFile(int folderId, string filePath);
+        Task<string> UploadFile(int folderId, string filePath);
+        Task<string> EditFile(string name, int id);
+        Task<byte[]> GetSingleFile(int id);
+        Task<List<FileList>> GetFiles(int folderId);
     }
 }

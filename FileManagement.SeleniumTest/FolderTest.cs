@@ -22,7 +22,7 @@ namespace FileManagement.SeleniumTest
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered two column grid container']")));
             
-            if (!await folderService.AddAsync("testfolder"))
+            if (!string.IsNullOrEmpty(await folderService.AddAsync(null, "testfolder")))
             {
                 Assert.Fail("Folder didn't added");
             }

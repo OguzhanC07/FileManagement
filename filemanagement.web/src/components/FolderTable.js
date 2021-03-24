@@ -17,13 +17,12 @@ import Viewer from "./Viewer";
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [sortType, setSortType] = useState("asc");
-  const [error, setError] = useState("");
   const { folder, dispatch } = useContext(FolderContext);
   const { file, dispatch: fileDispatch } = useContext(FileContext);
 
   const downloadHandler = async (id, type) => {
     let response = "";
-    setError("");
+    let problem = "";
     switch (type) {
       case "file":
         try {
@@ -31,8 +30,7 @@ const FolderTable = (props) => {
           response = await getsinglefile(id);
           setIsDisabled(false);
         } catch (responseError) {
-          console.log(responseError);
-          setError(responseError.message);
+          problem = responseError.message;
           setIsDisabled(false);
         }
         break;
@@ -42,16 +40,15 @@ const FolderTable = (props) => {
           response = await downloadfolder(id);
           setIsDisabled(false);
         } catch (responseError) {
-          setError(responseError.message);
+          problem = responseError.message;
           setIsDisabled(false);
         }
         break;
-
       default:
         break;
     }
-    if (error !== "") {
-      toast.error("The requested item couldn't downloaded. Error:" + error);
+    if (problem !== "") {
+      toast.error("The requested item couldn't downloaded. Error:" + problem);
     } else {
       setIsDisabled(true);
       var data = new Blob([response.data], { type: response.data.type });
@@ -188,9 +185,10 @@ const FolderTable = (props) => {
                         name={file.fileName}
                       />
                       <DeleteModal id={file.id} type="file" />
-                      {file.size === 0 ? null : (
+                      {file.size === 0 ? null : isDisabled ? (
+                        <Loader active inline />
+                      ) : (
                         <Icon
-                          loading={isDisabled}
                           name="download"
                           onClick={(e) => {
                             downloadHandler(file.id, "file");

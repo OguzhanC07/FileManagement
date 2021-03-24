@@ -31,7 +31,7 @@ namespace FileManagement.API.Controllers
         private readonly IWebHostEnvironment _webHostEnviroment;
         private readonly IMapper _mapper;
 
-        public FileController(IMapper mapper, IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService,webHostEnvironment)
+        public FileController(IMapper mapper, IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService, webHostEnvironment)
         {
             _folderService = folderService;
             _fileService = fileService;
@@ -56,12 +56,13 @@ namespace FileManagement.API.Controllers
         {
             var file = await _fileService.GetFileByIdAsync(id);
             var folder = await _folderService.FindFolderById(file.FolderId);
-            var user = await _userService.GetById(folder.AppUserId);
-            if (string.IsNullOrEmpty(file.FileName))
+            
+            if (folder == null)
             {
                 return NotFound(new SingleResponseMessageModel<string> { Result = false, Message = "File not found." });
             }
 
+            var user = await _userService.GetById(folder.AppUserId);
 
             string[] paths = { _webHostEnviroment.WebRootPath, @"users/", user.Username, folder.FileGuid.ToString(), file.FileGuid };
             var path = Path.Combine(paths);
@@ -104,7 +105,7 @@ namespace FileManagement.API.Controllers
             }
 
             folder.Size += folderSize;
-            if (folder.ParentFolderId!=null)
+            if (folder.ParentFolderId != null)
             {
                 var mainfolder = await _folderService.FindFolderById(Convert.ToInt32(folder.ParentFolderId));
                 mainfolder.Size += folderSize;
@@ -125,7 +126,7 @@ namespace FileManagement.API.Controllers
                 return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
-            file.FileName = dto.FileName +"."+ file.FileGuid.Split(".").Last();
+            file.FileName = dto.FileName + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
             return Ok(new SingleResponseMessageModel<string> { Result = true, Message = "File name edited successfully" });
         }

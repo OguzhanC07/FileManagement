@@ -1,15 +1,11 @@
 ﻿using FileManagement.ApiSdk.Services;
-using Microsoft.AspNetCore.Http;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FileManagement.SeleniumTest
@@ -25,7 +21,7 @@ namespace FileManagement.SeleniumTest
             IFileService fileService = new FileService("test","1234");
             IFolderService folderService = new FolderService("test", "1234");
 
-            if (!await folderService.AddAsync("test"))
+            if (!string.IsNullOrEmpty(await folderService.AddAsync(null, "test")))
             {
                 Assert.Fail("Folder didn't added");
             }
@@ -63,7 +59,10 @@ namespace FileManagement.SeleniumTest
             string[] filePaths = { AppDomain.CurrentDomain.BaseDirectory.Split(new string[] { "\\bin" }, StringSplitOptions.None)[0], "Files", "dummy.pdf" };
             string path = Path.Combine(filePaths);
 
-            await fileService.UploadFile(int.Parse(id),path);
+            if (!string.IsNullOrEmpty(await fileService.UploadFile(int.Parse(id), path)))
+            {
+                Assert.Fail("File didn't upload");
+            }
 
             var tableRow = Driver.FindElement(By.XPath("//table//tbody//tr[1]"));
             new Actions(Driver).DoubleClick(tableRow).Perform();
@@ -104,7 +103,6 @@ namespace FileManagement.SeleniumTest
             nameInput.Clear();
             nameInput.SendKeys("editedFileName");
             Driver.FindElement(By.XPath("//form//button")).Click();
-
             try
             {
                 IWebElement passResult = wait.Until(e => e.FindElement(By.XPath("//body[@class='']")));
@@ -118,6 +116,46 @@ namespace FileManagement.SeleniumTest
                 Assert.Fail("File uploading process failed\n", exc.Message);
             }
 
+        }
+
+        [Test]
+        public void PreviewFile()
+        {
+            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+            wait.Until(e => e.FindElement(By.XPath("//table")));
+            Driver.FindElement(By.XPath("//tr[@class='file'][1]//i[@class='external square alternate icon']")).Click();
+            try
+            {
+                wait.Until(e => e.FindElement(By.XPath("//div[contains(@style,'display: flex !important')]")));
+                Driver.FindElement(By.XPath("//i[@class='close icon']")).Click();
+                Assert.Pass("File preview successfully");
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Assert.Fail("File preview process failed");
+            }
+
+        }
+
+        [Test]
+        public void DownloadFile()
+        {
+            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+            wait.Until(e => e.FindElement(By.XPath("//table")));
+            Driver.FindElement(By.XPath("//tr[@class='file'][1]//i[@class='download icon']")).Click();
+
+            try
+            {
+                var error = wait.Until(e => e.FindElement(By.XPath("//div[@class='Toastify']//div")));
+                if (error!=null)
+                {
+                    Assert.Fail("File download process failed");
+                }
+            }
+            catch (WebDriverTimeoutException)
+            {
+                Assert.Pass("File downloaded successfuly");
+            }
         }
 
         [Test]

@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace FileManagement.ApiSdk.RequestClasses
 {
-    public class GenericData<T> where T : new()
+    public class ErrorResponse
     {
         public bool Result { get; set; }
-        public string Message { get; set; }
-        public T Data { get; set; }
+        public List<string> Message { get; set; }
     }
 }

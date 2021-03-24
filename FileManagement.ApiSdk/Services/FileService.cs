@@ -1,5 +1,4 @@
 ﻿using FileManagement.ApiSdk.RequestClasses;
-using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -45,7 +44,47 @@ namespace FileManagement.ApiSdk.Services
             return false;
         }
 
-        public async Task<bool> UploadFile(int folderId, string filePath)
+        public async Task<List<FileList>> GetFiles(int folderId)
+        {
+            var response = await client.GetAsync($"File/GetFiles/{folderId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return JsonConvert.DeserializeObject<List<FileList>>(await response.Content.ReadAsStringAsync());
+            }
+            else
+                return null;
+        }
+
+        public async Task<byte[]> GetSingleFile(int id)
+        {
+            var response = await client.GetAsync($"/File/{id}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsByteArrayAsync();
+            }
+            else
+                return null;
+        }
+
+        public async Task<string> EditFile(string name,int id)
+        {
+            var jsonData = JsonConvert.SerializeObject(new { Id = id, FileName = name });
+            StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+
+            var editRes = await client.PostAsync($"File/{id}",content);
+            if (editRes.IsSuccessStatusCode)
+            {
+                return "";
+            }
+            else
+            {
+                var errorRes = JsonConvert.DeserializeObject<ErrorResponse>(await editRes.Content.ReadAsStringAsync());
+                return errorRes.Message.First();
+            }
+        }
+
+        public async Task<string> UploadFile(int folderId, string filePath)
         {
             MultipartFormDataContent content = new MultipartFormDataContent();
             byte[] buffer;
@@ -72,9 +111,13 @@ namespace FileManagement.ApiSdk.Services
             var uploadRes = await client.PostAsync($"File/UploadFile/{folderId}", content);
             if (uploadRes.IsSuccessStatusCode)
             {
-                return true;
+                return "";
             }
-            return false;
+            else
+            {
+                var errorRes = JsonConvert.DeserializeObject<ErrorResponse>(await uploadRes.Content.ReadAsStringAsync());
+                return errorRes.Message.First();
+            }
         }
     }
 }

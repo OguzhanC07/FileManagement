@@ -21,7 +21,7 @@ namespace FileManagement.API.CustomFilters
                 context.Result = new BadRequestObjectResult(new
                 {
                     Result = false,
-                    Message= errors                
+                    Message= errors.First()                
                 });
 
             }
