@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import Loader from "react-loader-spinner";
+import { useTranslation } from "react-i18next";
 
 import { getfolders } from "../services/folderService";
 import FolderTable from "./FolderTable";
@@ -15,11 +16,12 @@ import { FileContext, REMOVEFILES, SETFILES } from "../context/FileContext";
 import { getfiles } from "../services/fileService";
 import UploadFile from "./UploadFile";
 
-const FetchingData = (props) => {
+const FetchingData = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { folder, dispatch } = useContext(FolderContext);
   const { file, dispatch: fileDispatch } = useContext(FileContext);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setIsLoading(true);
@@ -51,7 +53,11 @@ const FetchingData = (props) => {
   }, [dispatch, fileDispatch, folder.folderId]);
 
   if (error) {
-    return <p>There's a problem when a fetching datas. {error}</p>;
+    return (
+      <p>
+        {t("fetchingData.fetchDataError")} {error}
+      </p>
+    );
   }
 
   const setFolderHandler = (id, name) => {
@@ -104,9 +110,7 @@ const FetchingData = (props) => {
       file.files.length === 0 &&
       !isLoading &&
       !error ? (
-        <p>
-          This folder is empty. Do you want to add new folder or upload files ?
-        </p>
+        <p>{t("fetchingData.emptyFolderMessage")}</p>
       ) : (
         <FolderTable
           openFolder={(id, name) => {

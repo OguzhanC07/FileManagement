@@ -3,52 +3,56 @@ import apiUrl from "../constants/apiUrl";
 
 export const getfiles = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   try {
     const response = await axios.get(apiUrl.baseUrl + `/File/GetFiles/${id}`, {
       headers: {
         Authorization: "Bearer " + userInfo.token,
+        "Accept-Language": language,
       },
     });
     return response;
   } catch (error) {
     if (error.response) {
-      return error.response;
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong");
+      throw new Error("wentWrong");
     }
   }
 };
 
 export const getsinglefile = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   try {
     const response = await axios.get(apiUrl.baseUrl + `/File/${id}`, {
       responseType: "blob",
       headers: {
         Authorization: "Bearer " + userInfo.token,
+        "Accept-Language": language,
       },
     });
 
     return response;
   } catch (error) {
     if (error.response) {
-      return error.response;
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong");
+      throw new Error("wentWrong");
     }
   }
 };
 
 export const editfile = async (id, fileName) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   try {
     const response = await axios.put(
       apiUrl.baseUrl + `/File/${id}`,
@@ -56,47 +60,49 @@ export const editfile = async (id, fileName) => {
       {
         headers: {
           Authorization: "Bearer " + userInfo.token,
+          "Accept-Language": language,
         },
       }
     );
     return response;
   } catch (error) {
     if (error.response) {
-      return error.response;
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong");
+      throw new Error("wentWrong");
     }
   }
 };
 
 export const deletefile = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   try {
     const response = await axios.delete(apiUrl.baseUrl + `/File/${id}`, {
       headers: {
         Authorization: "Bearer " + userInfo.token,
+        "Accept-Language": language,
       },
     });
     return response;
   } catch (error) {
     if (error.response) {
-      return error.response;
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong");
+      throw new Error("wentWrong");
     }
   }
 };
 
 export const uploadfile = async (id, data) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   const formData = new FormData();
   for (const file of data) {
     formData.append("formFiles", file, file.name);
@@ -109,6 +115,7 @@ export const uploadfile = async (id, data) => {
       {
         headers: {
           Authorization: "Bearer " + userInfo.token,
+          "Accept-Language": language,
         },
       }
     );
@@ -116,13 +123,11 @@ export const uploadfile = async (id, data) => {
     return response;
   } catch (error) {
     if (error.response) {
-      console.log(error.response);
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong.");
+      throw new Error("wentWrong");
     }
   }
 };

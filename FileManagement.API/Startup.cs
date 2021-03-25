@@ -80,11 +80,11 @@ namespace FileManagement.API
             {
                 var supportedCultures = new List<CultureInfo>
                 {
-                    new CultureInfo("en-US"),
-                    new CultureInfo("tr-TR")
+                    new CultureInfo("en"),
+                    new CultureInfo("tr")
                 };
 
-                options.DefaultRequestCulture = new RequestCulture(culture: "en-US",uiCulture:"en-US");
+                options.DefaultRequestCulture = new RequestCulture(culture: "en",uiCulture:"en");
                 options.SupportedCultures = supportedCultures;
                 options.SupportedUICultures = supportedCultures;
                 options.RequestCultureProviders = new[] { new AcceptLanguageHeaderRequestCultureProvider()};

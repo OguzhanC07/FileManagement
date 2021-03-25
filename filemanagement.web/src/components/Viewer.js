@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { Modal, Icon } from "semantic-ui-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
 
 import { getsinglefile } from "../services/fileService";
 import "../styles/fileViewer.css";
@@ -10,28 +13,44 @@ import VideoDisplay from "./VideoDisplay";
 const Viewer = (props) => {
   const [file, setFile] = useState(null);
   const [open, setOpen] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const { t } = useTranslation();
 
   const viewHandler = async (e) => {
     e.preventDefault();
-    const response = await getsinglefile(props.id);
-    let base64;
-    switch (props.type) {
-      case "pdf":
-        base64 = await convertBase64(response.data);
-        setFile(base64);
-        setOpen(true);
-        break;
-      case "img":
-        base64 = await convertBase64(response.data);
-        setFile(base64);
-        setOpen(true);
-        break;
-      case "video":
-        setFile(URL.createObjectURL(response.data));
-        setOpen(true);
-        break;
-      default:
-        break;
+    let response;
+    let problem = "";
+    try {
+      setIsDisabled(true);
+      response = await getsinglefile(props.id);
+      setIsDisabled(false);
+    } catch (error) {
+      problem = error;
+      setIsDisabled(false);
+    }
+
+    if (problem !== "") {
+      toast.error(t("viewer.viewError") + t("responseErrors.wentWrong"));
+    } else {
+      let base64;
+      switch (props.type) {
+        case "pdf":
+          base64 = await convertBase64(response.data);
+          setFile(base64);
+          setOpen(true);
+          break;
+        case "img":
+          base64 = await convertBase64(response.data);
+          setFile(base64);
+          setOpen(true);
+          break;
+        case "video":
+          setFile(URL.createObjectURL(response.data));
+          setOpen(true);
+          break;
+        default:
+          break;
+      }
     }
   };
 
@@ -54,9 +73,21 @@ const Viewer = (props) => {
     <span>
       <Icon
         name="external square alternate"
+        disabled={isDisabled}
         onClick={(e) => {
           viewHandler(e);
         }}
+      />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
       />
       <Modal
         onOpen={() => setOpen(true)}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Button } from "semantic-ui-react";
+import { useTranslation } from "react-i18next";
 
 import "../styles/fileViewer.css";
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -8,6 +9,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 const PdfDisplay = (props) => {
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
+  const { t } = useTranslation();
 
   const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
@@ -24,25 +26,23 @@ const PdfDisplay = (props) => {
       </Document>
       <div className="outer">
         <Button
-          className="inner"
           onClick={() => {
             setPageNumber(pageNumber - 1);
           }}
           disabled={pageNumber <= 1 ? true : false}
         >
-          Go Back
+          {t("pdfDisplay.goBack")}
         </Button>
         <p>
           {pageNumber} / {numPages}
         </p>
         <Button
-          className="inner"
           onClick={() => {
             setPageNumber(pageNumber + 1);
           }}
           disabled={pageNumber === numPages ? true : false}
         >
-          Go Forward
+          {t("pdfDisplay.goForward")}
         </Button>
       </div>
     </div>

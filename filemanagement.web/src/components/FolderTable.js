@@ -3,6 +3,7 @@ import { Table, Image, Icon, Loader } from "semantic-ui-react";
 import uuid from "uuid/dist/v1";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
 
 import { FolderContext, SORTFOLDERS } from "../context/FolderContext";
 import img from "../assets/foldericon.jpg";
@@ -19,6 +20,7 @@ const FolderTable = (props) => {
   const [sortType, setSortType] = useState("asc");
   const { folder, dispatch } = useContext(FolderContext);
   const { file, dispatch: fileDispatch } = useContext(FileContext);
+  const { t } = useTranslation();
 
   const downloadHandler = async (id, type) => {
     let response = "";
@@ -30,7 +32,7 @@ const FolderTable = (props) => {
           response = await getsinglefile(id);
           setIsDisabled(false);
         } catch (responseError) {
-          problem = responseError.message;
+          problem = responseError;
           setIsDisabled(false);
         }
         break;
@@ -40,15 +42,17 @@ const FolderTable = (props) => {
           response = await downloadfolder(id);
           setIsDisabled(false);
         } catch (responseError) {
-          problem = responseError.message;
+          problem = responseError;
           setIsDisabled(false);
         }
         break;
       default:
         break;
     }
-    if (problem !== "") {
-      toast.error("The requested item couldn't downloaded. Error:" + problem);
+    if (typeof problem === "undefined" || problem !== "") {
+      toast.error(
+        t("folderTable.downloadError") + t("responseErrors.wentWrong")
+      );
     } else {
       setIsDisabled(true);
       var data = new Blob([response.data], { type: response.data.type });
@@ -62,7 +66,7 @@ const FolderTable = (props) => {
   };
 
   const convertHandler = (bytes) => {
-    var sizes = ["Bytes", "KB", "MB", "GB", "TB"];
+    var sizes = [t("folderTable.bytes"), "KB", "MB", "GB", "TB"];
     if (bytes === 0) return "0 Byte";
     var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
     return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
@@ -112,17 +116,21 @@ const FolderTable = (props) => {
                   sortingHandler("name");
                 }}
               >
-                Name
+                {t("folderTable.tableHeaderName")}
               </Table.HeaderCell>
               <Table.HeaderCell
                 onClick={() => {
                   sortingHandler("size");
                 }}
               >
-                Size
+                {t("folderTable.tableHeaderSize")}
               </Table.HeaderCell>
-              <Table.HeaderCell>Created At</Table.HeaderCell>
-              <Table.HeaderCell>Operations</Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("folderTable.tableHeaderCreatedAt")}
+              </Table.HeaderCell>
+              <Table.HeaderCell>
+                {t("folderTable.tableHeaderOperations")}
+              </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>

@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Menu, Icon } from "semantic-ui-react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import "semantic-ui-css/semantic.min.css";
 
 import "../styles/index.css";
 
 const SideMenu = (props) => {
   const [activeItem, setActiveItem] = useState("home");
+  const { t } = useTranslation();
+
   const handleItemClick = (name) => {
     setActiveItem(name);
   };
@@ -23,7 +27,7 @@ const SideMenu = (props) => {
           }}
         >
           <Icon name="home" />
-          Home
+          {t("sideMenu.home")}
         </Menu.Item>
       </Menu>
     );

@@ -23,14 +23,17 @@
   },
   "uploadFile": {
     "dragnDropText": "Dosyaları sürükleyip bu alana bırakabilirsin. Aynı zamanda tıklayıp da dosya seçebilirsin",
+    "byte": "byte",
     "fileUploadText": "Dosya Yüke",
     "removeInfo": "İstemediğin dosyaları kaldırabilirsin",
     "removeAllBtn": "Tümünü Kaldır",
     "cancelBtn": "İptal",
-    "uploadFileBtn": "Dosyaları Yükle"
+    "uploadFileBtn": "Dosyaları Yükle",
+    "uploadError": "Dosyayı yüklerken bir hata oluştu"
   },
   "folderTable": {
     "downloadError": "İstenilen dosya/klasör indirilemedi. Lütfen tekrar deneyiniz. Hata:",
+    "bytes": "Byte",
     "tableHeaderName": "Ad",
     "tableHeaderSize": "Boyut",
     "tableHeaderCreatedAt": "Oluşturulma Tarihi",
@@ -38,22 +41,33 @@
   },
   "editModal": {
     "editModalValidaton": "Ad boş olamaz",
-    "file": "Dosya",
+    "editModalHeader": "{{variable}} Adını Düzenle",
+    "editModalLabel": "{{variable}} Adı",
     "folder": "Klasör",
-    "edit": "Düzenle",
-    "name": "Ad",
+    "file": "Dosya",
     "submit": "Gönder"
   },
   "deleteModal": {
-    "file": "Dosya",
-    "folder": "Klasör",
-    "delete": "Sil",
-    "deleteValidation": "Silmek istediğine emin misin?",
+    "deleteHeader": "{{variable}} Sil",
+    "folder": "Klasörü",
+    "file": "Dosyayı",
+    "deleteValidation": " Bu {{variable}} silmek istediğine emin misin ?",
     "noBtn": "Hayır",
     "yesBtn": "Evet"
   },
   "pdfDisplay": {
     "goBack": "Geri Git",
     "goForward": "İleri Git"
+  },
+  "lang": {
+    "tr": "Türkçe",
+    "en": "İngilizce"
+  },
+  "viewer": {
+    "viewError": "Dosyayı görüntülerken bir hata oluştu "
+  },
+  "responseErrors": {
+    "connection": "Bağlantı Hatası",
+    "wentWrong": "Bir şeyler ters gitti!"
   }
 }

@@ -23,14 +23,17 @@
   },
   "uploadFile": {
     "dragnDropText": "Drag 'n' drop some files here, or click to select files",
+    "byte": "bytes",
     "fileUploadText": "File Upload",
     "removeInfo": "You can remove unwanted files",
     "removeAllBtn": "Remove All",
     "cancelBtn": "Cancel",
-    "uploadFileBtn": "Upload Files"
+    "uploadFileBtn": "Upload Files",
+    "uploadError": "There's a problem when a upload file"
   },
   "folderTable": {
     "downloadError": "The requested item couldn't downloaded. Error:",
+    "bytes": "Bytes",
     "tableHeaderName": "Name",
     "tableHeaderSize": "Size",
     "tableHeaderCreatedAt": "Created At",
@@ -38,22 +41,33 @@
   },
   "editModal": {
     "editModalValidaton": "Name cannot be empty",
-    "file": "File",
+    "editModalHeader": " Edit {{variable}} Name",
+    "editModalLabel": "{{variable}} Name",
     "folder": "Folder",
-    "edit": "Edit",
-    "name": "Name",
+    "file": "File",
     "submit": "Submit"
   },
   "deleteModal": {
-    "file": "File",
+    "deleteHeader": "Delete {{variable}}",
     "folder": "Folder",
-    "delete": "Delete",
-    "deleteValidation": " Do you really want to delete ?",
+    "file": "File",
+    "deleteValidation": " Do you really want to delete this {{variable}}?",
     "noBtn": "No",
     "yesBtn": "Yes"
   },
   "pdfDisplay": {
     "goBack": "Go Back",
     "goForward": "Go Forward"
+  },
+  "lang": {
+    "tr": "Turkish",
+    "en": "English"
+  },
+  "viewer": {
+    "viewError": "There's a problem when a preview file "
+  },
+  "responseErrors": {
+    "connection": "Connection Problem",
+    "wentWrong": "Something went wrong!"
   }
 }

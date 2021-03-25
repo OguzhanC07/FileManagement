@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Icon, Modal, Button } from "semantic-ui-react";
+import { useTranslation } from "react-i18next";
 
 import { DELETEFOLDER, FolderContext } from "../context/FolderContext";
 import { DELETEFILE, FileContext } from "../context/FileContext";
@@ -12,6 +13,7 @@ const DeleteModal = (props) => {
   const [error, setError] = useState(null);
   const { dispatch } = useContext(FolderContext);
   const { dispatch: fileDispatch } = useContext(FileContext);
+  const { t } = useTranslation();
 
   const deleteHandler = async (e) => {
     e.preventDefault();
@@ -28,7 +30,11 @@ const DeleteModal = (props) => {
             fid: props.id,
           });
         } catch (error) {
-          setError(error.message);
+          if (error.message === "connection")
+            setError(t("responseErrors.connection"));
+          else if (error.message === "wentWrong")
+            setError(t("responseErrors.wentWrong"));
+          else setError(error.message);
           setIsLoading(false);
         }
         break;
@@ -43,7 +49,11 @@ const DeleteModal = (props) => {
             fid: props.id,
           });
         } catch (error) {
-          setError(error.message);
+          if (error.message === "connection")
+            setError(t("responseErrors.connection"));
+          else if (error.message === "wentWrong")
+            setError(t("responseErrors.wentWrong"));
+          else setError(error.message);
           setIsLoading(false);
         }
         break;
@@ -57,6 +67,7 @@ const DeleteModal = (props) => {
       <Icon
         name="delete"
         onClick={() => {
+          setError("");
           setOpen(true);
         }}
       />
@@ -71,13 +82,22 @@ const DeleteModal = (props) => {
         }}
       >
         <h3 style={{ textAlign: "center", paddingBottom: 10 }}>
-          Delete {props.type === "file" ? "File" : "Folder"}
+          {t("deleteModal.deleteHeader", {
+            variable:
+              props.type === "file"
+                ? t("deleteModal.file")
+                : t("deleteModal.folder"),
+          })}
         </h3>
 
         <div style={{ textAlign: "center", paddingBottom: 10 }}>
           <p>
-            Do you really want to delete this{" "}
-            {props.type === "file" ? "File" : "Folder"} ?
+            {t("deleteModal.deleteValidation", {
+              variable:
+                props.type === "file"
+                  ? t("deleteModal.file")
+                  : t("deleteModal.folder"),
+            })}
           </p>
           <Button
             style={{ marginRight: 10 }}
@@ -86,7 +106,7 @@ const DeleteModal = (props) => {
             inverted
             onClick={() => setOpen(false)}
           >
-            <Icon name="remove" /> No
+            <Icon name="remove" /> {t("deleteModal.noBtn")}
           </Button>
           <Button
             color="green"
@@ -94,7 +114,7 @@ const DeleteModal = (props) => {
             inverted
             onClick={(e) => deleteHandler(e)}
           >
-            <Icon name="checkmark" /> Yes
+            <Icon name="checkmark" /> {t("deleteModal.yesBtn")}
           </Button>
         </div>
         <div style={{ margin: 20 }}>

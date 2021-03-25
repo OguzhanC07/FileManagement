@@ -3,6 +3,8 @@ import apiUrl from "../constants/apiUrl";
 
 export const getfolders = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   if (id > 0 && !isNaN(id) && id !== undefined) {
     try {
       const response = await axios.get(
@@ -10,6 +12,7 @@ export const getfolders = async (id) => {
         {
           headers: {
             Authorization: "Bearer " + userInfo.token,
+            "Accept-Language": language,
           },
         }
       );
@@ -17,13 +20,11 @@ export const getfolders = async (id) => {
       return response;
     } catch (error) {
       if (error.response) {
-        console.log(error.response);
+        throw new Error(error.response.data.message);
       } else if (error.request) {
-        console.log(error.response);
-        throw new Error("Connection problem");
+        throw new Error("connection");
       } else {
-        console.log(error);
-        throw new Error("Something went wrong");
+        throw new Error("wentWrong");
       }
     }
   } else {
@@ -33,19 +34,18 @@ export const getfolders = async (id) => {
         {
           headers: {
             Authorization: "Bearer " + userInfo.token,
+            "Accept-Language": language,
           },
         }
       );
       return response;
     } catch (error) {
       if (error.response) {
-        console.log(error.response);
+        throw new Error(error.response.data.message);
       } else if (error.request) {
-        console.log(error.response);
-        throw new Error("Connection problem");
+        throw new Error("connection");
       } else {
-        console.log(error);
-        throw new Error("Something went wrong!");
+        throw new Error("wentWrong");
       }
     }
   }
@@ -53,6 +53,8 @@ export const getfolders = async (id) => {
 
 export const addfolders = async (name, id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   try {
     if (id > 0 && id !== undefined && !isNaN(id)) {
       const response = await axios.post(
@@ -61,6 +63,7 @@ export const addfolders = async (name, id) => {
         {
           headers: {
             Authorization: "Bearer " + userInfo.token,
+            "Accept-Language": language,
           },
         }
       );
@@ -73,6 +76,7 @@ export const addfolders = async (name, id) => {
         {
           headers: {
             Authorization: "Bearer " + userInfo.token,
+            "Accept-Language": language,
           },
         }
       );
@@ -81,19 +85,18 @@ export const addfolders = async (name, id) => {
     }
   } catch (error) {
     if (error.response) {
-      throw new Error(error.response);
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong!");
+      throw new Error("wentWrong");
     }
   }
 };
 
 export const editfolder = async (id, name) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
   try {
     const response = await axios.put(
       apiUrl.baseUrl + `/Folder/${id}`,
@@ -101,25 +104,25 @@ export const editfolder = async (id, name) => {
       {
         headers: {
           Authorization: "Bearer " + userInfo.token,
+          "Accept-Language": language,
         },
       }
     );
     return response;
   } catch (error) {
     if (error.response) {
-      return error.response;
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      console.log(error.response);
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong!");
+      throw new Error("wentWrong");
     }
   }
 };
 
 export const downloadfolder = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
 
   try {
     const response = await axios.get(
@@ -128,6 +131,7 @@ export const downloadfolder = async (id) => {
         responseType: "blob",
         headers: {
           Authorization: "Bearer " + userInfo.token,
+          "Accept-Language": language,
         },
       }
     );
@@ -135,34 +139,35 @@ export const downloadfolder = async (id) => {
     return response;
   } catch (error) {
     if (error.response) {
-      throw new Error(error.response.data);
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong!");
+      throw new Error("wentWrong");
     }
   }
 };
 
 export const deletefolder = async (id) => {
   const userInfo = JSON.parse(localStorage.getItem("userinfo"));
+  const language = localStorage.getItem("i18nextLng");
+
   try {
     const response = await axios.delete(apiUrl.baseUrl + `/Folder/${id}`, {
       headers: {
         Authorization: "Bearer " + userInfo.token,
+        "Accept-Language": language,
       },
     });
 
     return response;
   } catch (error) {
     if (error.response) {
-      throw new Error(error.response);
+      throw new Error(error.response.data.message);
     } else if (error.request) {
-      throw new Error("Connection problem");
+      throw new Error("connection");
     } else {
-      console.log(error);
-      throw new Error("Something went wrong!");
+      throw new Error("wentWrong");
     }
   }
 };

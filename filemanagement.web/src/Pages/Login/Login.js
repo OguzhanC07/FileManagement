@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import "semantic-ui-css/semantic.min.css";
 import { Button, Form, Grid, Segment } from "semantic-ui-react";
+import { useTranslation } from "react-i18next";
 
 import "./Login.css";
 import { AuthContext, SIGNIN } from "../../context/AuthContext";
@@ -11,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const { t } = useTranslation();
   const { dispatch } = useContext(AuthContext);
 
   const loginHandler = async (e) => {
@@ -37,7 +38,7 @@ const Login = () => {
         setIsLoading(false);
       }
     } else {
-      setError("Kullanıcı adı ve şifre gereklidir.");
+      setError(t("loginScreen.loginError"));
     }
   };
 
@@ -52,8 +53,8 @@ const Login = () => {
             <Form.Field>
               <Form.Input
                 fluid
-                label="Username"
-                placeholder="Username"
+                label={t("loginScreen.username")}
+                placeholder={t("loginScreen.username")}
                 id="username"
                 type="text"
                 onChange={(e) => setUsername(e.target.value)}
@@ -63,14 +64,14 @@ const Login = () => {
               <Form.Input
                 fluid
                 id="password"
-                label="Password"
-                placeholder="Password"
+                label={t("loginScreen.password")}
+                placeholder={t("loginScreen.password")}
                 type="password"
                 onChange={(e) => setPassword(e.target.value)}
               />
             </Form.Field>
             <Button onClick={(e) => loginHandler(e)} primary>
-              Login
+              {t("loginScreen.login")}
             </Button>
             {error && (
               <p style={{ textAlign: "center", color: "red" }}>{error}</p>

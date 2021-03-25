@@ -2,6 +2,7 @@ import React, { useCallback, useState, useMemo, useContext } from "react";
 import { useDropzone } from "react-dropzone";
 import { Modal, Button, Icon } from "semantic-ui-react";
 import "react-toastify/dist/ReactToastify.css";
+import { useTranslation } from "react-i18next";
 
 import { FileContext, SETFILES } from "../context/FileContext";
 import { FolderContext } from "../context/FolderContext";
@@ -31,10 +32,11 @@ const acceptStyle = {
   borderColor: "#00e676",
 };
 
-const UploadFile = (props) => {
+const UploadFile = () => {
   const [myFiles, setMyFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   const { folder } = useContext(FolderContext);
   const { dispatch } = useContext(FileContext);
@@ -67,7 +69,7 @@ const UploadFile = (props) => {
 
   const files = myFiles.map((file) => (
     <li style={{ listStyle: "none" }} key={file.path}>
-      {file.path} - {file.size} bytes
+      {file.path} - {file.size} {t("uploadFile.byte")}
       <Icon
         style={{ marginLeft: 10, fontSize: 15 }}
         onClick={removeFile(file)}
@@ -99,15 +101,14 @@ const UploadFile = (props) => {
         });
         setIsLoading(false);
         removeAll();
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        setError(t("uploadFile.uploadError") + t("responseErrors.wentWrong"));
         setIsLoading(false);
       }
     } else {
       try {
         setIsLoading(true);
-        const response = await uploadfile(folder.folders[0].id, myFiles);
-        console.log(response);
+        await uploadfile(folder.folders[0].id, myFiles);
         getfiles(folder.folder[0].id).then((res) => {
           dispatch({
             type: SETFILES,
@@ -116,8 +117,8 @@ const UploadFile = (props) => {
         });
         setIsLoading(false);
         removeAll();
-      } catch (error) {
-        setError(error.message);
+      } catch (err) {
+        setError(t("uploadFile.uploadError") + t("responseErrors.wentWrong"));
         setIsLoading(false);
       }
     }
@@ -127,14 +128,16 @@ const UploadFile = (props) => {
     <section>
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
-        <p>Drag 'n' drop some files here, or click to select files</p>
+        <p>{t("uploadFile.dragnDropText")}</p>
       </div>
       <Modal basic closeIcon onClose={removeAll} open={files.length > 0}>
-        <h1 style={{ textAlign: "center", paddingBottom: 10 }}>File Upload</h1>
+        <h1 style={{ textAlign: "center", paddingBottom: 10 }}>
+          {t("uploadFile.fileUploadText")}
+        </h1>
         <div style={{ textAlign: "center", paddingBottom: 10 }}>
-          <p style={{ fontSize: 25 }}>You can remove unwanted files</p>
+          <p style={{ fontSize: 25 }}>{t("uploadFile.removeInfo")}</p>
           {files}
-          <Button onClick={removeAll}>Remove All</Button>
+          <Button onClick={removeAll}>{t("uploadFile.removeAllBtn")}</Button>
           <div style={{ paddingTop: 20 }}>
             <Button
               style={{ marginRight: 10 }}
@@ -143,7 +146,7 @@ const UploadFile = (props) => {
               inverted
               onClick={removeAll}
             >
-              <Icon name="remove" /> Cancel
+              <Icon name="remove" /> {t("uploadFile.cancelBtn")}
             </Button>
             <Button
               color="green"
@@ -153,7 +156,7 @@ const UploadFile = (props) => {
                 uploadHandler();
               }}
             >
-              <Icon name="checkmark" /> Upload Files
+              <Icon name="checkmark" /> {t("uploadFile.uploadFileBtn")}
             </Button>
           </div>
         </div>

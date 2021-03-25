@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Icon, Modal, Form, Button } from "semantic-ui-react";
+import { useTranslation } from "react-i18next";
 
 import { EDITFILE, FileContext } from "../context/FileContext";
 import { EDITFOLDER, FolderContext } from "../context/FolderContext";
@@ -11,13 +12,13 @@ const EditModal = (props) => {
   const [name, setName] = useState(props.name.split(".")[0]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { t } = useTranslation();
 
   const { dispatch } = useContext(FolderContext);
   const { dispatch: fileDispatch } = useContext(FileContext);
 
   const editHandler = async (e) => {
     e.preventDefault();
-    setError("");
     if (name !== "") {
       let response;
       switch (props.type) {
@@ -38,7 +39,11 @@ const EditModal = (props) => {
             }
             setIsLoading(false);
           } catch (error) {
-            setError(error.message);
+            if (error.message === "connection")
+              setError(t("responseErrors.connection"));
+            else if (error.message === "wentWrong")
+              setError(t("responseErrors.wentWrong"));
+            else setError(error.message);
             setIsLoading(false);
           }
           break;
@@ -58,7 +63,11 @@ const EditModal = (props) => {
             }
             setIsLoading(false);
           } catch (error) {
-            setError(error.message);
+            if (error.message === "connection")
+              setError(t("responseErrors.connection"));
+            else if (error.message === "wentWrong")
+              setError(t("responseErrors.wentWrong"));
+            else setError(error.message);
             setIsLoading(false);
           }
           break;
@@ -66,7 +75,7 @@ const EditModal = (props) => {
           break;
       }
     } else {
-      setError("Name cannot be empty");
+      setError(t("editModal.editModalValidaton"));
     }
   };
 
@@ -75,6 +84,7 @@ const EditModal = (props) => {
       <Icon
         name="edit"
         onClick={() => {
+          setError("");
           setOpen(true);
         }}
       />
@@ -89,7 +99,12 @@ const EditModal = (props) => {
         }}
       >
         <h3 style={{ textAlign: "center", paddingBottom: 10 }}>
-          Edit {props.type === "file" ? "File" : "Folder"} Name
+          {t("editModal.editModalHeader", {
+            variable:
+              props.type === "file"
+                ? t("editModal.file")
+                : t("editModal.folder"),
+          })}
         </h3>
         <hr />
         <div style={{ margin: 20 }}>
@@ -99,18 +114,27 @@ const EditModal = (props) => {
             }}
           >
             <Form.Field>
-              <label>{props.type === "file" ? "File" : "Folder"} Name</label>
+              <label>
+                {t("editModal.editModalLabel", {
+                  variable:
+                    props.type === "file"
+                      ? t("editModal.file")
+                      : t("editModal.folder"),
+                })}
+              </label>
               <input
-                placeholder={
-                  (props.type === "file" ? "File" : "Folder", " Name")
-                }
+                placeholder={t("editModal.editModalLabel", {
+                  variable:
+                    props.type === "file"
+                      ? t("editModal.file")
+                      : t("editModal.folder"),
+                })}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                required
               />
             </Form.Field>
             <Button type="submit" loading={isLoading}>
-              Submit
+              {t("editModal.submit")}
             </Button>
           </Form>
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
