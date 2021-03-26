@@ -36,7 +36,7 @@ namespace FileManagement.SeleniumTest
 
             try
             {
-                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='grid']//div[@class='menu']")));
+                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div//div[@class='links-con']")));
             }
             catch (WebDriverTimeoutException)
             {
@@ -172,7 +172,7 @@ namespace FileManagement.SeleniumTest
                 IWebElement passResult = wait.Until(e => e.FindElement(By.XPath("//body[@class='']")));
                 if (passResult != null)
                 {
-                    Assert.Pass("File edited succesfully");
+                    Assert.Pass("File deleted succesfully");
                 }
             }
             catch (WebDriverTimeoutException exc)

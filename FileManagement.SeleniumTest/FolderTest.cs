@@ -34,7 +34,7 @@ namespace FileManagement.SeleniumTest
 
             try
             {
-                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='grid']//div[@class='menu']")));
+                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div//div[@class='links-con']")));
             }
             catch (WebDriverTimeoutException)
             {

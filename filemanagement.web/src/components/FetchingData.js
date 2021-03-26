@@ -55,7 +55,7 @@ const FetchingData = () => {
   if (error) {
     return (
       <p>
-        {t("fetchingData.fetchDataError")} {error}
+        {t("fetchingData.fetchDataError")} {t("responseErrors.connection")}
       </p>
     );
   }

@@ -12,7 +12,7 @@ namespace FileManagement.SeleniumTest
         [SetUp]
         public void Setup()
         {
-            //if you want to use like that you should chrome driver to PATH
+            //if you want to use like that you should add chrome driver to PATH
             Driver = new ChromeDriver();
         }
 
@@ -20,7 +20,6 @@ namespace FileManagement.SeleniumTest
         public void LoginTest_ShouldEnterMainScreen_IfAuthProcessDone()
         {
             Driver.Navigate().GoToUrl("http://localhost:3000/");
-            //Driver.FindElement(By.XPath("//form[@class='ui inverted form']//"));
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered two column grid container']")));
 
@@ -30,7 +29,7 @@ namespace FileManagement.SeleniumTest
 
             try
             {
-                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='grid']//div[@class='menu']")));
+                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div//div[@class='links-con']")));
                 if (secondResult != null)
                 {
                     Assert.Pass();
@@ -57,14 +56,14 @@ namespace FileManagement.SeleniumTest
 
             try
             {
-                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='grid']//div[@class='menu']")));
+                IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div//div[@class='links-con']")));
             }
             catch (WebDriverTimeoutException)
             {
                 Assert.Fail("Login process failed");
             }
 
-            Driver.FindElement(By.XPath("//a[@class='right item no-border']")).Click();
+            Driver.FindElement(By.XPath("//div[@class='links-con']//button[@class='nav']")).Click();
             var result = Driver.FindElement(By.XPath("//div[@class='ui centered two column grid container']"));
             if (result!=null)
             {
