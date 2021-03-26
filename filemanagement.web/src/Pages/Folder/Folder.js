@@ -1,14 +1,13 @@
 import React from "react";
 import AddFolderModal from "../../components/AddFolderModal";
 import FetchingData from "../../components/FetchingData";
-import Layout from "../../components/Layout";
 
 const Folder = (props) => {
   return (
-    <Layout>
+    <div>
       <AddFolderModal />
       <FetchingData />
-    </Layout>
+    </div>
   );
 };
 

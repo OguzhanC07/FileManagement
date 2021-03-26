@@ -11,7 +11,7 @@ const LanguageDropDown = () => {
   var language = localStorage.getItem("i18nextLng");
 
   return (
-    <span className="custom-dropdown">
+    <span className="nav custom-dropdown">
       <select
         defaultValue={language !== "en" || "tr" ? "en" : language}
         onChange={(e) => {

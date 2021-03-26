@@ -34,7 +34,11 @@ const Login = () => {
           },
         });
       } catch (error) {
-        setError(error.message);
+        if (error.message === "connection")
+          setError(t("responseErrors.connection"));
+        else if (error.message === "wentWrong")
+          setError(t("responseErrors.wentWrong"));
+        else setError(error.message);
         setIsLoading(false);
       }
     } else {

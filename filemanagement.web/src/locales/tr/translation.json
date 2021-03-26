@@ -9,7 +9,8 @@
     "logOut": "Çıkış Yap"
   },
   "sideMenu": {
-    "home": "Ana Sayfa"
+    "myFiles": "Dosyalarım",
+    "sharedFiles": "Paylaşılan Dosyalar"
   },
   "addfolderModal": {
     "addValidation": "Klasör adı boş bırakılamaz",

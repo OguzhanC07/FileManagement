@@ -1,9 +1,11 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 
+import "../styles/divAlign.css";
+
 const BreadcrumbComponent = (props) => {
   return (
-    <div style={{ paddingTop: 15, paddingBottom: 10 }}>
+    <div className="align" style={{ paddingTop: 15, paddingBottom: 10 }}>
       <Breadcrumb style={{ fontSize: 20 }}>
         <Breadcrumb.Section
           onClick={() => {

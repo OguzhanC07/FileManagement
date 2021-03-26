@@ -9,7 +9,8 @@
     "logOut": "Log Out"
   },
   "sideMenu": {
-    "home": "Home"
+    "myFiles": "My Files",
+    "sharedFiles": "Shared Files"
   },
   "addfolderModal": {
     "addValidation": "Folder name can't be empty",

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { FolderContext, SETFOLDERS } from "../context/FolderContext";
 import { getfolders, addfolders } from "../services/folderService";
+import "../styles/divAlign.css";
 
 const AddFolderModal = () => {
   const [open, setOpen] = useState(false);
@@ -43,7 +44,7 @@ const AddFolderModal = () => {
   };
 
   return (
-    <div>
+    <div className="align">
       <Button
         primary
         onClick={() => {
