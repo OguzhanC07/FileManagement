@@ -5,10 +5,10 @@ import "react-toastify/dist/ReactToastify.css";
 import { useTranslation } from "react-i18next";
 
 import { getsinglefile } from "../services/fileService";
-import "../styles/fileViewer.css";
 import ImgDisplay from "./ImgDisplay";
 import PdfDisplay from "./PdfDisplay";
 import VideoDisplay from "./VideoDisplay";
+import "../styles/fileViewer.css";
 
 const Viewer = (props) => {
   const [file, setFile] = useState(null);

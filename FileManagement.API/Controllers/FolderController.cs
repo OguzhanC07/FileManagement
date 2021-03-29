@@ -114,6 +114,13 @@ namespace FileManagement.API.Controllers
             folder.IsDeleted = true;
             await _folderService.UpdateAsync(folder);
 
+            if (folder.ParentFolderId != null)
+            {
+                var mainFolder = await _folderService.FindFolderById(Convert.ToInt32(folder.ParentFolderId));
+                mainFolder.Size -= folder.Size;
+                await _folderService.UpdateAsync(mainFolder);
+            }
+
             return Ok(new SingleResponseMessageModel<string>
             {
                 Result = true,
@@ -146,11 +153,11 @@ namespace FileManagement.API.Controllers
         {
             //zipname and zip path.
             var zipName = Guid.NewGuid().ToString() + ".zip";
-            var tempOutput = Path.Combine(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\"), zipName);
+            var tempOutput = Path.Combine(Path.Combine(_webHostEnviroment.WebRootPath, "TempFiles"), zipName);
 
-            if (!Directory.Exists(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\")))
+            if (!Directory.Exists(Path.Combine(_webHostEnviroment.WebRootPath, "TempFiles")))
             {
-                Directory.CreateDirectory(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\"));
+                Directory.CreateDirectory(Path.Combine(_webHostEnviroment.WebRootPath, "TempFiles"));
             }
 
             //check main folder and files also look new path for folders
@@ -179,7 +186,12 @@ namespace FileManagement.API.Controllers
             }
 
             string mimetype = MimeTypesMap.GetMimeType(zipName);
-            return PhysicalFile(Path.Combine(_webHostEnviroment.WebRootPath, @"TempFiles\", zipName), mimetype, zipName);
+            string path = Path.Combine(_webHostEnviroment.WebRootPath, "TempFiles", zipName);
+            var fileResult = System.IO.File.ReadAllBytes(path);
+
+            System.IO.File.Delete(path);
+
+            return File(fileResult, mimetype, zipName);
         }
     }
 }

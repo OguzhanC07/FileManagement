@@ -70,5 +70,8 @@
   "responseErrors": {
     "connection": "Connection Problem",
     "wentWrong": "Something went wrong!"
+  },
+  "contextMenu": {
+    "download": "Download"
   }
 }

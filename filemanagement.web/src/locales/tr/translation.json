@@ -70,5 +70,8 @@
   "responseErrors": {
     "connection": "Bağlantı Hatası",
     "wentWrong": "Bir şeyler ters gitti!"
+  },
+  "contextMenu": {
+    "download": "İndir"
   }
 }

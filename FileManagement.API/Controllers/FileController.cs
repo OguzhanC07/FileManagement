@@ -72,10 +72,11 @@ namespace FileManagement.API.Controllers
 
             var user = await _userService.GetById(folder.AppUserId);
 
-            string[] paths = { _webHostEnviroment.WebRootPath, @"users/", user.Username, folder.FileGuid.ToString(), file.FileGuid };
+            string[] paths = { _webHostEnviroment.WebRootPath, "users", user.Username, folder.FileGuid.ToString(), file.FileGuid };
             var path = Path.Combine(paths);
+            var fileResult = System.IO.File.ReadAllBytes(path);
             string mimetype = MimeTypesMap.GetMimeType(file.FileGuid.Split(".").Last());
-            return PhysicalFile(path, mimetype);
+            return File(fileResult, mimetype);
         }
 
         [HttpPost("[action]/{id}")]
@@ -149,6 +150,9 @@ namespace FileManagement.API.Controllers
             file.IsActive = false;
             await _fileService.UpdateAsync(file);
 
+            var folder = await _folderService.FindFolderById(file.FolderId);
+            folder.Size -= file.Size;
+            await _folderService.UpdateAsync(folder);
             return Ok(new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FileDelete"] });
         }
     }

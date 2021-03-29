@@ -4,6 +4,7 @@ import uuid from "uuid/dist/v1";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useTranslation } from "react-i18next";
+import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
 import { FolderContext, SORTFOLDERS } from "../context/FolderContext";
 import img from "../assets/foldericon.jpg";
@@ -14,6 +15,7 @@ import { FileContext, SORTFILE } from "../context/FileContext";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 import Viewer from "./Viewer";
+import "../styles/react-contextmenu.css";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
@@ -21,6 +23,12 @@ const FolderTable = (props) => {
   const { folder, dispatch } = useContext(FolderContext);
   const { file, dispatch: fileDispatch } = useContext(FileContext);
   const { t } = useTranslation();
+
+  function collect(props) {
+    return { id: props.folderId, name: props.name, type: props.type };
+  }
+
+  const MENU_TYPE = "SIMPLE";
 
   const downloadHandler = async (id, type) => {
     let response = "";
@@ -105,6 +113,14 @@ const FolderTable = (props) => {
     }
   };
 
+  const handleDownloadClick = (e, data) => {
+    downloadHandler(data.id, data.type);
+  };
+
+  const handleDoubleClick = (id, name) => {
+    props.openFolder(id, name);
+  };
+
   return (
     <div>
       <div>
@@ -135,24 +151,47 @@ const FolderTable = (props) => {
           </Table.Header>
           <Table.Body>
             {folder.folders.map((folder) => (
-              <Table.Row
+              <ContextMenuTrigger
+                renderTag="tr"
+                folderId={folder.id}
+                name={folder.folderName}
+                type="folder"
+                id={MENU_TYPE}
+                holdToDisplay={1000}
                 key={folder.id}
-                id={folder.id.toString()}
-                onDoubleClick={() => {
-                  props.openFolder(folder.id, folder.folderName);
-                }}
+                collect={collect}
               >
-                <Table.Cell collapsing>
+                <Table.Cell
+                  className="folder"
+                  onDoubleClick={() => {
+                    handleDoubleClick(folder.id, folder.folderName);
+                  }}
+                  collapsing
+                >
                   <Image src={img} />
                   {folder.folderName.substring(0, 10)}
                   {folder.folderName.length > 10 ? "..." : null}
                 </Table.Cell>
-                <Table.Cell>{convertHandler(folder.size)}</Table.Cell>
-                <Table.Cell>
+                <Table.Cell
+                  onDoubleClick={() => {
+                    handleDoubleClick(folder.id, folder.folderName);
+                  }}
+                >
+                  {convertHandler(folder.size)}
+                </Table.Cell>
+                <Table.Cell
+                  onDoubleClick={() => {
+                    handleDoubleClick(folder.id, folder.folderName);
+                  }}
+                >
                   {new Date(folder.createdAt).toLocaleDateString("TR-tr")}-
                   {new Date(folder.createdAt).toLocaleTimeString("TR-tr")}
                 </Table.Cell>
-                <Table.Cell>
+                <Table.Cell
+                  onDoubleClick={() => {
+                    handleDoubleClick(folder.id, folder.folderName);
+                  }}
+                >
                   <EditModal
                     id={folder.id}
                     name={folder.folderName}
@@ -161,22 +200,23 @@ const FolderTable = (props) => {
                   <DeleteModal id={folder.id} type="folder" />
                   {folder.size === 0 ? null : isDisabled ? (
                     <Loader active inline />
-                  ) : (
-                    <Icon
-                      disabled={isDisabled}
-                      name="download"
-                      onClick={(e) => {
-                        downloadHandler(folder.id, "folder");
-                      }}
-                    />
-                  )}
+                  ) : null}
                 </Table.Cell>
-              </Table.Row>
+              </ContextMenuTrigger>
             ))}
 
             {file.files.length > 0
               ? file.files.map((file) => (
-                  <Table.Row className="file" id={file.id} key={file.id}>
+                  <ContextMenuTrigger
+                    renderTag="tr"
+                    folderId={file.id}
+                    name={file.fileName}
+                    type="file"
+                    id={MENU_TYPE}
+                    holdToDisplay={1000}
+                    key={file.id}
+                    collect={collect}
+                  >
                     <Table.Cell collapsing>
                       <Image src={fileimg} />
                       {file.fileName}
@@ -195,14 +235,7 @@ const FolderTable = (props) => {
                       <DeleteModal id={file.id} type="file" />
                       {file.size === 0 ? null : isDisabled ? (
                         <Loader active inline />
-                      ) : (
-                        <Icon
-                          name="download"
-                          onClick={(e) => {
-                            downloadHandler(file.id, "file");
-                          }}
-                        />
-                      )}
+                      ) : null}
                       {file.fileName.split(".")[1] === "pdf" && (
                         <Viewer type="pdf" id={file.id} />
                       )}
@@ -213,7 +246,7 @@ const FolderTable = (props) => {
                         <Viewer id={file.id} type="video" />
                       )}
                     </Table.Cell>
-                  </Table.Row>
+                  </ContextMenuTrigger>
                 ))
               : null}
           </Table.Body>
@@ -229,6 +262,12 @@ const FolderTable = (props) => {
           draggable
           pauseOnHover
         />
+
+        <ContextMenu id={MENU_TYPE}>
+          <MenuItem onClick={handleDownloadClick} data={{ item: "download" }}>
+            <Icon name="download" /> {t("contextMenu.download")}
+          </MenuItem>
+        </ContextMenu>
       </div>
     </div>
   );
