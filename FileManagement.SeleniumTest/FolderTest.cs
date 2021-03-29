@@ -130,7 +130,7 @@ namespace FileManagement.SeleniumTest
         [TearDown]
         public async Task CloseDriver()
         {
-            var element = Driver.FindElement(By.XPath("//tbody//tr[1]"));
+            var element = Driver.FindElement(By.XPath("//tbody//td[@class='folder'][1]"));
             var id = element.GetAttribute("id");
             IFolderService folderService = new FolderService("test","1234");
             if (!await folderService.RemoveAsync(int.Parse(id)))

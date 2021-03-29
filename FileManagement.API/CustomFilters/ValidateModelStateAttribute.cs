@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FileManagement.API.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace FileManagement.API.CustomFilters
                         .Select(v => v.ErrorMessage)
                         .ToList();
 
-                context.Result = new BadRequestObjectResult(new
+                context.Result = new BadRequestObjectResult(new ResponseMessageModel<string>
                 {
                     Result = false,
                     Message= errors.First()                

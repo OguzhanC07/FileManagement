@@ -43,7 +43,7 @@ namespace FileManagement.API.Controllers
                     Directory.CreateDirectory(userDirectory);
                 }
 
-                return Created("", new SingleResponseMessageModel<object>
+                return Created("", new ResponseMessageModel<object>
                 {
                     Result = true,
                     Message = _localizer["UserLoginSuccess"],
@@ -57,7 +57,7 @@ namespace FileManagement.API.Controllers
                 });
             }
 
-            return NotFound(new SingleResponseMessageModel<JwtToken>
+            return NotFound(new ResponseMessageModel<string>
             {
                 Result = false,
                 Message = _localizer["UserLoginFailed"]

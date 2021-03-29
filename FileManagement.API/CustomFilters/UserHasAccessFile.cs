@@ -30,7 +30,7 @@ namespace FileManagement.API.CustomFilters
                     var folder = sr.FindFolderById(Convert.ToInt32(dictionary)).Result;
                     if (folder != null && folder.AppUserId != userId)
                     {
-                        context.Result = new UnauthorizedObjectResult(new SingleResponseMessageModel<string> { Result = false, Message = "You don't have access for this folder." });
+                        context.Result = new UnauthorizedObjectResult(new ResponseMessageModel<string> { Result = false, Message = "You don't have access for this folder." });
                     }
                 }
             }
@@ -41,7 +41,7 @@ namespace FileManagement.API.CustomFilters
                 
                 if (file != null && folder != null && folder.AppUserId != userId)
                 {
-                    context.Result = new UnauthorizedObjectResult(new SingleResponseMessageModel<string>
+                    context.Result = new UnauthorizedObjectResult(new ResponseMessageModel<string>
                     {
                         Result = false,
                         Message = localizer["DontHaveAccessFile"]

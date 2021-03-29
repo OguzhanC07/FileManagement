@@ -48,7 +48,7 @@ namespace FileManagement.API.Controllers
         [UserHasAccessFile(HaveFolderId = true)]
         public async Task<IActionResult> GetFiles(int id)
         {
-            return Ok(new MultipleDataResponseMessageModel<FileListDto>
+            return Ok(new ResponseMessageModel<List<FileListDto>>
             {
                 Result = true,
                 Message = _localizer["FileSendSuccess"],
@@ -67,7 +67,7 @@ namespace FileManagement.API.Controllers
             
             if (folder == null)
             {
-                return NotFound(new SingleResponseMessageModel<string> { Result = false, Message = _localizer["FolderNotFound"] });
+                return NotFound(new ResponseMessageModel<string> { Result = false, Message = _localizer["FolderNotFound"] });
             }
 
             var user = await _userService.GetById(folder.AppUserId);
@@ -109,7 +109,7 @@ namespace FileManagement.API.Controllers
                 }
                 else
                 {
-                    return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = _localizer["FileUploadError"] });
+                    return BadRequest(new ResponseMessageModel<string> { Result = false, Message = _localizer["FileUploadError"] });
                 }
             }
 
@@ -121,7 +121,7 @@ namespace FileManagement.API.Controllers
                 await _folderService.UpdateAsync(mainfolder);
             }
             await _folderService.UpdateAsync(folder);
-            return Created("", new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FileUploadSuccess"] });
+            return Created("", new ResponseMessageModel<string> { Result = true, Message = _localizer["FileUploadSuccess"] });
         }
 
         [HttpPut("{id}")]
@@ -132,12 +132,12 @@ namespace FileManagement.API.Controllers
         {
             if (id != dto.Id)
             {
-                return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
+                return BadRequest(new ResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
             file.FileName = dto.FileName + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
-            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
+            return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
         }
 
         [HttpDelete("{id}")]
@@ -153,7 +153,7 @@ namespace FileManagement.API.Controllers
             var folder = await _folderService.FindFolderById(file.FolderId);
             folder.Size -= file.Size;
             await _folderService.UpdateAsync(folder);
-            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FileDelete"] });
+            return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FileDelete"] });
         }
     }
 }

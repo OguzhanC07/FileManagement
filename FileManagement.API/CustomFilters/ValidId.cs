@@ -34,7 +34,7 @@ namespace FileManagement.API.CustomFilters
 
             if (dictionary.Value == null)
             {
-                context.Result = new NotFoundObjectResult(new SingleResponseMessageModel<string> { Result = false, Message = "The thing of you searched could not found found" });
+                context.Result = new NotFoundObjectResult(new ResponseMessageModel<string> { Result = false, Message = "The thing of you searched could not found found" });
             }
             else
             {
@@ -42,7 +42,7 @@ namespace FileManagement.API.CustomFilters
                 var entity = _genericService.GetById(id).Result;
                 if (entity == null)
                 {
-                    context.Result = new NotFoundObjectResult(new SingleResponseMessageModel<T> { Result = false, Message = "The thing you searched could not found" });
+                    context.Result = new NotFoundObjectResult(new ResponseMessageModel<T> { Result = false, Message = "The thing you searched could not found" });
                 }
             }
 

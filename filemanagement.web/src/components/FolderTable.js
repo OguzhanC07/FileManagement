@@ -162,7 +162,6 @@ const FolderTable = (props) => {
                 collect={collect}
               >
                 <Table.Cell
-                  className="folder"
                   onDoubleClick={() => {
                     handleDoubleClick(folder.id, folder.folderName);
                   }}
@@ -191,6 +190,8 @@ const FolderTable = (props) => {
                   onDoubleClick={() => {
                     handleDoubleClick(folder.id, folder.folderName);
                   }}
+                  id={folder.id}
+                  className="folder"
                 >
                   <EditModal
                     id={folder.id}
@@ -226,7 +227,7 @@ const FolderTable = (props) => {
                       {new Date(file.uploadedAt).toLocaleDateString("TR-tr")}-
                       {new Date(file.uploadedAt).toLocaleTimeString("TR-tr")}
                     </Table.Cell>
-                    <Table.Cell>
+                    <Table.Cell id={file.id} className="file">
                       <EditModal
                         id={file.id}
                         type="file"

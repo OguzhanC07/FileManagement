@@ -33,7 +33,7 @@ namespace FileManagement.API.CustomFilters
                 {
                     if (Convert.ToInt32(dictionary) != userId)
                     {
-                        context.Result = new UnauthorizedObjectResult(new SingleResponseMessageModel<string> { Result = false, Message = localizer["DontHaveAccessFolder"] });
+                        context.Result = new UnauthorizedObjectResult(new ResponseMessageModel<string> { Result = false, Message = localizer["DontHaveAccessFolder"] });
                     }
                 }
             }
@@ -42,7 +42,7 @@ namespace FileManagement.API.CustomFilters
                 var entity = sr.FindFolderById(Convert.ToInt32(dictionary)).Result;
                 if (entity!=null && entity.AppUserId != userId)
                 {
-                    context.Result = new UnauthorizedObjectResult(new SingleResponseMessageModel<string>
+                    context.Result = new UnauthorizedObjectResult(new ResponseMessageModel<string>
                     {
                         Result = false,
                         Message = localizer["DontHaveAccessFolder"]

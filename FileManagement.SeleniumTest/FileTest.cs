@@ -52,7 +52,7 @@ namespace FileManagement.SeleniumTest
                 Assert.Fail("Folder list are not loaded");
             }
 
-            var element = Driver.FindElement(By.XPath("//tbody//tr[1]"));
+            var element = Driver.FindElement(By.XPath("//td[@class='folder'][1]"));
 
             var id = element.GetAttribute("id");
 
@@ -64,7 +64,7 @@ namespace FileManagement.SeleniumTest
                 Assert.Fail("File didn't upload");
             }
 
-            var tableRow = Driver.FindElement(By.XPath("//table//tbody//tr[1]"));
+            var tableRow = Driver.FindElement(By.XPath("//td[@class='folder'][1]"));
             new Actions(Driver).DoubleClick(tableRow).Perform();
             wait.Until(e => e.FindElement(By.XPath("//div[@tabindex='0']")));
         }
@@ -98,7 +98,7 @@ namespace FileManagement.SeleniumTest
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
-            Driver.FindElement(By.XPath("//tr[@class='file'][1]//i[@class='edit icon']")).Click();
+            Driver.FindElement(By.XPath("//td[@class='file'][1]//i[@class='edit icon']")).Click();
             var nameInput = Driver.FindElement(By.XPath("//form//input"));
             nameInput.Clear();
             nameInput.SendKeys("editedFileName");
@@ -123,7 +123,7 @@ namespace FileManagement.SeleniumTest
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
-            Driver.FindElement(By.XPath("//tr[@class='file'][1]//i[@class='external square alternate icon']")).Click();
+            Driver.FindElement(By.XPath("//td[@class='file'][1]//i[@class='external square alternate icon']")).Click();
             try
             {
                 wait.Until(e => e.FindElement(By.XPath("//div[contains(@style,'display: flex !important')]")));
@@ -142,7 +142,9 @@ namespace FileManagement.SeleniumTest
         {
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
-            Driver.FindElement(By.XPath("//tr[@class='file'][1]//i[@class='download icon']")).Click();
+            var element = Driver.FindElement(By.XPath("//td[@class='file'][1]"));
+            new Actions(Driver).ContextClick(element).Perform();
+            Driver.FindElement(By.XPath("//nav[@class='react-contextmenu react-contextmenu--visible']//div[1]")).Click();
 
             try
             {
@@ -164,7 +166,7 @@ namespace FileManagement.SeleniumTest
             WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
 
-            Driver.FindElement(By.XPath("//tr[@class='file'][1]//i[@class='delete icon']")).Click();
+            Driver.FindElement(By.XPath("//td[@class='file'][1]//i[@class='delete icon']")).Click();
             Driver.FindElement(By.XPath("//button[@class='ui green inverted button']")).Click();
 
             try

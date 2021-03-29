@@ -47,7 +47,7 @@ namespace FileManagement.API.Controllers
         [UserHasAccessFolder(CheckUserId = true)]
         public async Task<IActionResult> GetFoldersByAppUserId(int id)
         {
-            return Ok(new MultipleDataResponseMessageModel<FolderListDto>
+            return Ok(new ResponseMessageModel<List<FolderListDto>>
             {
                 Result = true,
                 Message = _localizer["FolderSendSuccess"],
@@ -60,7 +60,7 @@ namespace FileManagement.API.Controllers
         [UserHasAccessFolder(CheckUserId = false)]
         public async Task<IActionResult> GetSubFoldersByFolderId(int id)
         {
-            return Ok(new MultipleDataResponseMessageModel<FolderListDto>
+            return Ok(new ResponseMessageModel<List<FolderListDto>>
             {
                 Result = true,
                 Message = _localizer["FolderSendSuccess"],
@@ -76,7 +76,7 @@ namespace FileManagement.API.Controllers
             {
                 if (await _folderService.FindFolderById(Convert.ToInt32(id)) == null)
                 {
-                    return BadRequest(new SingleResponseMessageModel<int>
+                    return BadRequest(new ResponseMessageModel<string>
                     {
                         Result = false,
                         Message = _localizer["AddSubFolderToDoesNotExistFolder"],
@@ -97,7 +97,7 @@ namespace FileManagement.API.Controllers
             string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.FileGuid}";
             Directory.CreateDirectory(userDirectory);
 
-            return Created("", new SingleResponseMessageModel<AddFolderDto>
+            return Created("", new ResponseMessageModel<AddFolderDto>
             {
                 Result = true,
                 Message = _localizer["FolderCreateSuccess"],
@@ -121,7 +121,7 @@ namespace FileManagement.API.Controllers
                 await _folderService.UpdateAsync(mainFolder);
             }
 
-            return Ok(new SingleResponseMessageModel<string>
+            return Ok(new ResponseMessageModel<string>
             {
                 Result = true,
                 Message = _localizer["FolderDeleteSuccess"]
@@ -136,14 +136,14 @@ namespace FileManagement.API.Controllers
         {
             if (id != folderEditDto.Id)
             {
-                return BadRequest(new SingleResponseMessageModel<string> { Result = false, Message = _localizer["IdsAreNotMatch"] });
+                return BadRequest(new ResponseMessageModel<string> { Result = false, Message = _localizer["IdsAreNotMatch"] });
             }
 
             var folder = await _folderService.GetById(id);
 
             folder.FolderName = folderEditDto.FolderName.Trim();
             await _folderService.UpdateAsync(folder);
-            return Ok(new SingleResponseMessageModel<string> { Result = true, Message = _localizer["FolderEditSuccess"] });
+            return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FolderEditSuccess"] });
         }
 
         [HttpGet("[action]/{id}")]
