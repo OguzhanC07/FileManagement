@@ -15,7 +15,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FileManagement.API.Controllers
@@ -25,7 +24,6 @@ namespace FileManagement.API.Controllers
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class FileController : BaseController
     {
-
         public readonly IFolderService _folderService;
         public readonly IFileService _fileService;
         private readonly IUserService _userService;
@@ -97,7 +95,7 @@ namespace FileManagement.API.Controllers
                 {
                     await _fileService.AddAsync(new DataAccess.File
                     {
-                        FileName = file.FileName,/*rgx.Replace(file.FileName, "a").Trim(),*/
+                        FileName = file.FileName.Substring(0,50),/*rgx.Replace(file.FileName, "a").Trim(),*/
                         FileGuid = newName,
                         FolderId = folder.Id,
                         IsActive = true,
@@ -135,7 +133,7 @@ namespace FileManagement.API.Controllers
                 return BadRequest(new ResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
-            file.FileName = dto.FileName + "." + file.FileGuid.Split(".").Last();
+            file.FileName = dto.FileName.Substring(0,50) + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
             return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
         }
