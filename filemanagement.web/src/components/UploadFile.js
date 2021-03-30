@@ -3,6 +3,7 @@ import { useDropzone } from "react-dropzone";
 import { Modal, Button, Icon } from "semantic-ui-react";
 import "react-toastify/dist/ReactToastify.css";
 import { useTranslation } from "react-i18next";
+import { toast, ToastContainer } from "react-toastify";
 
 import { FileContext, SETFILES } from "../context/FileContext";
 import { FolderContext } from "../context/FolderContext";
@@ -43,9 +44,13 @@ const UploadFile = () => {
 
   const onDrop = useCallback(
     (acceptedFiles) => {
-      setMyFiles([...myFiles, ...acceptedFiles]);
+      if (acceptedFiles.length > 50 || acceptedFiles.length === 0) {
+        toast.error(t("uploadFile.uploadFileError"));
+      } else {
+        setMyFiles([...myFiles, ...acceptedFiles]);
+      }
     },
-    [myFiles]
+    [myFiles, t]
   );
 
   const {
@@ -54,6 +59,7 @@ const UploadFile = () => {
     isDragActive,
     isDragAccept,
   } = useDropzone({
+    maxFiles: 50,
     onDrop,
   });
 
@@ -164,6 +170,7 @@ const UploadFile = () => {
           <p style={{ textAlign: "center", color: "red" }}>{error}</p>
         </div>
       </Modal>
+      <ToastContainer />
     </section>
   );
 };

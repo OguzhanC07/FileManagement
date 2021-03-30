@@ -24,6 +24,7 @@
   },
   "uploadFile": {
     "dragnDropText": "Drag 'n' drop some files here, or click to select files",
+    "uploadFileError": "You can only update 50 files in one upload. Please try again.",
     "byte": "bytes",
     "fileUploadText": "File Upload",
     "removeInfo": "You can remove unwanted files",

@@ -24,6 +24,7 @@
   },
   "uploadFile": {
     "dragnDropText": "Dosyaları sürükleyip bu alana bırakabilirsin. Aynı zamanda tıklayıp da dosya seçebilirsin",
+    "uploadFileError": "Tek yüklemede maksimum 50 adet dosya yükleyebilirsin. Lütfen tekrar dene.",
     "byte": "byte",
     "fileUploadText": "Dosya Yüke",
     "removeInfo": "İstemediğin dosyaları kaldırabilirsin",
