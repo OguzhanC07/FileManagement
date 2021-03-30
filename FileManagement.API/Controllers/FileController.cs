@@ -95,7 +95,7 @@ namespace FileManagement.API.Controllers
                 {
                     await _fileService.AddAsync(new DataAccess.File
                     {
-                        FileName = file.FileName.Substring(0,50),/*rgx.Replace(file.FileName, "a").Trim(),*/
+                        FileName = file.FileName.Length>50 ? file.FileName.Substring(0,50) : file.FileName,/*rgx.Replace(file.FileName, "a").Trim(),*/
                         FileGuid = newName,
                         FolderId = folder.Id,
                         IsActive = true,
@@ -133,7 +133,7 @@ namespace FileManagement.API.Controllers
                 return BadRequest(new ResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
-            file.FileName = dto.FileName.Substring(0,50) + "." + file.FileGuid.Split(".").Last();
+            file.FileName = file.FileName.Length > 50 ? file.FileName.Substring(0, 50) : file.FileName + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
             return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
         }

@@ -115,12 +115,6 @@ const UploadFile = () => {
       try {
         setIsLoading(true);
         await uploadfile(folder.folders[0].id, myFiles);
-        getfiles(folder.folder[0].id).then((res) => {
-          dispatch({
-            type: SETFILES,
-            files: res.data,
-          });
-        });
         setIsLoading(false);
         removeAll();
       } catch (err) {
