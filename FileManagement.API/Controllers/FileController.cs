@@ -133,7 +133,7 @@ namespace FileManagement.API.Controllers
                 return BadRequest(new ResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
-            file.FileName = file.FileName.Length > 50 ? file.FileName.Substring(0, 50) : file.FileName + "." + file.FileGuid.Split(".").Last();
+            file.FileName = file.FileName.Length>50 ? file.FileName.Substring(0,50) : file.FileName + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
             return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
         }

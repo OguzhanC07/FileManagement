@@ -2,14 +2,6 @@
   padding-top: 10px;
 }
 
-.zui-table-highlight tbody tr:hover {
-  background-color: #cce7e7;
-}
-.zui-table-horizontal tbody td {
-  border-left: none;
-  border-right: none;
-}
-
 .loader {
   position: absolute;
   top: 50%;
@@ -19,18 +11,6 @@
   transform: translateX(-50%) translateY(-50%);
 }
 
-.sort-direction {
-  display: inline-block;
-  height: 0;
-  width: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-
-  &.asc {
-    border-bottom: 5px solid black;
-  }
-
-  &.desc {
-    border-top: 5px solid black;
-  }
+.tableHeader {
+  width: 200px;
 }

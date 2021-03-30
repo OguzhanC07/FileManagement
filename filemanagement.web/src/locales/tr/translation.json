@@ -26,7 +26,7 @@
     "dragnDropText": "Dosyaları sürükleyip bu alana bırakabilirsin. Aynı zamanda tıklayıp da dosya seçebilirsin",
     "uploadFileError": "Tek yüklemede maksimum 50 adet dosya yükleyebilirsin. Lütfen tekrar dene.",
     "byte": "byte",
-    "fileUploadText": "Dosya Yüke",
+    "fileUploadText": "Dosya Yükle",
     "removeInfo": "İstemediğin dosyaları kaldırabilirsin",
     "removeAllBtn": "Tümünü Kaldır",
     "cancelBtn": "İptal",
@@ -73,6 +73,7 @@
     "wentWrong": "Bir şeyler ters gitti!"
   },
   "contextMenu": {
-    "download": "İndir"
+    "download": "İndir",
+    "openFolder": "Klasörü Aç"
   }
 }

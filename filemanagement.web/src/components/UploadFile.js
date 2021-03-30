@@ -74,7 +74,7 @@ const UploadFile = () => {
   };
 
   const files = myFiles.map((file) => (
-    <li style={{ listStyle: "none" }} key={file.path}>
+    <li style={{ listStyle: "none", marginTop: 5 }} key={file.path}>
       {file.path} - {file.size} {t("uploadFile.byte")}
       <Icon
         style={{ marginLeft: 10, fontSize: 15 }}
@@ -137,7 +137,9 @@ const UploadFile = () => {
         <div style={{ textAlign: "center", paddingBottom: 10 }}>
           <p style={{ fontSize: 25 }}>{t("uploadFile.removeInfo")}</p>
           {files}
-          <Button onClick={removeAll}>{t("uploadFile.removeAllBtn")}</Button>
+          <Button style={{ marginTop: 10 }} onClick={removeAll}>
+            {t("uploadFile.removeAllBtn")}
+          </Button>
           <div style={{ paddingTop: 20 }}>
             <Button
               style={{ marginRight: 10 }}

@@ -16,10 +16,12 @@ import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 import Viewer from "./Viewer";
 import "../styles/react-contextmenu.css";
+import SortingArrow from "./SortingArrow";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [sortType, setSortType] = useState("asc");
+  const [sortName, setSortName] = useState("name");
   const { folder, dispatch } = useContext(FolderContext);
   const { file, dispatch: fileDispatch } = useContext(FileContext);
   const { t } = useTranslation();
@@ -29,6 +31,7 @@ const FolderTable = (props) => {
   }
 
   const MENU_TYPE = "SIMPLE";
+  const FILE_MENU = "FILE_MENU";
 
   const downloadHandler = async (id, type) => {
     let response = "";
@@ -82,7 +85,7 @@ const FolderTable = (props) => {
 
   const sortingHandler = (type) => {
     sortType === "asc" ? setSortType("desc") : setSortType("asc");
-
+    setSortName(type);
     switch (type) {
       case "name":
         dispatch({
@@ -108,6 +111,18 @@ const FolderTable = (props) => {
           sortName: "size",
         });
         break;
+      case "time":
+        dispatch({
+          type: SORTFOLDERS,
+          sortType: sortType,
+          sortName: "createdAt",
+        });
+        fileDispatch({
+          type: SORTFILE,
+          sortType: sortType,
+          sortName: "uploadedAt",
+        });
+        break;
       default:
         break;
     }
@@ -117,8 +132,12 @@ const FolderTable = (props) => {
     downloadHandler(data.id, data.type);
   };
 
-  const handleDoubleClick = (id, name) => {
-    props.openFolder(id, name);
+  const handleDoubleClick = (id, data) => {
+    if (!isNaN(id)) {
+      props.openFolder(id, data);
+    } else {
+      props.openFolder(data.id, data.name);
+    }
   };
 
   return (
@@ -131,20 +150,33 @@ const FolderTable = (props) => {
                 onClick={() => {
                   sortingHandler("name");
                 }}
+                style={{ cursor: "pointer" }}
+                className="tableHeader"
               >
                 {t("folderTable.tableHeaderName")}
+                {sortName === "name" && <SortingArrow sortType={sortType} />}
               </Table.HeaderCell>
               <Table.HeaderCell
                 onClick={() => {
                   sortingHandler("size");
                 }}
+                style={{ cursor: "pointer" }}
+                className="tableHeader"
               >
                 {t("folderTable.tableHeaderSize")}
+                {sortName === "size" && <SortingArrow sortType={sortType} />}
               </Table.HeaderCell>
-              <Table.HeaderCell>
+              <Table.HeaderCell
+                onClick={() => {
+                  sortingHandler("time");
+                }}
+                style={{ cursor: "pointer" }}
+                className="tableHeader"
+              >
                 {t("folderTable.tableHeaderCreatedAt")}
+                {sortName === "time" && <SortingArrow sortType={sortType} />}
               </Table.HeaderCell>
-              <Table.HeaderCell>
+              <Table.HeaderCell className="tableHeader">
                 {t("folderTable.tableHeaderOperations")}
               </Table.HeaderCell>
             </Table.Row>
@@ -213,14 +245,16 @@ const FolderTable = (props) => {
                     folderId={file.id}
                     name={file.fileName}
                     type="file"
-                    id={MENU_TYPE}
+                    id={FILE_MENU}
                     holdToDisplay={1000}
                     key={file.id}
                     collect={collect}
                   >
                     <Table.Cell collapsing>
                       <Image src={fileimg} />
-                      {file.fileName}
+                      {file.fileName.length > 10
+                        ? file.fileName.substring(0, 20) + "..."
+                        : file.fileName}
                     </Table.Cell>
                     <Table.Cell>{convertHandler(file.size)}</Table.Cell>
                     <Table.Cell>
@@ -264,9 +298,19 @@ const FolderTable = (props) => {
           pauseOnHover
         />
 
+        <ContextMenu id={FILE_MENU}>
+          <MenuItem onClick={handleDownloadClick} data={{ item: "download" }}>
+            <Icon name="download" /> {t("contextMenu.download")}
+          </MenuItem>
+        </ContextMenu>
+
         <ContextMenu id={MENU_TYPE}>
           <MenuItem onClick={handleDownloadClick} data={{ item: "download" }}>
             <Icon name="download" /> {t("contextMenu.download")}
+          </MenuItem>
+          <MenuItem divider />
+          <MenuItem onClick={handleDoubleClick} data={{ item: "open" }}>
+            <Icon name="folder open" /> {t("contextMenu.openFolder")}
           </MenuItem>
         </ContextMenu>
       </div>

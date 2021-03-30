@@ -73,6 +73,7 @@
     "wentWrong": "Something went wrong!"
   },
   "contextMenu": {
-    "download": "Download"
+    "download": "Download",
+    "openFolder": "Open Folder"
   }
 }
