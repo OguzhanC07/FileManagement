@@ -29,9 +29,9 @@ namespace FileManagement.API.Controllers
         private readonly IUserService _userService;
         private readonly IWebHostEnvironment _webHostEnviroment;
         private readonly IMapper _mapper;
-        public readonly IStringLocalizer<FileController> _localizer;
+        public readonly IStringLocalizer<SharedResource> _localizer;
 
-        public FileController(IStringLocalizer<FileController> localizer, IMapper mapper, IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService, webHostEnvironment)
+        public FileController(IStringLocalizer<SharedResource> localizer, IMapper mapper, IFolderService folderService, IFileService fileService, IUserService userService, IWebHostEnvironment webHostEnvironment) : base(fileService, webHostEnvironment)
         {
             _localizer = localizer;
             _folderService = folderService;
@@ -95,7 +95,7 @@ namespace FileManagement.API.Controllers
                 {
                     await _fileService.AddAsync(new DataAccess.File
                     {
-                        FileName = file.FileName.Length>50 ? file.FileName.Substring(0,50) : file.FileName,/*rgx.Replace(file.FileName, "a").Trim(),*/
+                        FileName = file.FileName.Length > 30 ? file.FileName.Trim().Substring(0, 30)+ Path.GetExtension(file.FileName) : file.FileName,/*rgx.Replace(file.FileName, "a").Trim(),*/
                         FileGuid = newName,
                         FolderId = folder.Id,
                         IsActive = true,
@@ -133,7 +133,7 @@ namespace FileManagement.API.Controllers
                 return BadRequest(new ResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
             }
             var file = await _fileService.GetFileByIdAsync(id);
-            file.FileName = file.FileName.Length>50 ? file.FileName.Substring(0,50) : file.FileName + "." + file.FileGuid.Split(".").Last();
+            file.FileName = (dto.FileName.Length > 50 ? dto.FileName.Substring(0, 50) : dto.FileName) + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
             return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
         }

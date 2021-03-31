@@ -120,8 +120,32 @@
   <data name="AddSubFolderToDoesNotExistFolder" xml:space="preserve">
     <value>You can't create folder if main folder does not exist.</value>
   </data>
+  <data name="DontHaveAccessFile" xml:space="preserve">
+    <value>You don't have access for this file</value>
+  </data>
   <data name="DontHaveAccessFolder" xml:space="preserve">
     <value>You don't have access for this folder.</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="FileDelete" xml:space="preserve">
+    <value>File deleted successfully</value>
+  </data>
+  <data name="FileNameEdit" xml:space="preserve">
+    <value>File name edited successfully</value>
+  </data>
+  <data name="FileSendSuccess" xml:space="preserve">
+    <value>File sended successfully</value>
+  </data>
+  <data name="FileUploadError" xml:space="preserve">
+    <value>File(s) did not upload</value>
+  </data>
+  <data name="FileUploadSuccess" xml:space="preserve">
+    <value>File(s) uploaded successfully</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>Folder</value>
   </data>
   <data name="FolderCreateSuccess" xml:space="preserve">
     <value>Folder created successfully.</value>
@@ -132,10 +156,26 @@
   <data name="FolderEditSuccess" xml:space="preserve">
     <value>Folder edited successfully.</value>
   </data>
+  <data name="FolderNotFound" xml:space="preserve">
+    <value>Folder not found</value>
+  </data>
   <data name="FolderSendSuccess" xml:space="preserve">
     <value>Successfully sended.</value>
   </data>
   <data name="IdsAreNotMatch" xml:space="preserve">
     <value>Id's are not match.</value>
+  </data>
+  <data name="NotFoundError" xml:space="preserve">
+    <value>The {0} of you searched could not found found</value>
+    <comment>You should replace {0} for what did you search for.</comment>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="UserLoginFailed" xml:space="preserve">
+    <value>Username or password is wrong</value>
+  </data>
+  <data name="UserLoginSuccess" xml:space="preserve">
+    <value>Login success</value>
   </data>
 </root>

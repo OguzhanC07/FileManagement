@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-#nullable disable
 
 namespace FileManagement.DataAccess
 {
@@ -18,7 +17,7 @@ namespace FileManagement.DataAccess
         [Key]
         public int Id { get; set; }
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string FolderName { get; set; }
         public Guid FileGuid { get; set; }
         public int Size { get; set; }

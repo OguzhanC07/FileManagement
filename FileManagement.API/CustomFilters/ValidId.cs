@@ -13,11 +13,12 @@ namespace FileManagement.API.CustomFilters
     public class ValidId<T> : IActionFilter where T : class, new()
     {
         private readonly IGenericService<T> _genericService;
-        public ValidId(IGenericService<T> genericService)
+        private readonly IStringLocalizer<SharedResource> _localizer;
+        public ValidId(IGenericService<T> genericService, IStringLocalizer<SharedResource> localizer)
         {
             _genericService = genericService;
+            _localizer = localizer;
         }
-
 
         public void OnActionExecuted(ActionExecutedContext context)
         {
@@ -25,16 +26,14 @@ namespace FileManagement.API.CustomFilters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
-            //context.ActionArguments
-            //context.HttpContext.User.Identity.Name;
-
             var list = context.ActionArguments.ToList();
 
             var dictionary = context.ActionArguments.Where(I => I.Key == "id").FirstOrDefault();
-
+            
+            string type = _localizer["NotFoundError"];
             if (dictionary.Value == null)
             {
-                context.Result = new NotFoundObjectResult(new ResponseMessageModel<string> { Result = false, Message = "The thing of you searched could not found found" });
+                context.Result = new NotFoundObjectResult(new ResponseMessageModel<string> { Result = false, Message =type.Replace("{0}",_localizer[typeof(T).Name]) });
             }
             else
             {
@@ -42,7 +41,7 @@ namespace FileManagement.API.CustomFilters
                 var entity = _genericService.GetById(id).Result;
                 if (entity == null)
                 {
-                    context.Result = new NotFoundObjectResult(new ResponseMessageModel<T> { Result = false, Message = "The thing you searched could not found" });
+                    context.Result = new NotFoundObjectResult(new ResponseMessageModel<string> { Result = false, Message = type.Replace("{0}", _localizer[typeof(T).Name]) });
                 }
             }
 

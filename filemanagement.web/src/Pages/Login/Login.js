@@ -18,7 +18,7 @@ const Login = () => {
   const loginHandler = async (e) => {
     e.preventDefault();
     setError(null);
-    if (username !== "" && password !== "") {
+    if (username.trim().trimStart() !== "" && password !== "") {
       setIsLoading(true);
       try {
         const response = await authService.signin(username, password);
@@ -50,9 +50,7 @@ const Login = () => {
     <Grid className="container" centered columns={2}>
       <Grid.Column>
         <Segment inverted>
-          <h2 style={{ textAlign: "center", fontFamily: "cursive" }}>
-            File Management
-          </h2>
+          <h2 className="title">File Management</h2>
           <Form inverted loading={isLoading}>
             <Form.Field>
               <Form.Input
@@ -77,9 +75,7 @@ const Login = () => {
             <Button onClick={(e) => loginHandler(e)} primary>
               {t("loginScreen.login")}
             </Button>
-            {error && (
-              <p style={{ textAlign: "center", color: "red" }}>{error}</p>
-            )}
+            {error && <p className="errorMessage">{error}</p>}
           </Form>
         </Segment>
       </Grid.Column>

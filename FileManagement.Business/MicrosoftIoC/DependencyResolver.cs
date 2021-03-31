@@ -9,11 +9,6 @@ using FileManagement.DataAccess.Concrete.EntityFrameworkCore.Repositories;
 using FileManagement.DataAccess.Interfaces;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FileManagement.Business.MicrosoftIoC
 {

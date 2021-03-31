@@ -117,8 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddSubFolderToDoesNotExistFolder" xml:space="preserve">
+    <value>Ana klasör yoksa alt klasör oluşturulamaz</value>
+  </data>
   <data name="DontHaveAccessFile" xml:space="preserve">
     <value>Bu dosyaya erişiminiz yoktur.</value>
+  </data>
+  <data name="DontHaveAccessFolder" xml:space="preserve">
+    <value>Bu klasöre erişiminiz yoktur</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Dosya</value>
   </data>
   <data name="FileDelete" xml:space="preserve">
     <value>Dosya başarıyla silindi.</value>
@@ -135,7 +144,38 @@
   <data name="FileUploadSuccess" xml:space="preserve">
     <value>Dosya(lar) başarıyla yüklendi.</value>
   </data>
+  <data name="Folder" xml:space="preserve">
+    <value>Klasör</value>
+  </data>
+  <data name="FolderCreateSuccess" xml:space="preserve">
+    <value>Klasör başarıyla oluşturuldu.</value>
+  </data>
+  <data name="FolderDeleteSuccess" xml:space="preserve">
+    <value>Klasör başarıyla silindi.</value>
+  </data>
+  <data name="FolderEditSuccess" xml:space="preserve">
+    <value>Klasör adı başarıyla değiştirildi.</value>
+  </data>
   <data name="FolderNotFound" xml:space="preserve">
-    <value>Klasör bulunamadı.</value>
+    <value>Klasör bulunamadı</value>
+  </data>
+  <data name="FolderSendSuccess" xml:space="preserve">
+    <value>Başarıyla gönderildi.</value>
+  </data>
+  <data name="IdsAreNotMatch" xml:space="preserve">
+    <value>Id'ler uyuşmuyor.</value>
+  </data>
+  <data name="NotFoundError" xml:space="preserve">
+    <value>Aradığınız {0} bulunamadı.</value>
+    <comment>You should replace {0} for what did you search for.</comment>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Kullanıcı</value>
+  </data>
+  <data name="UserLoginFailed" xml:space="preserve">
+    <value>Kullanıcı adı veya şifre yanlış</value>
+  </data>
+  <data name="UserLoginSuccess" xml:space="preserve">
+    <value>Giriş başarılı</value>
   </data>
 </root>

@@ -21,9 +21,9 @@ namespace FileManagement.API.Controllers
     {
         private readonly IJwtService _jwtService;
         private readonly IUserService _userService;
-        private readonly IStringLocalizer<UserController> _localizer;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public UserController(IJwtService jwtService, IUserService userService, IStringLocalizer<UserController> localizer)
+        public UserController(IJwtService jwtService, IUserService userService, IStringLocalizer<SharedResource> localizer)
         {
             _jwtService = jwtService;
             _userService = userService;

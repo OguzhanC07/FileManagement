@@ -18,7 +18,7 @@ namespace FileManagement.API.CustomFilters
             var thisController = ((FileController)context.Controller);
             IFolderService sr = thisController._folderService;
             IFileService fs = thisController._fileService;
-            IStringLocalizer<FileController> localizer = thisController._localizer;
+            IStringLocalizer<SharedResource> localizer = thisController._localizer;
             int userId = Convert.ToInt32(context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
             var dictionary = context.ActionArguments.Where(I => I.Key == "id").FirstOrDefault().Value;

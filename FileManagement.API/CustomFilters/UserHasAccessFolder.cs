@@ -21,7 +21,7 @@ namespace FileManagement.API.CustomFilters
             var thisController = ((FolderController)context.Controller);
 
             IFolderService sr = thisController._folderService;
-            IStringLocalizer<FolderController> localizer = thisController._localizer;
+            IStringLocalizer<SharedResource> localizer = thisController._localizer;
 
             int userId = Convert.ToInt32(context.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 

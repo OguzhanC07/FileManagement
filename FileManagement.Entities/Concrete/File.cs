@@ -11,7 +11,7 @@ namespace FileManagement.DataAccess
         [Key]
         public int Id { get; set; }
         [Required]
-        [StringLength(50)]
+        [StringLength(100)]
         public string FileName { get; set; }
         public int Size { get; set; }
         [Column(TypeName = "datetime")]

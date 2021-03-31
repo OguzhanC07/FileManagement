@@ -117,25 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddSubFolderToDoesNotExistFolder" xml:space="preserve">
-    <value>Ana klasör yoksa klasör oluşturamazsınız.</value>
+  <data name="EmptyValidator" xml:space="preserve">
+    <value>{0} boş olamaz</value>
   </data>
-  <data name="DontHaveAccessFolder" xml:space="preserve">
-    <value>Bu klasöre erişiminiz yoktur.</value>
+  <data name="FileName" xml:space="preserve">
+    <value>Dosya adı</value>
   </data>
-  <data name="FolderCreateSuccess" xml:space="preserve">
-    <value>Klasör başarıyla oluşturuldu.</value>
+  <data name="FolderName" xml:space="preserve">
+    <value>Klasör adı</value>
   </data>
-  <data name="FolderDeleteSuccess" xml:space="preserve">
-    <value>Klasör başarıyla silindi.</value>
+  <data name="MaxLengthValidator" xml:space="preserve">
+    <value>{0} maksimum {1}, minimum {2} karakter olabilir.</value>
   </data>
-  <data name="FolderEditSuccess" xml:space="preserve">
-    <value>Klasör adı başarıyla değiştirildi.</value>
+  <data name="Password" xml:space="preserve">
+    <value>Şifre</value>
   </data>
-  <data name="FolderSendSuccess" xml:space="preserve">
-    <value>Başarıyla gönderildi.</value>
+  <data name="Username" xml:space="preserve">
+    <value>Kullanıcı adı</value>
   </data>
-  <data name="IdsAreNotMatch" xml:space="preserve">
-    <value>Id'ler uyuşmuyor.</value>
+  <data name="ValidNameValidator" xml:space="preserve">
+    <value>{0} adı alfanumerik karakterler olmalıdır.</value>
   </data>
 </root>

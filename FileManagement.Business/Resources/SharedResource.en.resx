@@ -117,10 +117,28 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UserLoginFailed" xml:space="preserve">
-    <value>Kullanıcı adı veya şifre yanlış</value>
+  <data name="EmptyValidator" xml:space="preserve">
+    <value>{0} can't be empty</value>
+    <comment>{0} property name</comment>
   </data>
-  <data name="UserLoginSuccess" xml:space="preserve">
-    <value>Giriş Başarılı</value>
+  <data name="FileName" xml:space="preserve">
+    <value>File name</value>
+  </data>
+  <data name="FolderName" xml:space="preserve">
+    <value>Folder name</value>
+  </data>
+  <data name="MaxLengthValidator" xml:space="preserve">
+    <value>{0} can be a maximum of {1} characters and a minimum of {2} characters</value>
+    <comment>{0} property name, {1} max character , {2} minimum charatcer</comment>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="ValidNameValidator" xml:space="preserve">
+    <value>{0} must be alphanumerical characters</value>
+    <comment>{0} property name</comment>
   </data>
 </root>

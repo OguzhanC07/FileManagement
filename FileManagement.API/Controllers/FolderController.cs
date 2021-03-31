@@ -30,9 +30,9 @@ namespace FileManagement.API.Controllers
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
         private readonly IWebHostEnvironment _webHostEnviroment;
-        public readonly IStringLocalizer<FolderController> _localizer;
+        public readonly IStringLocalizer<SharedResource> _localizer;
 
-        public FolderController(IStringLocalizer<FolderController> localizer, IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment) : base(fileService,webHostEnvironment)
+        public FolderController(IStringLocalizer<SharedResource> localizer, IFileService fileService, IUserService userService, IMapper mapper, IFolderService folderService, IWebHostEnvironment webHostEnvironment) : base(fileService,webHostEnvironment)
         {
             _localizer = localizer;
             _folderService = folderService;
