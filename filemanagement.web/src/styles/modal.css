@@ -1,0 +1,57 @@
+.align {
+  display: flex;
+  justify-content: space-between;
+}
+
+.header {
+  text-align: center;
+  padding-bottom: 10px !important;
+  font-size: 25px !important;
+}
+.divider {
+  text-align: center !important;
+  padding-bottom: 10px !important;
+}
+
+.divmargin {
+  margin: 20px;
+}
+
+.breadcrumbDivAlign {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+.errorMessage {
+  text-align: center;
+  color: red;
+}
+
+.breadcrumbFont {
+  font-size: 20px !important;
+}
+
+.liItems {
+  list-style-type: none;
+  margin-top: 10px;
+}
+
+.removeIcon {
+  margin-left: 10px !important;
+}
+
+.uploadRemoveInfo {
+  font-size: 20px;
+}
+
+.fileRemoveButton {
+  margin-top: 10px !important;
+}
+
+.buttonDivider {
+  padding-top: 20px;
+}
+
+.cancelButton {
+  margin-right: 10px !important;
+}

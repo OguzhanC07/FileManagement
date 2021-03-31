@@ -6,6 +6,7 @@ import { EDITFILE, FileContext } from "../context/FileContext";
 import { EDITFOLDER, FolderContext } from "../context/FolderContext";
 import { editfile } from "../services/fileService";
 import { editfolder } from "../services/folderService";
+import "../styles/modal.css";
 
 const EditModal = (props) => {
   const [open, setOpen] = useState(false);
@@ -98,7 +99,7 @@ const EditModal = (props) => {
           setOpen(false);
         }}
       >
-        <h3 style={{ textAlign: "center", paddingBottom: 10 }}>
+        <h3 className="header">
           {t("editModal.editModalHeader", {
             variable:
               props.type === "file"
@@ -106,8 +107,7 @@ const EditModal = (props) => {
                 : t("editModal.folder"),
           })}
         </h3>
-        <hr />
-        <div style={{ margin: 20 }}>
+        <div className="divmargin">
           <Form
             onSubmit={(e) => {
               editHandler(e);
@@ -137,7 +137,7 @@ const EditModal = (props) => {
               {t("editModal.submit")}
             </Button>
           </Form>
-          <p style={{ textAlign: "center", color: "red" }}>{error}</p>
+          {error && <p className="errorMessage">{error}</p>}
         </div>
       </Modal>
     </span>

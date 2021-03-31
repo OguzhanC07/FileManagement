@@ -74,13 +74,9 @@ const UploadFile = () => {
   };
 
   const files = myFiles.map((file) => (
-    <li style={{ listStyle: "none", marginTop: 5 }} key={file.path}>
+    <li className="liItems" key={file.path}>
       {file.path} - {file.size} {t("uploadFile.byte")}
-      <Icon
-        style={{ marginLeft: 10, fontSize: 15 }}
-        onClick={removeFile(file)}
-        name="cancel"
-      />
+      <Icon className="removeIcon" onClick={removeFile(file)} name="cancel" />
     </li>
   ));
 
@@ -131,18 +127,16 @@ const UploadFile = () => {
         <p>{t("uploadFile.dragnDropText")}</p>
       </div>
       <Modal basic closeIcon onClose={removeAll} open={files.length > 0}>
-        <h1 style={{ textAlign: "center", paddingBottom: 10 }}>
-          {t("uploadFile.fileUploadText")}
-        </h1>
-        <div style={{ textAlign: "center", paddingBottom: 10 }}>
-          <p style={{ fontSize: 25 }}>{t("uploadFile.removeInfo")}</p>
+        <h1 className="header">{t("uploadFile.fileUploadText")}</h1>
+        <div className="divider">
+          <p className="uploadRemoveInfo">{t("uploadFile.removeInfo")}</p>
           {files}
-          <Button style={{ marginTop: 10 }} onClick={removeAll}>
+          <Button className="fileRemoveButton" onClick={removeAll}>
             {t("uploadFile.removeAllBtn")}
           </Button>
-          <div style={{ paddingTop: 20 }}>
+          <div className="buttonDivider">
             <Button
-              style={{ marginRight: 10 }}
+              className="cancelButton"
               basic
               color="red"
               inverted
@@ -162,8 +156,8 @@ const UploadFile = () => {
             </Button>
           </div>
         </div>
-        <div style={{ margin: 20 }}>
-          <p style={{ textAlign: "center", color: "red" }}>{error}</p>
+        <div className="divmargin">
+          {error && <p className="errorMessage">{error}</p>}
         </div>
       </Modal>
       <ToastContainer />

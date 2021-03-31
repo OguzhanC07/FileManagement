@@ -17,7 +17,7 @@ namespace FileManagement.SeleniumTest
             Driver = new ChromeDriver();
             Driver.Navigate().GoToUrl("http://localhost:3000/");
             wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-            IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered two column grid container']")));
+            IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered one column grid container']")));
         }
 
         [Test]
@@ -26,7 +26,6 @@ namespace FileManagement.SeleniumTest
             Driver.FindElement(By.Id("username")).SendKeys("test");
             Driver.FindElement(By.Id("password")).SendKeys("1234");
             Driver.FindElement(By.XPath("//button[@class='ui primary button']")).Click();
-            wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
 
             try
             {
@@ -50,7 +49,6 @@ namespace FileManagement.SeleniumTest
             Driver.FindElement(By.Id("username")).SendKeys("test");
             Driver.FindElement(By.Id("password")).SendKeys("1234");
             Driver.FindElement(By.XPath("//button[@class='ui primary button']")).Click();
-            wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             try
             {
                 IWebElement secondResult = wait.Until(e => e.FindElement(By.XPath("//div//div[@class='links-con']")));
@@ -61,7 +59,7 @@ namespace FileManagement.SeleniumTest
             }
 
             Driver.FindElement(By.XPath("//div[@class='links-con']//button[@class='nav']")).Click();
-            var result = Driver.FindElement(By.XPath("//div[@class='ui centered two column grid container']"));
+            var result = Driver.FindElement(By.XPath("//div[@class='ui centered one column grid container']"));
             if (result!=null)
             {
                 Assert.Pass();  
@@ -79,7 +77,6 @@ namespace FileManagement.SeleniumTest
             Driver.FindElement(By.Id("username")).SendKeys("Test");
             Driver.FindElement(By.Id("password")).SendKeys("1234");
             Driver.FindElement(By.XPath("//button[@class='ui primary button']")).Click();
-            wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
 
             try
             {
@@ -103,6 +100,24 @@ namespace FileManagement.SeleniumTest
                 Assert.Pass("Login test passed");
             }
             catch (WebDriverTimeoutException)
+            {
+                Assert.Fail("Login test failed");
+            }
+        }
+
+        [Test]
+        public void LoginTest_ShouldSeeAnError_WhenAttempToLoginWithMoreThan30Characters()
+        {
+            Driver.FindElement(By.Id("username")).SendKeys("testtestestestsetsetsetsetetssettestesteastsea");
+            Driver.FindElement(By.Id("password")).SendKeys("asdqwewqeqweqweqweqweqweqweqweqweqwe");
+            Driver.FindElement(By.XPath("//button[@class='ui primary button']")).Click();
+
+            try
+            {
+                wait.Until(e => e.FindElement(By.XPath("//p")));
+                Assert.Pass("Login test success");
+            }
+            catch (WebDriverException)
             {
                 Assert.Fail("Login test failed");
             }

@@ -1,12 +1,12 @@
 import React from "react";
 import { Breadcrumb } from "semantic-ui-react";
 
-import "../styles/divAlign.css";
+import "../styles/modal.css";
 
 const BreadcrumbComponent = (props) => {
   return (
-    <div className="align" style={{ paddingTop: 15, paddingBottom: 10 }}>
-      <Breadcrumb style={{ fontSize: 20 }}>
+    <div className="align breadcrumbDivAlign">
+      <Breadcrumb className="breadcrumbFont">
         <Breadcrumb.Section
           onClick={() => {
             props.removeStack(0);

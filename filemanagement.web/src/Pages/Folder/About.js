@@ -1,6 +1,6 @@
 import React from "react";
 
-const About = (p) => {
+const About = (props) => {
   return <p>I'm about page</p>;
 };
 

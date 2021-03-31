@@ -13,7 +13,7 @@ namespace FileManagement.SeleniumTest
     public class FileTest
     {
         private IWebDriver Driver;
-
+        private WebDriverWait wait;
         [SetUp]
         public async Task Setup()
         {
@@ -27,8 +27,8 @@ namespace FileManagement.SeleniumTest
             }
 
             Driver.Navigate().GoToUrl("http://localhost:3000/");
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-            IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered two column grid container']")));
+            wait= new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+            IWebElement firstResult = wait.Until(e => e.FindElement(By.XPath("//div[@class='ui centered one column grid container']")));
 
             Driver.FindElement(By.Id("username")).SendKeys("test");
             Driver.FindElement(By.Id("password")).SendKeys("1234");
@@ -70,10 +70,8 @@ namespace FileManagement.SeleniumTest
         }
 
         [Test]
-        public void UploadFile()
+        public void UploadFile_ShouldUploadFilesOnTable_WhenFolderExists()
         {
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-
             string[] filePaths = { AppDomain.CurrentDomain.BaseDirectory.Split(new string[] { "\\bin" }, StringSplitOptions.None)[0], "Files", "dummy.pdf" };
             string exampleFile = Path.Combine(filePaths);
             Driver.FindElement(By.XPath("//input[@type='file']")).SendKeys(exampleFile);
@@ -94,9 +92,8 @@ namespace FileManagement.SeleniumTest
         }
 
         [Test]
-        public void EditFile()
+        public void EditFile_ShouldChangeFileName_WhenFileExists()
         {
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
             Driver.FindElement(By.XPath("//td[@class='file'][1]//i[@class='edit icon']")).Click();
             var nameInput = Driver.FindElement(By.XPath("//form//input"));
@@ -115,13 +112,11 @@ namespace FileManagement.SeleniumTest
             {
                 Assert.Fail("File uploading process failed\n", exc.Message);
             }
-
         }
 
         [Test]
-        public void PreviewFile()
+        public void PreviewFile_ShouldPreviewFile_WhenFileExists()
         {
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
             Driver.FindElement(By.XPath("//td[@class='file'][1]//i[@class='external square alternate icon']")).Click();
             try
@@ -138,9 +133,8 @@ namespace FileManagement.SeleniumTest
         }
 
         [Test]
-        public void DownloadFile()
+        public void DownloadFile_ShouldDownloadFileFromTable_WhenFileExists()
         {
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
             var element = Driver.FindElement(By.XPath("//td[@class='file'][1]"));
             new Actions(Driver).ContextClick(element).Perform();
@@ -161,9 +155,8 @@ namespace FileManagement.SeleniumTest
         }
 
         [Test]
-        public void DeleteFile()
+        public void DeleteFile_ShouldDeleteFileFromTable_WhenFileExists()
         {
-            WebDriverWait wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             wait.Until(e => e.FindElement(By.XPath("//table")));
 
             Driver.FindElement(By.XPath("//td[@class='file'][1]//i[@class='delete icon']")).Click();
@@ -187,7 +180,7 @@ namespace FileManagement.SeleniumTest
         [TearDown]
         public void CloseDriver()
         {
-            var element = Driver.FindElement(By.XPath("//div[@class='ui breadcrumb']//div[@class='section']"));
+            var element = Driver.FindElement(By.XPath("//div[@class='ui breadcrumb breadcrumbFont']//div[@class='section']"));
             var id = element.GetAttribute("id");
             IFolderService folderService = new FolderService("test","1234");
             folderService.RemoveAsync(int.Parse(id));

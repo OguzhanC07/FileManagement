@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { FolderContext, SETFOLDERS } from "../context/FolderContext";
 import { getfolders, addfolders } from "../services/folderService";
-import "../styles/divAlign.css";
+import "../styles/modal.css";
 
 const AddFolderModal = () => {
   const [open, setOpen] = useState(false);
@@ -63,11 +63,8 @@ const AddFolderModal = () => {
           setOpen(false);
         }}
       >
-        <h3 style={{ textAlign: "center", paddingBottom: 10 }}>
-          {t("addfolderModal.addFolder")}
-        </h3>
-        <hr />
-        <div style={{ margin: 20 }}>
+        <h3 className="header">{t("addfolderModal.addFolder")}</h3>
+        <div className="divmargin">
           <Form
             onSubmit={(e) => {
               addFolderModalHandler(e);
@@ -85,7 +82,7 @@ const AddFolderModal = () => {
               {t("addfolderModal.submit")}
             </Button>
           </Form>
-          <p style={{ textAlign: "center", color: "red" }}>{error}</p>
+          {error && <p className="errorMessage">{error}</p>}
         </div>
       </Modal>
     </div>

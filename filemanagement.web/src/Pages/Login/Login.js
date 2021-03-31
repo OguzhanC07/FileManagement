@@ -47,7 +47,7 @@ const Login = () => {
   };
 
   return (
-    <Grid className="container" centered columns={2}>
+    <Grid className="container" centered columns={1}>
       <Grid.Column>
         <Segment inverted>
           <h2 className="title">File Management</h2>

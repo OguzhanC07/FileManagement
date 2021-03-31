@@ -6,6 +6,7 @@ import { DELETEFOLDER, FolderContext } from "../context/FolderContext";
 import { DELETEFILE, FileContext } from "../context/FileContext";
 import { deletefolder } from "../services/folderService";
 import { deletefile } from "../services/fileService";
+import "../styles/modal.css";
 
 const DeleteModal = (props) => {
   const [open, setOpen] = useState(false);
@@ -81,7 +82,7 @@ const DeleteModal = (props) => {
           setOpen(false);
         }}
       >
-        <h3 style={{ textAlign: "center", paddingBottom: 10 }}>
+        <h3 className="header">
           {t("deleteModal.deleteHeader", {
             variable:
               props.type === "file"
@@ -90,7 +91,7 @@ const DeleteModal = (props) => {
           })}
         </h3>
 
-        <div style={{ textAlign: "center", paddingBottom: 10 }}>
+        <div className="header">
           <p>
             {t("deleteModal.deleteValidation", {
               variable:
@@ -100,7 +101,7 @@ const DeleteModal = (props) => {
             })}
           </p>
           <Button
-            style={{ marginRight: 10 }}
+            className="cancelButton"
             basic
             color="red"
             inverted
@@ -117,9 +118,7 @@ const DeleteModal = (props) => {
             <Icon name="checkmark" /> {t("deleteModal.yesBtn")}
           </Button>
         </div>
-        <div style={{ margin: 20 }}>
-          <p style={{ textAlign: "center", color: "red" }}>{error}</p>
-        </div>
+        <div>{error && <p className="errorMessage">{error}</p>}</div>
       </Modal>
     </span>
   );
