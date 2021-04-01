@@ -86,15 +86,15 @@ namespace FileManagement.API.Controllers
                     dto.ParentFolderId = id;
             }
 
-
             dto.Size = 0;
             dto.CreatedAt = DateTime.Now;
             dto.FileGuid = Guid.NewGuid();
-            dto.FolderName.Trim();
+            dto.FolderName = dto.FolderName.Trim();
             dto.AppUserId = Convert.ToInt32(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             await _folderService.AddAsync(_mapper.Map<Folder>(dto));
             var user = await _userService.GetById(dto.AppUserId);
-            string userDirectory = Directory.GetCurrentDirectory() + $"/wwwroot/users/{user.Username}/{dto.FileGuid}";
+            string[] paths = { Directory.GetCurrentDirectory(),"wwwroot","users",user.Username,dto.FileGuid.ToString() };
+            string userDirectory = Path.Combine(paths);
             Directory.CreateDirectory(userDirectory);
 
             return Created("", new ResponseMessageModel<AddFolderDto>
@@ -153,7 +153,8 @@ namespace FileManagement.API.Controllers
         {
             //zipname and zip path.
             var zipName = Guid.NewGuid().ToString() + ".zip";
-            var tempOutput = Path.Combine(Path.Combine(_webHostEnviroment.WebRootPath, "TempFiles"), zipName);
+            string[] names = { _webHostEnviroment.WebRootPath,"TempFiles",zipName};
+            var tempOutput = Path.Combine(names);
 
             if (!Directory.Exists(Path.Combine(_webHostEnviroment.WebRootPath, "TempFiles")))
             {

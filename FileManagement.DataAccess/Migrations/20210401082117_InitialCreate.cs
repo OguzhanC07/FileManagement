@@ -13,9 +13,9 @@ namespace FileManagement.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, collation: "SQL_Latin1_General_CP1_CS_AS"),
+                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, collation: "SQL_Latin1_General_CP1_CS_AS"),
+                    Email = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, collation: "SQL_Latin1_General_CP1_CS_AS"),
                     isActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -29,7 +29,7 @@ namespace FileManagement.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FolderName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FolderName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Size = table.Column<int>(type: "int", nullable: false),
                     ParentFolderId = table.Column<int>(type: "int", nullable: true),
@@ -60,9 +60,9 @@ namespace FileManagement.DataAccess.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FileName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Size = table.Column<int>(type: "int", nullable: false),
-                    UploadedAt = table.Column<DateTime>(type: "date", nullable: false),
+                    UploadedAt = table.Column<DateTime>(type: "datetime", nullable: false),
                     FolderId = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     FileGuid = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)

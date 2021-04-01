@@ -17,7 +17,7 @@ const AddFolderModal = () => {
   const addFolderModalHandler = async (e) => {
     setError("");
     e.preventDefault();
-    if (name !== "") {
+    if (name.trim() !== "") {
       try {
         setIsLoading(true);
         await addfolders(name, folder.folderId);
@@ -48,6 +48,7 @@ const AddFolderModal = () => {
       <Button
         primary
         onClick={() => {
+          setName("");
           setOpen(true);
         }}
       >
@@ -60,6 +61,7 @@ const AddFolderModal = () => {
         size="small"
         onClose={() => {
           setError("");
+          setName("");
           setOpen(false);
         }}
       >

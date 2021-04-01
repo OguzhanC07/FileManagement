@@ -57,7 +57,7 @@ namespace FileManagement.API.Controllers
                 });
             }
 
-            return NotFound(new ResponseMessageModel<string>
+            return BadRequest(new ResponseMessageModel<string>
             {
                 Result = false,
                 Message = _localizer["UserLoginFailed"]

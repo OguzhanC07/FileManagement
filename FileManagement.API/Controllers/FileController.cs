@@ -86,16 +86,20 @@ namespace FileManagement.API.Controllers
             var folder = await _folderService.FindFolderById(id);
             var user = await _userService.GetById(folder.AppUserId);
             int folderSize = 0;
+            
+
 
             foreach (var file in formFiles)
             {
+                string trustedFileName = string.Join(".", file.FileName.Split('.').Select(s => s.Trim()).ToArray());
+                trustedFileName = string.Join(" ", trustedFileName.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries).ToList().Select(x => x.Trim()));
                 var newName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                 var result = await UploadFile(file, folder.FileGuid.ToString(), user.Username, newName);
                 if (result == true)
                 {
                     await _fileService.AddAsync(new DataAccess.File
                     {
-                        FileName = file.FileName.Length > 30 ? file.FileName.Trim().Substring(0, 30)+ Path.GetExtension(file.FileName) : file.FileName,/*rgx.Replace(file.FileName, "a").Trim(),*/
+                        FileName = trustedFileName.Length > 30 ? trustedFileName.Substring(0, 30)+ Path.GetExtension(file.FileName.Trim()) : trustedFileName,
                         FileGuid = newName,
                         FolderId = folder.Id,
                         IsActive = true,
@@ -128,12 +132,13 @@ namespace FileManagement.API.Controllers
         //id is fileId
         public async Task<IActionResult> EditFile(int id, FileEditDto dto)
         {
+            string trustedFileName = string.Join(" ", dto.FileName.Split(Array.Empty<char>(), StringSplitOptions.RemoveEmptyEntries).ToList().Select(x => x.Trim()));
             if (id != dto.Id)
             {
-                return BadRequest(new ResponseMessageModel<string> { Result = false, Message = "Id's are not match" });
+                return BadRequest(new ResponseMessageModel<string> { Result = false, Message =_localizer["IdsAreNotMatch"] });
             }
             var file = await _fileService.GetFileByIdAsync(id);
-            file.FileName = (dto.FileName.Length > 50 ? dto.FileName.Substring(0, 50) : dto.FileName) + "." + file.FileGuid.Split(".").Last();
+            file.FileName = (trustedFileName.Length > 50 ? trustedFileName.Substring(0, 50) : trustedFileName) + "." + file.FileGuid.Split(".").Last();
             await _fileService.UpdateAsync(file);
             return Ok(new ResponseMessageModel<string> { Result = true, Message = _localizer["FileNameEdit"] });
         }
