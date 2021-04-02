@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileManagement.Test", "File
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileManagement.SeleniumTest", "FileManagement.SeleniumTest\FileManagement.SeleniumTest.csproj", "{9A1C785E-A6E3-4886-B599-776E9E2D93F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileManagement.ApiSdk", "FileManagement.ApiSdk\FileManagement.ApiSdk.csproj", "{0886E03E-22BA-4604-9F98-03FDAAD80216}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileManagement.ApiSdk", "FileManagement.ApiSdk\FileManagement.ApiSdk.csproj", "{0886E03E-22BA-4604-9F98-03FDAAD80216}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileManagement.SeleniumXunit", "FileManagement.SeleniumXunit\FileManagement.SeleniumXunit.csproj", "{45EB5CB2-CB3E-4B45-A2C7-E9C031D21F53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{0886E03E-22BA-4604-9F98-03FDAAD80216}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0886E03E-22BA-4604-9F98-03FDAAD80216}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0886E03E-22BA-4604-9F98-03FDAAD80216}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45EB5CB2-CB3E-4B45-A2C7-E9C031D21F53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45EB5CB2-CB3E-4B45-A2C7-E9C031D21F53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45EB5CB2-CB3E-4B45-A2C7-E9C031D21F53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45EB5CB2-CB3E-4B45-A2C7-E9C031D21F53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

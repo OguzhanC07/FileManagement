@@ -84,8 +84,10 @@ namespace FileManagement.Test
                 FolderId = random.Next(1, 100)
             };
 
-            var mockFileList = new List<File>();
-            mockFileList.Add(mockFile);
+            var mockFileList = new List<File>
+            {
+                mockFile
+            };
 
             _fileRepoMock.Setup(x => x.AddAsync(It.IsAny<File>())).Verifiable();
             _fileRepoMock.Setup(x => x.GetAll()).ReturnsAsync(mockFileList);
@@ -199,7 +201,7 @@ namespace FileManagement.Test
         }
 
 
-        private List<File> mockFiles = new List<File>
+        private readonly List<File> mockFiles = new List<File>
             {
                 new File{Id=1,FileName="test name 1",FileGuid = Guid.NewGuid().ToString(), Size = 500 , UploadedAt = DateTime.Now, IsActive =true,FolderId=1 },
                 new File{Id=2,FileName="test name 2",FileGuid = Guid.NewGuid().ToString(), Size = 600 , UploadedAt = DateTime.Now.AddSeconds(1), IsActive =false,FolderId=1 },
