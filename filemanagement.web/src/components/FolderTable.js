@@ -1,29 +1,25 @@
 import React, { useContext, useState } from "react";
-import { Table, Image, Icon, Loader } from "semantic-ui-react";
 import uuid from "uuid/dist/v1";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useTranslation } from "react-i18next";
-import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 
-import { FolderContext, SORTFOLDERS } from "../context/FolderContext";
-import img from "../assets/foldericon.jpg";
-import fileimg from "../assets/fileicon.png";
+import { FolderContext } from "../context/FolderContext";
+
 import { downloadfolder } from "../services/folderService";
 import { getsinglefile } from "../services/fileService";
-import { FileContext, SORTFILE } from "../context/FileContext";
-import EditModal from "./EditModal";
-import DeleteModal from "./DeleteModal";
-import Viewer from "./Viewer";
+import { FileContext } from "../context/FileContext";
 import "../styles/react-contextmenu.css";
-import SortingArrow from "./SortingArrow";
+import TableWrapper from "./TableWrapper";
+import ContextMenuCreator from "./ContextMenuCreator";
+import TableFolderRow from "./TableFolderRow";
+import TableFileRow from "./TableFileRow";
 
 const FolderTable = (props) => {
   const [isDisabled, setIsDisabled] = useState(false);
-  const [sortType, setSortType] = useState("asc");
-  const [sortName, setSortName] = useState("name");
-  const { folder, dispatch } = useContext(FolderContext);
-  const { file, dispatch: fileDispatch } = useContext(FileContext);
+
+  const { folder } = useContext(FolderContext);
+  const { file } = useContext(FileContext);
   const { t } = useTranslation();
 
   function collect(props) {
@@ -83,51 +79,6 @@ const FolderTable = (props) => {
     return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
   };
 
-  const sortingHandler = (type) => {
-    sortType === "asc" ? setSortType("desc") : setSortType("asc");
-    setSortName(type);
-    switch (type) {
-      case "name":
-        dispatch({
-          type: SORTFOLDERS,
-          sortType: sortType,
-          sortName: "folderName",
-        });
-        fileDispatch({
-          type: SORTFILE,
-          sortType: sortType,
-          sortName: "fileName",
-        });
-        break;
-      case "size":
-        dispatch({
-          type: SORTFOLDERS,
-          sortType: sortType,
-          sortName: "size",
-        });
-        fileDispatch({
-          type: SORTFILE,
-          sortType: sortType,
-          sortName: "size",
-        });
-        break;
-      case "time":
-        dispatch({
-          type: SORTFOLDERS,
-          sortType: sortType,
-          sortName: "createdAt",
-        });
-        fileDispatch({
-          type: SORTFILE,
-          sortType: sortType,
-          sortName: "uploadedAt",
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
   const handleDownloadClick = (e, data) => {
     downloadHandler(data.id, data.type);
   };
@@ -142,178 +93,53 @@ const FolderTable = (props) => {
 
   return (
     <div>
-      <div>
-        <Table style={{ paddingTop: 10 }} selectable>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell
-                onClick={() => {
-                  sortingHandler("name");
-                }}
-                style={{ cursor: "pointer" }}
-                className="tableHeader"
-              >
-                {t("folderTable.tableHeaderName")}
-                {sortName === "name" && <SortingArrow sortType={sortType} />}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => {
-                  sortingHandler("size");
-                }}
-                style={{ cursor: "pointer" }}
-                className="tableHeader"
-              >
-                {t("folderTable.tableHeaderSize")}
-                {sortName === "size" && <SortingArrow sortType={sortType} />}
-              </Table.HeaderCell>
-              <Table.HeaderCell
-                onClick={() => {
-                  sortingHandler("time");
-                }}
-                style={{ cursor: "pointer" }}
-                className="tableHeader"
-              >
-                {t("folderTable.tableHeaderCreatedAt")}
-                {sortName === "time" && <SortingArrow sortType={sortType} />}
-              </Table.HeaderCell>
-              <Table.HeaderCell className="tableHeader">
-                {t("folderTable.tableHeaderOperations")}
-              </Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
-          <Table.Body>
-            {folder.folders.map((folder) => (
-              <ContextMenuTrigger
-                renderTag="tr"
-                folderId={folder.id}
-                name={folder.folderName}
-                type="folder"
-                id={MENU_TYPE}
-                holdToDisplay={1000}
-                key={folder.id}
+      <TableWrapper>
+        {folder.folders.map((folder) => (
+          <TableFolderRow
+            convertHandler={convertHandler}
+            handleDoubleClick={handleDoubleClick}
+            collect={collect}
+            folder={folder}
+            isDisabled={isDisabled}
+            type={MENU_TYPE}
+            key={folder.id}
+          />
+        ))}
+        {file.files.length > 0
+          ? file.files.map((file) => (
+              <TableFileRow
+                file={file}
                 collect={collect}
-              >
-                <Table.Cell
-                  onDoubleClick={() => {
-                    handleDoubleClick(folder.id, folder.folderName);
-                  }}
-                  collapsing
-                >
-                  <Image src={img} />
-                  {folder.folderName.substring(0, 10)}
-                  {folder.folderName.length > 10 ? "..." : null}
-                </Table.Cell>
-                <Table.Cell
-                  onDoubleClick={() => {
-                    handleDoubleClick(folder.id, folder.folderName);
-                  }}
-                >
-                  {convertHandler(folder.size)}
-                </Table.Cell>
-                <Table.Cell
-                  onDoubleClick={() => {
-                    handleDoubleClick(folder.id, folder.folderName);
-                  }}
-                >
-                  {new Date(folder.createdAt).toLocaleDateString("TR-tr")}-
-                  {new Date(folder.createdAt).toLocaleTimeString("TR-tr")}
-                </Table.Cell>
-                <Table.Cell
-                  onDoubleClick={() => {
-                    handleDoubleClick(folder.id, folder.folderName);
-                  }}
-                  id={folder.id}
-                  className="folder"
-                >
-                  <EditModal
-                    id={folder.id}
-                    name={folder.folderName}
-                    type="folder"
-                  />
-                  <DeleteModal id={folder.id} type="folder" />
-                  {folder.size === 0 ? null : isDisabled ? (
-                    <Loader active inline />
-                  ) : null}
-                </Table.Cell>
-              </ContextMenuTrigger>
-            ))}
+                convertHandler={convertHandler}
+                isDisabled={isDisabled}
+                type={FILE_MENU}
+                key={file.id}
+              />
+            ))
+          : null}
+      </TableWrapper>
 
-            {file.files.length > 0
-              ? file.files.map((file) => (
-                  <ContextMenuTrigger
-                    renderTag="tr"
-                    folderId={file.id}
-                    name={file.fileName}
-                    type="file"
-                    id={FILE_MENU}
-                    holdToDisplay={1000}
-                    key={file.id}
-                    collect={collect}
-                  >
-                    <Table.Cell collapsing>
-                      <Image src={fileimg} />
-                      {file.fileName.length > 10
-                        ? file.fileName.substring(0, 20) + "..."
-                        : file.fileName}
-                    </Table.Cell>
-                    <Table.Cell>{convertHandler(file.size)}</Table.Cell>
-                    <Table.Cell>
-                      {new Date(file.uploadedAt).toLocaleDateString("TR-tr")}-
-                      {new Date(file.uploadedAt).toLocaleTimeString("TR-tr")}
-                    </Table.Cell>
-                    <Table.Cell id={file.id} className="file">
-                      <EditModal
-                        id={file.id}
-                        type="file"
-                        name={file.fileName}
-                      />
-                      <DeleteModal id={file.id} type="file" />
-                      {file.size === 0 ? null : isDisabled ? (
-                        <Loader active inline />
-                      ) : null}
-                      {file.fileName.split(".")[1] === "pdf" && (
-                        <Viewer type="pdf" id={file.id} />
-                      )}
-                      {file.fileName.match(
-                        /[^/]+(jpg|png|gif|tif|tiff|bmp|jpeg)$/
-                      ) && <Viewer type="img" id={file.id} />}
-                      {file.fileName.split(".")[1] === "mp4" && (
-                        <Viewer id={file.id} type="video" />
-                      )}
-                    </Table.Cell>
-                  </ContextMenuTrigger>
-                ))
-              : null}
-          </Table.Body>
-        </Table>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-        />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
 
-        <ContextMenu id={FILE_MENU}>
-          <MenuItem onClick={handleDownloadClick} data={{ item: "download" }}>
-            <Icon name="download" /> {t("contextMenu.download")}
-          </MenuItem>
-        </ContextMenu>
-
-        <ContextMenu id={MENU_TYPE}>
-          <MenuItem onClick={handleDownloadClick} data={{ item: "download" }}>
-            <Icon name="download" /> {t("contextMenu.download")}
-          </MenuItem>
-          <MenuItem divider />
-          <MenuItem onClick={handleDoubleClick} data={{ item: "open" }}>
-            <Icon name="folder open" /> {t("contextMenu.openFolder")}
-          </MenuItem>
-        </ContextMenu>
-      </div>
+      <ContextMenuCreator
+        handleDownload={handleDownloadClick}
+        type={FILE_MENU}
+      />
+      <ContextMenuCreator
+        handleOpen={handleDoubleClick}
+        handleDownload={handleDownloadClick}
+        type={MENU_TYPE}
+      />
     </div>
   );
 };

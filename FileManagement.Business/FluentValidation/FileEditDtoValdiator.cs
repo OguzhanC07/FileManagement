@@ -15,7 +15,7 @@ namespace FileManagement.Business.FluentValidation
         public FileEditDtoValdiator(IStringLocalizer<SharedResource> localizer)
         {
             RuleFor(I => I.FileName).NotEmpty().WithMessage(localizer["EmptyValidator"].ToString().Replace("{0}",localizer["FileName"]));
-            RuleFor(I => I.FileName).Matches("^[A-Za-z0-9ığüşöçİĞÜŞÖÇ]+$").WithMessage(localizer["ValidNameValidator"].ToString().Replace("{0}",localizer["FileName"]));
+            RuleFor(I => I.FileName).Matches("^[A-Za-z0-9 ığüşöçİĞÜŞÖÇ]+$").WithMessage(localizer["ValidNameValidator"].ToString().Replace("{0}",localizer["FileName"]));
             RuleFor(I => I.FileName).Length(3, 50).WithMessage(localizer["MaxLengthValidator"].ToString().Replace("{0}", localizer["FileName"]).Replace("{1}","{MaxLength}").Replace("{2}", "{MinLength}"));
         }
     }
